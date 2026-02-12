@@ -40,31 +40,25 @@ impl Span {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Default)]
 pub enum Severity {
     Error,
     Warning,
+    #[default]
     Info,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Default)]
 pub enum SeverityProfile {
     /// Use severities exactly as emitted by rule packs.
     Conformance,
     /// Normalize severities to reflect runtime risk (DOM/interaction instability > spec purity).
+    #[default]
     Risk,
 }
 
-impl Default for SeverityProfile {
-    fn default() -> Self {
-        SeverityProfile::Risk
-    }
-}
 
-impl Default for Severity {
-    fn default() -> Self {
-        Severity::Info
-    }
-}
 
 impl Severity {
     fn rank(self) -> u8 {

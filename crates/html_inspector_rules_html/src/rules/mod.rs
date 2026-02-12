@@ -317,7 +317,7 @@ pub fn all() -> Vec<Box<dyn Rule>> {
         Box::new(progress_constraints::ProgressConstraints),
         Box::new(popover_constraints::PopoverConstraints),
         Box::new(rel_typo_constraints::RelTypoConstraints),
-        Box::new(rdfa_lite_constraints::RdfaLiteConstraints::default()),
+        Box::new(rdfa_lite_constraints::RdfaLiteConstraints),
         Box::new(script_integrity_constraints::ScriptIntegrityConstraints),
         Box::new(script_constraints::ScriptConstraints),
         Box::new(script_importmap_constraints::ScriptImportmapConstraints::default()),

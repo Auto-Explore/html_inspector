@@ -726,15 +726,11 @@ fn handle_ui_compare(
         gnu: rust_gnu,
     };
 
-    let java = match ui
+    let java = ui
         .java_base_url
         .as_deref()
         .map(str::trim)
-        .filter(|s| !s.is_empty())
-    {
-        None => None,
-        Some(base) => Some(call_java_validator(base, &ui)),
-    };
+        .filter(|s| !s.is_empty()).map(|base| call_java_validator(base, &ui));
 
     let diff = diff_reports(
         &rust_resp.report,
@@ -879,8 +875,8 @@ fn diff_reports(rust: &Report, java_json: Option<&serde_json::Value>) -> DiffSum
             }
             .to_string(),
             message: m.message.clone(),
-            first_line: m.span.map(|s| s.line as u32),
-            first_col: m.span.map(|s| s.col as u32),
+            first_line: m.span.map(|s| s.line),
+            first_col: m.span.map(|s| s.col),
         })
         .collect();
 

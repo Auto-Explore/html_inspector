@@ -249,8 +249,7 @@ pub(crate) fn external_url_allowed_by_sources(
             let Some(actual_host) = actual.host_str() else {
                 continue;
             };
-            if token_host.starts_with("*.") {
-                let suffix = &token_host[2..];
+            if let Some(suffix) = token_host.strip_prefix("*.") {
                 if actual_host == suffix || actual_host.ends_with(&format!(".{suffix}")) {
                     return true;
                 }
@@ -412,7 +411,7 @@ pub(crate) fn is_event_handler_attr(ctx: &ValidationContext, attr_name: &str) ->
         html_inspector_core::InputFormat::Html => EVENT_HANDLERS
             .iter()
             .any(|h| attr_name.eq_ignore_ascii_case(h)),
-        html_inspector_core::InputFormat::Xhtml => EVENT_HANDLERS.iter().any(|h| attr_name == *h),
+        html_inspector_core::InputFormat::Xhtml => EVENT_HANDLERS.contains(&attr_name),
     }
 }
 
