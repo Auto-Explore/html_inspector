@@ -1,0 +1,24 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+base64 = "0.22"
+css_inspector = { path = "../css_inspector/crates/css_inspector" }
+
+[patch.crates-io]
+markup5ever_rcdom = { path = "crates/markup5ever_rcdom" }
+
+[profile.release-with-debug]
+inherits = "release"
+debug = 2
+incremental = false
+strip = false

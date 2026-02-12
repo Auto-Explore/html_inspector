@@ -1,0 +1,8 @@
+[package]
+name = "html_inspector_html_data_bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+libc = "0.2"

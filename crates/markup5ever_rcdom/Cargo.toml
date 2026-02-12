@@ -1,0 +1,15 @@
+[package]
+name = "markup5ever_rcdom"
+version = "0.36.0+unofficial"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Local patched RcDom for html5ever/markup5ever compatibility"
+publish = false
+
+[lib]
+name = "markup5ever_rcdom"
+path = "lib.rs"
+
+[dependencies]
+markup5ever = "0.38.0"
+tendril = "0.5.0"

@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>&lt;object&gt;</title>
+</head>
+<body>
+  <map name="idref"></map>
+  <!-- is structured inline -->
+  <p><object
+      data="uri"
+      height="40"
+      width="40"
+      class="class"
+      xml:lang="en"></object></p>
+
+  <!-- is strictly inline -->
+  <p><dfn><object
+      data="uri"
+      height="40"
+      width="40"
+      class="class"
+      xml:lang="en"></object></dfn></p>
+
+  <p>paragraph
+    <object data='bar.ogg'>
+        <em>some</em> 
+    </object>
+  </p>
+
+  <p><dfn>strictly inline
+    <object data='bar.ogg'>
+        <em>text</em>
+    </object>
+  </dfn></p>
+
+  <p>paragraph
+    <object data='bar.ogg'>
+      <a>link</a>
+    </object>
+  </p>
+  <p><dfn>strictly inline
+    <object data='foo.mov'>
+      <a>link</a>
+    </object>
+  </dfn></p>
+</body>
+</html>

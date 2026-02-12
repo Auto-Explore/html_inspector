@@ -1,0 +1,15 @@
+[package]
+name = "html_inspector_rules_html"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+html_inspector_core = { path = "../html_inspector_core" }
+base64 = "0.22"
+serde_json = { workspace = true }
+sha2 = "0.10"
+url = "2"
+
+[dev-dependencies]
+html_inspector_html = { path = "../html_inspector_html", features = ["html5ever"] }

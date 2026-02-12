@@ -1,0 +1,13 @@
+[package]
+name = "html_inspector_inprocess_bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+html_inspector_core = { path = "../html_inspector_core" }
+html_inspector_html = { path = "../html_inspector_html" }
+html_inspector_rules_aria = { path = "../html_inspector_rules_aria" }
+html_inspector_rules_css = { path = "../html_inspector_rules_css" }
+html_inspector_rules_html = { path = "../html_inspector_rules_html" }
+html_inspector_rules_i18n = { path = "../html_inspector_rules_i18n" }

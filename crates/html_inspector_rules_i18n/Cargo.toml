@@ -1,0 +1,9 @@
+[package]
+name = "html_inspector_rules_i18n"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+html_inspector_core = { path = "../html_inspector_core" }
+unicode-normalization = "0.1"
