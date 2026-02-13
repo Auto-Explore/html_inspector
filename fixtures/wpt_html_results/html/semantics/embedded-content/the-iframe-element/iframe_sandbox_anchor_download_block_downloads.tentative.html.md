@@ -1,0 +1,107 @@
+# html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>&lt;a download&gt; triggered download in sandbox is blocked.</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#attr-iframe-sandbox">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-iframe-element">
+<script src="/common/utils.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src='/resources/testharnessreport.js'></script>
+<script src="support/iframe_sandbox_download_helper.js"></script>
+<body>
+<script>
+"use strict";
+
+async_test(t => {
+  const download_token = token();
+    var iframe = document.createElement("iframe");
+    iframe.srcdoc = "<a>Download</a>";
+    iframe.sandbox = "allow-same-origin";
+    iframe.onload = t.step_func(function () {
+      iframe.contentWindow.addEventListener(
+        "unload", t.unreached_func("Unexpected navigation."));
+      let anchor = iframe.contentDocument.getElementsByTagName('a')[0];
+      anchor.href = `support/download_stash.py?token=${download_token}` +
+        `&finish-delay=${StreamDownloadFinishDelay()}`;
+      anchor.download = null;
+      anchor.click();
+      AssertDownloadFailure(t, download_token, StreamDownloadFinishDelay() +
+                            DownloadVerifyDelay());
+    });
+
+  document.body.appendChild(iframe);
+}, "<a download> triggered download in sandbox is blocked.");
+
+async_test(t => {
+  const download_token = token();
+  let iframe = document.createElement("iframe");
+  iframe.srcdoc = '<a>Download</a>';
+  iframe.sandbox = "allow-same-origin";
+  iframe.onload = t.step_func(function () {
+    iframe.contentWindow.addEventListener(
+      "unload", t.unreached_func("Unexpected navigation."));
+    let anchor = iframe.contentDocument.getElementsByTagName('a')[0];
+    anchor.href = `support/download_stash.py?token=${download_token}`;
+    anchor.download = null;
+    anchor.click();
+    AssertDownloadFailure(t, download_token, DownloadVerifyDelay());
+  });
+
+  document.body.appendChild(iframe);
+}, '<a download> triggered download in sandbox is blocked ' +
+           'before a request is made.');
+
+['', 'target="_blank" ', 'target="_blank" rel="noopener" '].forEach(
+  attributes => async_test(t => {
+    const download_token = token();
+    let iframe = document.createElement("iframe");
+    iframe.srcdoc = `<a ${attributes}>Download</a>`;
+    iframe.sandbox = "allow-same-origin allow-popups";
+    iframe.onload = t.step_func(function () {
+      iframe.contentWindow.addEventListener(
+        "unload", t.unreached_func("Unexpected navigation."));
+      let anchor = iframe.contentDocument.getElementsByTagName('a')[0];
+      anchor.href = `support/download_stash.py?token=${download_token}` +
+        `&finish-delay=${StreamDownloadFinishDelay()}`;
+      anchor.click();
+      AssertDownloadFailure(t, download_token, StreamDownloadFinishDelay() +
+                            DownloadVerifyDelay());
+    });
+
+    document.body.appendChild(iframe);
+  }, `<a ${attributes}> triggered download in sandbox is blocked.`));
+</script>
+</body>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html"
+}
+```

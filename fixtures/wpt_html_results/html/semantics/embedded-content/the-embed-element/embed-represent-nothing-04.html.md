@@ -1,0 +1,71 @@
+# html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html
+
+Counts:
+- errors: 1
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset="utf-8">
+<title>HTML Test: The embed element represents nothing when it is never being rendered</title>
+<link rel="author" title="Peng Zhou" href="mailto:zhoupeng.1996@bytedance.com">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-embed-element">
+<meta name="assert" content="Check if the embed element represents nothing when it is never being rendered">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  #target {
+    display: none;
+  }
+</style>
+<body>
+  <script>
+  async_test(t => {
+    window.childLoaded = false;
+    addEventListener('load', t.step_func_done(() => {
+      assert_true(!!document.querySelector('embed'));
+      assert_false(window.childLoaded);
+    }));
+  }, 'ensure the element represents nothing');
+  </script>
+  <embed id="target" src="embed-iframe.html"></embed>
+</body>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.parser.stray_end_tag",
+      "message": "Stray end tag “embed”.",
+      "severity": "Error",
+      "span": {
+        "byte_end": 903,
+        "byte_start": 895,
+        "col": 46,
+        "line": 24
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html"
+}
+```

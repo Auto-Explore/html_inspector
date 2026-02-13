@@ -1,0 +1,86 @@
+# html/semantics/popovers/popover-shadowhost-focus-navigation.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/popovers/popover-shadowhost-focus-navigation.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Popover that is shadow host focus behaviors</title>
+<meta name="timeout" content="long">
+<link rel="author" href="mailto:perryuwang@gmail.com">
+<link rel=help href="https://issues.chromium.org/issues/402282793">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/shadow-dom/focus-navigation/resources/focus-utils.js"></script>
+<script src="/shadow-dom/focus-navigation/resources/shadow-dom.js"></script>
+<script src="resources/popover-utils.js"></script>
+
+<div id="root">
+  <button id="invoker" popovertarget="popover">Open popover</button>
+  <custom-popover id="popover">
+    <input type="checkbox" id="checkbox1" />
+    <input type="checkbox" id="checkbox2" />
+  </custom-popover>
+  <button id="last">Last focusable element</button>
+</div>
+
+<script>
+class CustomPopover extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.host.setAttribute('popover', 'auto');
+    this.shadowRoot.innerHTML = `<button id="button1">button1</button>
+                                 <slot></slot>
+                                 <button id="button2">button2</button>`;
+  }
+}
+customElements.define('custom-popover', CustomPopover);
+
+promise_test(async () => {
+  invoker.focus();
+  await sendEnter();
+  assert_true(popover.matches(":popover-open"));
+  assert_equals(document.activeElement, invoker);
+  await assert_focus_navigation_bidirectional([
+    'invoker',
+    'popover/button1',
+    'checkbox1',
+    'checkbox2',
+    'popover/button2',
+    'last'
+  ]);
+}, 'Focus behavior of popover that is shadow host');
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/popovers/popover-shadowhost-focus-navigation.html"
+}
+```

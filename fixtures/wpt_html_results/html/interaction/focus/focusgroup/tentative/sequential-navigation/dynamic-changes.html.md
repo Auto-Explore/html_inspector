@@ -1,0 +1,96 @@
+# html/interaction/focus/focusgroup/tentative/sequential-navigation/dynamic-changes.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/interaction/focus/focusgroup/tentative/sequential-navigation/dynamic-changes.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML Test: focusgroup - Dynamic DOM and focusgroupstart changes</title>
+<link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+<link rel="help" href="https://open-ui.org/components/scoped-focusgroup.explainer/">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/shadow-dom/focus-navigation/resources/focus-utils.js"></script>
+<script src="../resources/focusgroup-utils.js"></script>
+
+<!-- Test focusgroupstart changes during navigation -->
+<div id=before1 tabindex=0>Before test 1</div>
+
+<div id=fg1 focusgroup="toolbar no-memory">
+  <span id=item1 tabindex=0>Item 1</span>
+  <span id=item2 tabindex=0>Item 2</span>
+</div>
+
+<div id=after1 tabindex=0>After test 1</div>
+
+<!-- Test disabled element changes -->
+<div id=before2 tabindex=0>Before test 2</div>
+
+<div id=fg2 focusgroup="toolbar no-memory">
+  <button id=btn1>Button 1</button>
+  <button id=btn2 disabled>Button 2</button>
+</div>
+
+<div id=after2 tabindex=0>After test 2</div>
+
+<script>
+  promise_test(async t => {
+    document.getElementById("before1").focus();
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("item1"),
+                  "First item selected as entry element initially (tree order)");
+
+    document.getElementById("item2").setAttribute("focusgroupstart", "");
+
+    document.getElementById("before1").focus();
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("item2"),
+                  "After adding focusgroupstart, new priority is respected");
+  }, "Dynamic focusgroupstart changes affect entry element selection");
+
+  promise_test(async t => {
+    document.getElementById("before2").focus();
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("btn1"),
+                  "Tab skips disabled button");
+
+    document.getElementById("btn2").removeAttribute("disabled");
+
+    document.getElementById("before2").focus();
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("btn1"),
+                  "First enabled button selected in tree order");
+  }, "Enabling disabled elements makes them available for tab stop");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/interaction/focus/focusgroup/tentative/sequential-navigation/dynamic-changes.html"
+}
+```

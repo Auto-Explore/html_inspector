@@ -1,0 +1,95 @@
+# html/webappapis/dynamic-markup-insertion/opening-the-input-stream/form-control-state.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/webappapis/dynamic-markup-insertion/opening-the-input-stream/form-control-state.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Writing out a document with form controls with values</title>
+<link rel="author" href="mailto:bzbarsky@mit.edu"/>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+function asyncHop(t, arg) {
+  return new Promise(res => t.step_timeout(res.bind(null, arg), 0));
+}
+
+function loadPromise(t, iframe) {
+  var p = new Promise(res =>
+    iframe.addEventListener("load", res.bind(null, iframe), { once: true }));
+  // We need to do one trip through the event loop to make sure we're
+  // not still under the load event firing when we start doing our
+  // document.open bits.
+  return p.then(asyncHop.bind(null, t));
+}
+
+async function createIframe(t) {
+  var i = document.createElement("iframe");
+  t.add_cleanup(() => i.remove());
+  var p = loadPromise(t, i);
+  document.body.appendChild(i);
+  return p;
+}
+
+async function replaceIframe(t, i, text) {
+  var p = loadPromise(t, i);
+  var doc = i.contentDocument;
+  doc.open();
+  doc.write(text);
+  doc.close();
+  return p;
+}
+
+promise_test(async function(t) {
+  var i = await createIframe(t);
+  var str = "<textarea>123</textarea>";
+  await replaceIframe(t, i, str);
+  i.contentDocument.querySelector("textarea").value = "abc";
+  await replaceIframe(t, i, str);
+  assert_equals(i.contentDocument.querySelector("textarea").value, "123");
+}, "textarea state");
+
+promise_test(async function(t) {
+  var i = await createIframe(t);
+  var str = "<input value='123'>";
+  await replaceIframe(t, i, str);
+  i.contentDocument.querySelector("input").value = "abc";
+  await replaceIframe(t, i, str);
+  assert_equals(i.contentDocument.querySelector("input").value, "123");
+}, "input state");
+</script>
+</body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/webappapis/dynamic-markup-insertion/opening-the-input-stream/form-control-state.html"
+}
+```

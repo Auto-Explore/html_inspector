@@ -1,0 +1,89 @@
+# html/semantics/embedded-content/media-elements/interfaces/TextTrack/mode.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/media-elements/interfaces/TextTrack/mode.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<title>TextTrack.mode</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<div id=log></div>
+<script>
+test(function(){
+    var track = document.createElement('track');
+    assert_equals(track.track.mode, 'disabled', 'initial');
+    track.track.mode = 1;
+    assert_equals(track.track.mode, 'disabled', '1');
+    track.track.mode = '';
+    assert_equals(track.track.mode, 'disabled', '""');
+    track.track.mode = null;
+    assert_equals(track.track.mode, 'disabled', 'null');
+    track.track.mode = undefined;
+    assert_equals(track.track.mode, 'disabled', 'undefined');
+    track.track.mode = 'showing';
+    assert_equals(track.track.mode, 'showing', 'showing (correct value)');
+    track.track.mode = 'DISABLED';
+    assert_equals(track.track.mode, 'showing', '"DISABLED"');
+    track.track.mode = 'd\u0130sabled'; // dotted uppercase i
+    assert_equals(track.track.mode, 'showing', '"d\u0130sabled" (dotted uppercase i)');
+    track.track.mode = 'd\u0131sabled'; // dotless lowercase i
+    assert_equals(track.track.mode, 'showing', '"d\u0131sabled" (dotless lowercase i)');
+    track.track.mode = 'disabled ';
+    assert_equals(track.track.mode, 'showing', '"disabled "');
+    track.track.mode = ' disabled';
+    assert_equals(track.track.mode, 'showing', '" disabled"');
+    track.track.mode = {};
+    assert_equals(track.track.mode, 'showing', '{}');
+    track.track.mode = 'HIDDEN';
+    assert_equals(track.track.mode, 'showing', '"HIDDEN"');
+    track.track.mode = 'h\u0130dden'; // dotted uppercase i
+    assert_equals(track.track.mode, 'showing', '"h\u0130dden" (dotted uppercase i)');
+    track.track.mode = 'h\u0131dden'; // dotless lowercase i
+    assert_equals(track.track.mode, 'showing', '"h\u0131dden" (dotless lowercase i)');
+}, document.title+', wrong value');
+test(function() {
+    var track = document.createElement('track');
+    assert_equals(track.track.mode, 'disabled', 'initial');
+    track.track.mode = 'disabled'; // no-op
+    assert_equals(track.track.mode, 'disabled', 'disabled (1)');
+    track.track.mode = 'hidden';
+    assert_equals(track.track.mode, 'hidden', 'hidden (1)');
+    track.track.mode = 'hidden'; // no-op
+    assert_equals(track.track.mode, 'hidden', 'hidden (2)');
+    track.track.mode = 'showing';
+    assert_equals(track.track.mode, 'showing', 'showing (1)');
+    track.track.mode = 'showing'; // no-op
+    assert_equals(track.track.mode, 'showing', 'showing (2)');
+    track.track.mode = {toString:function() { return 'disabled'; }};
+    assert_equals(track.track.mode, 'disabled', '{toString:...}');
+}, document.title+', correct value');
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/media-elements/interfaces/TextTrack/mode.html"
+}
+```

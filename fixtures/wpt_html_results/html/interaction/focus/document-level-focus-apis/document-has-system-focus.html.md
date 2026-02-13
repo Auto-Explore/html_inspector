@@ -1,0 +1,78 @@
+# html/interaction/focus/document-level-focus-apis/document-has-system-focus.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/interaction/focus/document-level-focus-apis/document-has-system-focus.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML Test: focus - document has system focus</title>
+<link rel="help" href="https://html.spec.whatwg.org/#has-focus-steps">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<input id="input">
+<script>
+
+promise_test(async t => {
+  await new Promise(r => window.onload = r);
+  // This test requires the document to have focus as a starting condition.
+  // Whether a newly loaded page receives focus or not, seems to be somewhat
+  // browser-dependent and situation-dependent. For instance, Firefox appears to
+  // focus the page immediately if the page was loaded with the refresh button,
+  // but not if it was loaded from pressing ENTER in the URL bar. To ensure a
+  // reliable starting condition for this test, we give an extra push for focus.
+  if (!document.hasFocus()) {
+    const input = document.getElementById("input");
+    input.focus();
+    await new Promise(r => input.onfocus = r);
+  }
+  assert_true(document.hasFocus(), "Document has focus as starting condition.");
+
+  let gotBlur = false;
+  window.onblur = () => gotBlur = true;
+  const popup = window.open("support/popup.html", "otherwindow", "resizable");
+  assert_not_equals(popup, null, "Test requires popup be opened");
+  t.add_cleanup(() => popup.close());
+  const msg = await new Promise(r => window.onmessage = ({data}) => r(data));
+  assert_equals(msg, "focus = true",
+                "Test requires popups be focused (may require harness flags)");
+  assert_true(gotBlur, "Document received blur event when popup opened");
+  assert_false(document.hasFocus(), "Document lost focus when popup opened");
+
+  const p = new Promise(r => window.onfocus = r);
+  popup.close();
+  await p;
+  assert_true(true, "Document received focus event when popup closed");
+  assert_true(document.hasFocus(), "Document regained focus when popup closed");
+}, "Top-level document receives blur/focus events and loses system focus " +
+   "during opening/closing of a popup");
+
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/interaction/focus/document-level-focus-apis/document-has-system-focus.html"
+}
+```

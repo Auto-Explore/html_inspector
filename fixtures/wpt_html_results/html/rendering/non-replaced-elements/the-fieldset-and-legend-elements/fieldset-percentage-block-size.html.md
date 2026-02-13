@@ -1,0 +1,98 @@
+# html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-percentage-block-size.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-percentage-block-size.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<title>fieldset percentage block size</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<style>
+ fieldset { block-size: 100px; margin: 20px; padding: 0; border: 10px solid; }
+ .rendered-legend { block-size: 80%; background: lime; padding: 0; }
+ .second-legend { block-size: 100%; background: yellow; padding: 0; }
+ fieldset > div { block-size: 100%; background: fuchsia; }
+</style>
+<div style="writing-mode: horizontal-tb">
+ <fieldset>
+  <legend class="rendered-legend">rendered legend</legend>
+  <legend class="second-legend">second legend</legend>
+  <div>div</div>
+ </fieldset>
+</div>
+
+<div style="writing-mode: vertical-lr">
+ <fieldset>
+  <legend class="rendered-legend">rendered legend</legend>
+  <legend class="second-legend">second legend</legend>
+  <div>div</div>
+ </fieldset>
+</div>
+
+<div style="writing-mode: vertical-rl">
+ <fieldset>
+  <legend class="rendered-legend">rendered legend</legend>
+  <legend class="second-legend">second legend</legend>
+  <div>div</div>
+ </fieldset>
+</div>
+
+<table cellspacing="0" cellpadding="0" style="width:100px; height:60px;">
+  <tr>
+    <td>
+      <fieldset style="border:none; padding:0; height:100%; margin:0; margin-top:13px;">
+        <div><div id="elm"></div></div>
+      </fieldset>
+    </td>
+  </tr>
+</table>
+
+<script>
+ for (const div of document.querySelectorAll('div[style]')) {
+   for (const el of div.firstElementChild.children) {
+     test(() => {
+       const expected = el.textContent === 'rendered legend' ? '80px' : '30px';
+       // 30px because: 100px - (max(0, legend-block-size - border-block-start))
+       assert_equals(getComputedStyle(el).blockSize, expected);
+     }, `${el.textContent} (${div.getAttribute('style')})`);
+   }
+ }
+
+// crbug.com/1138204. Though the specification doesn't mention this behavior,
+// there must be no doubt about the expected behavior.
+test(() => {
+  const fieldset = document.querySelector('table fieldset');
+  const initialHeight = fieldset.offsetHeight;
+  document.querySelector('#elm').style.display = 'none';
+  assert_equals(fieldset.offsetHeight, initialHeight);
+}, 'Fieldset with a percentage height should not increase the height on every reflow.');
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-percentage-block-size.html"
+}
+```

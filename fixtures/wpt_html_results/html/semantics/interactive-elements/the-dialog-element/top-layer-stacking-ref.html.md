@@ -1,0 +1,81 @@
+# html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-ref.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-ref.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/dialog.css">
+</head>
+<style>
+.box {
+    height: 150px;
+    width: 150px;
+}
+.container {
+    perspective: 500px;
+    border: 1px solid black;
+    background-color: magenta;
+}
+.transformed {
+    transform: rotateY(45deg);
+    background-color: cyan;
+}
+</style>
+<body>
+<div class="pseudodialog" style="position: fixed; top: 10px; z-index:3000">
+    This white box is the topmost modal dialog. It should be on top of everything.
+</div>
+<div style="position: absolute; top: 0px; z-index: 3; background-color: red; left: 0; right: 0; height: 200px;"></div>
+<div class="pseudodialog" style="position: absolute; top: 50px; background-color: green; width: 75%; height: 400px; z-index:2000; overflow: auto;">
+    This green box is also a modal dialog. It should be rendered above the red and yellow regions.
+    <div class="container box">
+        <div class="transformed box">A transform within the dialog's subtree.</div>
+    </div>
+    <div class="box" style="position: absolute; top:300px; z-index: 2; background-color: cyan">
+        This shows z-index stacking within the dialog's subtree. The cyan box should be on top of the magenta one.
+    </div>
+    <div class="box" style="position: absolute; top:350px; left:50px; z-index: 1; background-color: magenta"></div>
+    <div style="position: fixed; top: 90px; left: 30px; background-color: green">This is part of the green dialog.</div>
+</div>
+<div style="position: absolute; top: 100px; left: 0px; right: 0px; height: 200em; background-color: yellow; z-index:1000">
+</div>
+</body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-ref.html"
+}
+```

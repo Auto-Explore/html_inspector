@@ -1,0 +1,98 @@
+# html/semantics/forms/the-select-element/select-remove.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/forms/the-select-element/select-remove.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset=utf-8>
+<title>HTMLSelectElement.remove</title>
+<link rel="author" title="Ms2ger" href="Ms2ger@gmail.com">
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-childnode-remove">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#dom-select-remove">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#dom-htmloptionscollection-remove">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id=log></div>
+<script>
+function testRemove(getter, desc) {
+  test(function() {
+    var div = document.createElement("div");
+    var select = document.createElement("select");
+    div.appendChild(select);
+    assert_equals(select.parentNode, div);
+
+    var options = [];
+    for (var i = 0; i < 3; ++i) {
+      var option = document.createElement("option");
+      option.textContent = String(i);
+      select.appendChild(option);
+      options.push(option);
+    }
+
+    getter(select).remove(-1);
+    assert_array_equals(select.options, options, "After remove(-1)");
+    assert_equals(select.parentNode, div);
+
+    getter(select).remove(3);
+    assert_array_equals(select.options, options, "After remove(3)");
+    assert_equals(select.parentNode, div);
+
+    getter(select).remove(0);
+    assert_array_equals(select.options, [options[1], options[2]], "After remove(0)");
+    assert_equals(select.parentNode, div);
+  }, desc)
+}
+testRemove(function(select) { return select; }, "select.remove(n) should work");
+testRemove(function(select) { return select.options; }, "select.options.remove(n) should work");
+test(function() {
+  var div = document.createElement("div");
+  var select = document.createElement("select");
+  div.appendChild(select);
+  assert_equals(select.parentNode, div);
+  assert_equals(div.firstChild, select);
+
+  select.remove();
+  assert_equals(select.parentNode, null);
+  assert_equals(div.firstChild, null);
+}, "remove() should work on select elements.")
+test(function() {
+  var div = document.createElement("div");
+  var select = document.createElement("select");
+  div.appendChild(select);
+  assert_equals(select.parentNode, div);
+  assert_equals(div.firstChild, select);
+
+  Element.prototype.remove.call(select);
+  assert_equals(select.parentNode, null);
+  assert_equals(div.firstChild, null);
+}, "Element#remove() should work on select elements.")
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/forms/the-select-element/select-remove.html"
+}
+```

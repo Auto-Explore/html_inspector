@@ -1,0 +1,72 @@
+# html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-009a.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-009a.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html  lang="en" >
+<head>
+<meta charset="utf-8"/>
+<title>The dir attribute: isolated from surrounding text, opposite direction</title>
+<link rel='author' title='Richard Ishida' href='mailto:ishida@w3.org'>
+<link rel="help" href='http://www.w3.org/TR/html5/dom.html#requirements-relating-to-the-bidirectional-algorithm'>
+<link rel='match' href='reference/dir-isolation-009-ref.html'>
+<meta name='assert' content="Element content with a dir attribute is treated as a neutral character and directionally isolated from surrounding text.">
+<style type='text/css'>
+.test, .ref { font-size: 150%; border: 1px solid orange; margin: 10px; margin-right: 200px; padding: 5px; clear: both; }
+input { margin: 5px; }
+</style>
+</head>
+<body>
+<p class="instructions" dir="ltr">Test passes if the two boxes are identical.</p>
+<!-- Key to entities used below:
+&#x5d0; ... &#x5d5; - The first six Hebrew letters (strongly RTL).
+&#x202d; - The LRO (left-to-right-override) formatting character.
+&#x202c; - The PDF (pop directional formatting) formatting character; closes LRO.
+If the BDI in the test's first DIV were a SPAN, its b would prevent the &#x5d0; and the &#x5d1;
+from forming a single RTL run and thus keep the &gt;s between from being mirrored into &lt;s.
+-->
+<div class="test">
+<div dir="ltr">&#x5d0; &gt; <span dir="rtl">&gt; b &gt;</span> &gt; &#x5d2;...</div>
+<div dir="rtl">a &gt; <span dir="ltr">&gt; &#x5d1; &gt;</span> &gt; c...</div>
+</div>
+<div class="ref">
+<div dir="ltr">&#x202d;&#x5d2; &lt; &lt; b &lt; &lt; &#x5d0;...&#x202c;</div>
+<div dir="rtl">&#x202d;...a &gt; &gt; &#x5d1; &gt; &gt; c&#x202c;</div>
+</div>
+</body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.style.type.unnecessary",
+      "message": "The “type” attribute for the “style” element is not needed and should be omitted.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 574,
+        "byte_start": 551,
+        "col": 1,
+        "line": 10
+      }
+    }
+  ],
+  "source_name": "html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-009a.html"
+}
+```

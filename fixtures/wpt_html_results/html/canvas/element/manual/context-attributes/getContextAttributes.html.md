@@ -1,0 +1,129 @@
+# html/canvas/element/manual/context-attributes/getContextAttributes.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/canvas/element/manual/context-attributes/getContextAttributes.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<script>
+
+var testScenarios = [
+    // defaults
+    {testDescription: "Test default context creation attributes",
+        canvasContextAttributes: {},
+        expectedContextAttributes: {
+            alpha: true,
+            desynchronized: false,
+            willReadFrequently: false,
+            colorSpace: "srgb",
+            colorType:"unorm8"}},
+    // alpha
+    {testDescription: "Test context creation attributes alpha: true",
+        canvasContextAttributes: {alpha: true},
+        expectedContextAttributes: {alpha: true}},
+    {testDescription: "Test context creation attributes alpha: false",
+        canvasContextAttributes: {alpha: false},
+        expectedContextAttributes: {alpha: false}},
+    // colorSpace
+    {testDescription: "Test context creation attributes colorSpace: 'srgb'",
+        canvasContextAttributes: {colorSpace: "srgb"},
+        expectedContextAttributes: {colorSpace: "srgb"}},
+    {testDescription: "Test context creation attributes colorSpace: 'display-p3'",
+        canvasContextAttributes: {colorSpace: "display-p3"},
+        expectedContextAttributes: {colorSpace: "display-p3"}},
+    // desynchronized
+    {testDescription: "Test context creation attributes desynchronized: true",
+        canvasContextAttributes: {desynchronized: true},
+        expectedContextAttributes: {desynchronized: true}},
+    {testDescription: "Test context creation attributes desynchronized: false",
+        canvasContextAttributes: {desynchronized: false},
+        expectedContextAttributes: {desynchronized: false}},
+    // willReadFrequently
+    {testDescription: "Test context creation attributes willReadFrequently: true",
+        canvasContextAttributes: {willReadFrequently: true},
+        expectedContextAttributes: {willReadFrequently: true}},
+    {testDescription: "Test context creation attributes willReadFrequently: false",
+        canvasContextAttributes: {willReadFrequently: false},
+        expectedContextAttributes: {willReadFrequently: false}},
+    // colorType
+    {testDescription: "Test context creation attributes colorType: unorm8",
+        canvasContextAttributes: {colorType: "unorm8"},
+        expectedContextAttributes: {colorType: "unorm8"}},
+    {testDescription: "Test context creation attributes colorType: float16",
+        canvasContextAttributes: {colorType: "float16"},
+        expectedContextAttributes: {colorType: "float16"}},
+];
+
+function runTestScenario(canvas, testScenario) {
+    var t = test(function() {
+        var ctx = canvas.getContext('2d', testScenario.canvasContextAttributes);
+        var contextAttributes = ctx.getContextAttributes();
+        if (testScenario.expectedContextAttributes.alpha !== undefined) {
+            assert_equals(contextAttributes.alpha,
+                testScenario.expectedContextAttributes.alpha);
+        }
+        if (testScenario.expectedContextAttributes.colorSpace !== undefined) {
+            assert_equals(contextAttributes.colorSpace,
+                testScenario.expectedContextAttributes.colorSpace);
+        }
+        if (testScenario.expectedContextAttributes.desynchronized !== undefined) {
+            assert_equals(contextAttributes.desynchronized,
+                testScenario.expectedContextAttributes.desynchronized);
+        }
+        if (testScenario.expectedContextAttributes.willReadFrequently !== undefined) {
+            assert_equals(contextAttributes.willReadFrequently,
+                testScenario.expectedContextAttributes.willReadFrequently);
+        }
+        if (testScenario.expectedContextAttributes.colorType !== undefined) {
+            assert_equals(contextAttributes.colorType,
+                testScenario.expectedContextAttributes.colorType);
+        }
+    }, testScenario.testDescription);
+}
+
+function runAllTests() {
+    for (var i = 0; i < testScenarios.length; i++) {
+        runTestScenario(document.createElement('canvas'), testScenarios[i]);
+    }
+}
+
+runAllTests();
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/canvas/element/manual/context-attributes/getContextAttributes.html"
+}
+```

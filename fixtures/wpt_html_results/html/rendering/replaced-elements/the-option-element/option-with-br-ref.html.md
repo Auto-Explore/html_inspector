@@ -1,0 +1,55 @@
+# html/rendering/replaced-elements/the-option-element/option-with-br-ref.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/rendering/replaced-elements/the-option-element/option-with-br-ref.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>option element with br child</title>
+<link rel="author" title="Domenic Denicola" href="mailto:d@domenic.me">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#concept-option-label">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#dom-option-text">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#the-select-element-2">
+
+<p>This test passes if the option element displays three options:</p>
+
+<pre>a
+b
+ab</pre>
+
+<p>Importantly the third option must not be split across two lines.</p>
+
+<select multiple>
+  <option>a</option>
+  <option>b</option>
+  <option>ab</option>
+</select>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/rendering/replaced-elements/the-option-element/option-with-br-ref.html"
+}
+```

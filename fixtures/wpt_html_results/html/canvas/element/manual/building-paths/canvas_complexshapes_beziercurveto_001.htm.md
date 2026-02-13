@@ -1,0 +1,81 @@
+# html/canvas/element/manual/building-paths/canvas_complexshapes_beziercurveto_001.htm
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/canvas/element/manual/building-paths/canvas_complexshapes_beziercurveto_001.htm",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype HTML>
+<html>
+    <head>
+        <title>HTML5 Canvas Test:  bezierCurveTo() must ensure subpaths</title>
+        <link rel="match" href="canvas_complexshapes_beziercurveto_001-ref.htm">
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com" />
+        <link rel="help" href="http://www.w3.org/TR/2dcontext/#dom-context-2d-beziercurveto" />
+        <meta name="assert" content="bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) must ensure there is a subpath for the point (cp1x,cp1y) if the context has no subpaths, then it must connect the last point in the subpath to the point (x,y)." />
+        <script type="text/javascript">
+            function runTest()
+            {
+                var canvas = document.getElementById("canvas1");
+                var ctx = canvas.getContext("2d");
+
+                // Since the canvas has no subpaths, a virtual moveTo must be performed to (65,25) before creating the bezier.
+                ctx.bezierCurveTo(65, 25, 65, 25, 65, 65);
+                ctx.stroke();
+                ctx.beginPath();
+
+                // Since the canvas has no subpaths, a virtual moveTo must be performed to (35,25) before creating the bezier.
+                ctx.bezierCurveTo(35, 25, 35, 25, 35, 65);
+                ctx.stroke();
+                ctx.beginPath();
+
+                // Since the canvas has no subpaths, a virtual moveTo must be performed to (0,75) before creating the bezier.
+                ctx.bezierCurveTo(0, 75, 50, 150, 100, 75);
+                ctx.stroke();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>Description: bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) must ensure there is a subpath for the point (cp1x,cp1y) if the context has no subpaths, then it must connect the last point in the subpath to the point (x,y).</p>
+        <canvas id="canvas1" width="300" height="150">Browser does not support HTML5 Canvas.</canvas>
+    </body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 655,
+        "byte_start": 624,
+        "col": 9,
+        "line": 9
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/canvas/element/manual/building-paths/canvas_complexshapes_beziercurveto_001.htm"
+}
+```

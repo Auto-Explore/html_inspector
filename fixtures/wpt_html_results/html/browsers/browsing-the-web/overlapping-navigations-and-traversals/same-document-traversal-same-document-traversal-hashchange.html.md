@@ -1,0 +1,182 @@
+# html/browsers/browsing-the-web/overlapping-navigations-and-traversals/same-document-traversal-same-document-traversal-hashchange.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/browsing-the-web/overlapping-navigations-and-traversals/same-document-traversal-same-document-traversal-hashchange.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Same-document traversals during same-document traversals (using fragment navigations)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!--
+  Compare this to cross-document-traversal-cross-document-traversal.html. Since
+  there are no network loads or document unloads to cancel tasks, both
+  traversals should observably go through. Target step calculation for the
+  second traversal should take place after the first traversal is finished. So
+  we end up with both traversals observable in sequence.
+-->
+
+<body>
+<script type="module">
+import { createIframe, delay, waitForHashchange } from "./resources/helpers.mjs";
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+  const baseURL = iframe.contentWindow.location.href;
+
+  // Setup
+  iframe.contentWindow.location.hash = "#1";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.location.hash = "#2";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.location.hash = "#3";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.history.back();
+  await waitForHashchange(iframe.contentWindow);
+  assert_equals(iframe.contentWindow.location.hash, "#2", "we made our way to #2 for setup");
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.hash, "#2", "must not go back synchronously");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.hash, "#2", "must not go forward synchronously");
+
+  const event1 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event1.oldURL, baseURL + "#2", "oldURL 1");
+  assert_equals(event1.newURL, baseURL + "#1", "newURL 1");
+  // Cannot test iframe.contentWindow.location.hash since the second history
+  // traversal task is racing with the fire an event task, so we don't know
+  // which will happen first.
+
+  const event2 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event2.oldURL, baseURL + "#1", "oldURL 2");
+  assert_equals(event2.newURL, baseURL + "#2", "newURL 2");
+  assert_equals(iframe.contentWindow.location.hash, "#2");
+}, "same-document traversals in opposite directions: queued up");
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+  const baseURL = iframe.contentWindow.location.href;
+
+  // Setup
+  iframe.contentWindow.location.hash = "#1";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.location.hash = "#2";
+  await waitForHashchange(iframe.contentWindow);
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.hash, "#2", "must not go back synchronously");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.hash, "#2", "must not go forward synchronously");
+
+  const event1 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event1.oldURL, baseURL + "#2", "oldURL 1");
+  assert_equals(event1.newURL, baseURL + "#1", "newURL 1");
+  // Cannot test iframe.contentWindow.location.hash since the second history
+  // traversal task is racing with the fire an event task, so we don't know
+  // which will happen first.
+
+  const event2 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event2.oldURL, baseURL + "#1", "oldURL 2");
+  assert_equals(event2.newURL, baseURL + "#2", "newURL 2");
+  assert_equals(iframe.contentWindow.location.hash, "#2");
+}, "same-document traversals in opposite directions, second traversal invalid at queuing time: queued up");
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+  const baseURL = iframe.contentWindow.location.href;
+
+  // Setup
+  iframe.contentWindow.location.hash = "#1";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.location.hash = "#2";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.location.hash = "#3";
+  await waitForHashchange(iframe.contentWindow);
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.hash, "#3", "must not go back synchronously (1)");
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.hash, "#3", "must not go back synchronously (2)");
+
+  const event1 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event1.oldURL, baseURL + "#3", "oldURL 1");
+  assert_equals(event1.newURL, baseURL + "#2", "newURL 1");
+  // Cannot test iframe.contentWindow.location.hash since the second history
+  // traversal task is racing with the fire an event task, so we don't know
+  // which will happen first.
+
+  const event2 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event2.oldURL, baseURL + "#2", "oldURL 2");
+  assert_equals(event2.newURL, baseURL + "#1", "newURL 2");
+  assert_equals(iframe.contentWindow.location.hash, "#1");
+}, "same-document traversals in the same (back) direction: queue up");
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+  const baseURL = iframe.contentWindow.location.href;
+
+  // Setup
+  iframe.contentWindow.location.hash = "#1";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.location.hash = "#2";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.location.hash = "#3";
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.history.back();
+  await waitForHashchange(iframe.contentWindow);
+  iframe.contentWindow.history.back();
+  await waitForHashchange(iframe.contentWindow);
+  assert_equals(iframe.contentWindow.location.hash, "#1", "we made our way to #1 for setup");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.hash, "#1", "must not go forward synchronously (1)");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.hash, "#1", "must not go forward synchronously (2)");
+
+  const event1 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event1.oldURL, baseURL + "#1", "oldURL 1");
+  assert_equals(event1.newURL, baseURL + "#2", "newURL 1");
+  // Cannot test iframe.contentWindow.location.hash since the second history
+  // traversal task is racing with the fire an event task, so we don't know
+  // which will happen first.
+
+  const event2 = await waitForHashchange(iframe.contentWindow);
+  assert_equals(event2.oldURL, baseURL + "#2", "oldURL 2");
+  assert_equals(event2.newURL, baseURL + "#3", "newURL 2");
+  assert_equals(iframe.contentWindow.location.hash, "#3");
+}, "same-document traversals in the same (forward) direction: queue up");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/browsing-the-web/overlapping-navigations-and-traversals/same-document-traversal-same-document-traversal-hashchange.html"
+}
+```

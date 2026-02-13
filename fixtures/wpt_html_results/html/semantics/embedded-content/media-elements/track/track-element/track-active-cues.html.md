@@ -1,0 +1,76 @@
+# html/semantics/embedded-content/media-elements/track/track-element/track-active-cues.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/media-elements/track/track-element/track-active-cues.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>Ensure that no text track cues are active after the video is unloaded</title>
+<script src="/common/media.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+async_test(function(t) {
+    var eventCount = 0;
+
+    function eventCallback() {
+        eventCount++;
+        if (eventCount == 3) {
+            assert_equals(trackElement.track.activeCues.length, 1);
+            video.src = '';
+        }
+    }
+
+    var video = document.createElement('video');
+    video.src = getVideoURI('/media/movie_5');
+    // uanset media element's `show-poster` flag in order to run `time marches on`
+    // when we add new cues into media element's cues list.
+    video.play();
+    var trackElement = document.createElement('track');
+
+    trackElement.onload = t.step_func(eventCallback);
+    trackElement.oncuechange = t.step_func(eventCallback);
+    video.oncanplaythrough = t.step_func(eventCallback);
+
+    video.onerror = t.step_func_done(function(event) {
+        assert_equals(event.target, video);
+        assert_not_equals(video.error, null);
+        assert_equals(video.error.code, MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+        assert_equals(video.networkState, HTMLMediaElement.NETWORK_NO_SOURCE);
+        assert_equals(trackElement.track.activeCues.length, 0);
+    });
+
+    trackElement.src = 'resources/captions-fast.vtt';
+    trackElement.kind = 'captions';
+    trackElement.default = true;
+    video.appendChild(trackElement);
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/media-elements/track/track-element/track-active-cues.html"
+}
+```

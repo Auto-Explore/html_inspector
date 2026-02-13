@@ -1,0 +1,98 @@
+# html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-overflow-ref.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-overflow-ref.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE HTML>
+<title>Reference for fieldset overflow</title>
+<style>
+.fieldset, .legend {
+  border: 1em solid;
+  background: lime;
+}
+.fieldset {
+  height: 1em;
+  margin-top: 2em;
+}
+.legend {
+  height: 1em;
+  width: 5em;
+  line-height: 1;
+  margin-top: -4em;
+  margin-left: 1em;
+  margin-bottom: 1em;
+}
+
+.fieldset2 {
+  background: lime;
+  padding: 50px;
+  max-height: 50px;
+  overflow: scroll;
+}
+
+.fieldset3 {
+  width: 20em;
+  max-height: 250px;
+  padding: 7px;
+  margin: 0;
+  overflow: auto;
+  box-sizing: border-box;
+  border: 1em solid transparent;
+  border-top: 40px solid transparent;
+}
+</style>
+<p>There should be no red.</p>
+<div class=fieldset>
+</div>
+<div class=legend></div>
+
+<div class=fieldset2>
+  <div style="height:200px; background:blue"></div>
+</div>
+
+<div class="fieldset3">
+  <p>
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+The quick brown fox jumps over the lazy dog.
+  </p>
+</div>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-overflow-ref.html"
+}
+```

@@ -1,0 +1,361 @@
+# html/semantics/the-button-element/command-and-commandfor/button-event-dispatch.html
+
+Counts:
+- errors: 0
+- warnings: 5
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/the-button-element/command-and-commandfor/button-event-dispatch.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="author" title="Keith Cirkel" href="mailto:wpt@keithcirkel.co.uk" />
+<meta name="timeout" content="long" />
+<link rel="help" href="https://open-ui.org/components/invokers.explainer/" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/invoker-utils.js"></script>
+
+<div id="invokee"></div>
+<button id="invokerbutton" commandfor="invokee" command="--custom-command"></button>
+<input type="button" id="invalidbutton" commandfor="invokee" command="--custom-command">
+<form id="aform"></form>
+<svg id="svgInvokee"></svg>
+
+<script>
+  aform.addEventListener('submit', (e) => (e.preventDefault()));
+
+  function resetState() {
+    invokerbutton.setAttribute("commandfor", "invokee");
+    invokerbutton.setAttribute("command", "--custom-command");
+    invokerbutton.removeAttribute("disabled");
+    invokerbutton.removeAttribute("form");
+    invokerbutton.removeAttribute("type");
+  }
+
+  test(function (t) {
+    let event = null;
+    invokee.addEventListener("command", (e) => (event = e), { once: true });
+    invokerbutton.click();
+    assert_true(event instanceof CommandEvent, "event is CommandEvent");
+    assert_equals(event.type, "command", "type");
+    assert_equals(event.bubbles, false, "bubbles");
+    assert_equals(event.composed, false, "composed");
+    assert_equals(event.isTrusted, true, "isTrusted");
+    assert_equals(event.command, "--custom-command", "command");
+    assert_equals(event.target, invokee, "target");
+    assert_equals(event.source, invokerbutton, "source");
+  }, "event dispatches on click with addEventListener");
+
+  test(function (t) {
+    let event = null;
+    t.add_cleanup(() => {
+        invokee.oncommand = null;
+    });
+    invokee.oncommand = (e) => (event = e);
+    invokerbutton.click();
+    assert_true(event instanceof CommandEvent, "event is CommandEvent");
+    assert_equals(event.type, "command", "type");
+    assert_equals(event.bubbles, false, "bubbles");
+    assert_equals(event.composed, false, "composed");
+    assert_equals(event.isTrusted, true, "isTrusted");
+    assert_equals(event.command, "--custom-command", "command");
+    assert_equals(event.target, invokee, "target");
+    assert_equals(event.source, invokerbutton, "source");
+  }, "event dispatches on click with oncommand property");
+
+  // valid custom invokeactions
+  ["--foo", "--foo-", "--cAsE-cArRiEs", "--", "--a-", "--a-b", "---", "--show-picker"].forEach(
+    (command) => {
+      test(function (t) {
+        t.add_cleanup(resetState);
+        let event = null;
+        invokee.addEventListener("command", (e) => (event = e), { once: true });
+        invokerbutton.command = command;
+        invokerbutton.click();
+        assert_true(event instanceof CommandEvent, "event is CommandEvent");
+        assert_equals(event.type, "command", "type");
+        assert_equals(event.bubbles, false, "bubbles");
+        assert_equals(event.composed, false, "composed");
+        assert_equals(event.isTrusted, true, "isTrusted");
+        assert_equals(event.command, command, "command");
+        assert_equals(event.target, invokee, "target");
+        assert_equals(event.source, invokerbutton, "source");
+      }, `setting custom command property to ${command} (must include dash) sets event command`);
+
+      test(function (t) {
+        t.add_cleanup(resetState);
+        let event = null;
+        invokee.addEventListener("command", (e) => (event = e), { once: true });
+        invokerbutton.setAttribute("command", command);
+        invokerbutton.click();
+        assert_true(event instanceof CommandEvent, "event is CommandEvent");
+        assert_equals(event.type, "command", "type");
+        assert_equals(event.bubbles, false, "bubbles");
+        assert_equals(event.composed, false, "composed");
+        assert_equals(event.isTrusted, true, "isTrusted");
+        assert_equals(event.command, command, "command");
+        assert_equals(event.target, invokee, "target");
+        assert_equals(event.source, invokerbutton, "source");
+      }, `setting custom command attribute to ${command} (must include dash) sets event command`);
+    },
+  );
+
+  // invalid custom invokeactions
+  ["-foo", "-foo-", "foo-bar", "-foo bar", "—-emdash", "hidedocument"].forEach((command) => {
+    test(function (t) {
+      t.add_cleanup(resetState);
+      let event = null;
+      invokee.addEventListener("command", (e) => (event = e), { once: true });
+      invokerbutton.command = command;
+      invokerbutton.click();
+      assert_equals(event, null, "event should not have fired");
+    }, `setting custom command property to ${command} (no dash) did not dispatch an event`);
+
+    test(function (t) {
+      t.add_cleanup(resetState);
+      let event = null;
+      invokee.addEventListener("command", (e) => (event = e), { once: true });
+      invokerbutton.setAttribute("command", command);
+      invokerbutton.click();
+      assert_equals(event, null, "event should not have fired");
+    }, `setting custom command attribute to ${command} (no dash) did not dispatch an event`);
+
+    test(function (t) {
+      t.add_cleanup(resetState);
+      assert_false(svgInvokee instanceof HTMLElement);
+      assert_true(svgInvokee instanceof Element);
+      let command_event_fired = false;
+      svgInvokee.addEventListener("command", () => (command_event_fired = true), {signal: t.get_signal()});
+      invokerbutton.setAttribute("commandfor", "svgInvokee");
+      invokerbutton.setAttribute("command", command);
+      invokerbutton.click();
+      assert_false(command_event_fired, "command event fired");
+    }, `setting command attribute to ${command} (no dash) did not dispatch an event with an svg target`);
+  });
+
+  test(function (t) {
+    let called = false;
+    invokerbutton.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+      },
+      { once: true },
+    );
+    invokee.addEventListener(
+      "command",
+      (event) => {
+        called = true;
+      },
+      { once: true },
+    );
+    invokerbutton.click();
+    assert_false(called, "event was not called");
+  }, "event does not dispatch if click:preventDefault is called");
+
+  test(function (t) {
+    let event = null;
+    invokee.addEventListener("command", (e) => (event = e), { once: true });
+    invalidbutton.click();
+    assert_equals(event, null, "command should not have fired");
+  }, "event does not dispatch on input[type=button]");
+
+  test(function (t) {
+    t.add_cleanup(resetState);
+    let called = false;
+    invokee.addEventListener("command", (e) => (called = true), { once: true });
+    invokerbutton.setAttribute("disabled", "");
+    invokerbutton.click();
+    assert_false(called, "event was not called");
+  }, "event does not dispatch if invoker is disabled");
+
+  test(function (t) {
+    t.add_cleanup(resetState);
+    let called = false;
+    invokee.addEventListener("command", (e) => (called = true), { once: true });
+    invokerbutton.setAttribute("form", "aform");
+    invokerbutton.removeAttribute("type");
+    invokerbutton.click();
+    assert_false(called, "event was not called");
+  }, "event does NOT dispatch if button is form associated, with implicit type");
+
+  test(function (t) {
+    t.add_cleanup(resetState);
+    let called = false;
+    invokee.addEventListener("command", (e) => (called = true), { once: true });
+    invokerbutton.setAttribute("form", "aform");
+    invokerbutton.setAttribute("type", "invalid");
+    invokerbutton.click();
+    assert_false(called, "event was not called");
+  }, "event does NOT dispatch if button is form associated, with explicit type=invalid");
+
+  test(function (t) {
+    t.add_cleanup(resetState);
+    let event;
+    invokee.addEventListener("command", (e) => (event = e), { once: true });
+    invokerbutton.setAttribute("form", "aform");
+    invokerbutton.setAttribute("type", "button");
+    invokerbutton.click();
+    assert_true(event instanceof CommandEvent, "event is CommandEvent");
+    assert_equals(event.type, "command", "type");
+    assert_equals(event.bubbles, false, "bubbles");
+    assert_equals(event.composed, false, "composed");
+    assert_equals(event.isTrusted, true, "isTrusted");
+    assert_equals(event.command, "--custom-command", "command");
+    assert_equals(event.target, invokee, "target");
+    assert_equals(event.source, invokerbutton, "source");
+  }, "event dispatches if button is form associated, with explicit type=button");
+
+  test(function (t) {
+    t.add_cleanup(resetState);
+    let called = false;
+    invokee.addEventListener("command", (e) => (called = true), { once: true });
+    invokerbutton.setAttribute("form", "aform");
+    invokerbutton.setAttribute("type", "submit");
+    invokerbutton.click();
+    assert_false(called, "event was not called");
+  }, "event does NOT dispatch if button is form associated, with explicit type=submit");
+
+  test(function (t) {
+    t.add_cleanup(resetState);
+    let called = false;
+    invokee.addEventListener("command", (e) => (called = true), { once: true });
+    invokerbutton.setAttribute("form", "aform");
+    invokerbutton.setAttribute("type", "reset");
+    invokerbutton.click();
+    assert_false(called, "event was called");
+  }, "event does NOT dispatch if button is form associated, with explicit type=reset");
+
+  test(function (t) {
+    t.add_cleanup(resetState);
+    assert_false(svgInvokee instanceof HTMLElement);
+    assert_true(svgInvokee instanceof Element);
+    let event = null;
+    svgInvokee.addEventListener("command", (e) => (event = e), { once: true, signal: t.get_signal() });
+    invokerbutton.setAttribute("commandfor", "svgInvokee");
+    invokerbutton.setAttribute("command", "--custom-command");
+    assert_equals(invokerbutton.commandForElement, svgInvokee);
+    invokerbutton.click();
+    assert_not_equals(event, null, "event was called");
+    assert_true(event instanceof CommandEvent, "event is CommandEvent");
+    assert_equals(event.source, invokerbutton, "event.invoker is set to right element");
+    assert_equals(event.target, svgInvokee, "event.target is set to right element");
+  }, "event dispatches if invokee is non-HTML Element and command is custom");
+
+  // known commands with incompatible target
+  ["show-modal", "close", "request-close"].forEach((command) => {
+    test(function (t) {
+      t.add_cleanup(resetState);
+      let command_event_fired = false;
+      invokee.addEventListener("command", () => (command_event_fired = true), { signal: t.get_signal() });
+      invokerbutton.command = command;
+      invokerbutton.click();
+      assert_false(command_event_fired, "command event fired");
+    }, `setting command to ${command} did not dispatch an event for invalid element`);
+
+    test(function (t) {
+      t.add_cleanup(resetState);
+      assert_false(svgInvokee instanceof HTMLElement);
+      assert_true(svgInvokee instanceof Element);
+      let command_event_fired = false;
+      svgInvokee.addEventListener("command", () => (command_event_fired = true), { signal: t.get_signal() });
+      invokerbutton.setAttribute("commandfor", "svgInvokee");
+      invokerbutton.setAttribute("command", command);
+      invokerbutton.click();
+      assert_false(command_event_fired, "command event fired");
+    }, `setting command to ${command} did not dispatch an event for svg element`);
+  });
+
+  // popover commands
+  ["show-popover", "hide-popover", "toggle-popover"].forEach((command) => {
+    test(function (t) {
+      t.add_cleanup(resetState);
+      let command_event_fired = false;
+      invokee.addEventListener("command", () => (command_event_fired = true), { signal: t.get_signal() });
+      invokerbutton.command = command;
+      invokerbutton.click();
+      assert_true(command_event_fired, "command event fired");
+    }, `setting command to ${command} did dispatch an event for element without popover attribute`);
+
+    test(function (t) {
+      t.add_cleanup(resetState);
+      assert_false(svgInvokee instanceof HTMLElement);
+      assert_true(svgInvokee instanceof Element);
+      let command_event_fired = false;
+      svgInvokee.addEventListener("command", () => (command_event_fired = true), { signal: t.get_signal() });
+      invokerbutton.setAttribute("commandfor", "svgInvokee");
+      invokerbutton.setAttribute("command", command);
+      invokerbutton.click();
+      assert_false(command_event_fired, "command event fired");
+    }, `setting command to ${command} did not dispatch an event for svg element`);
+  });
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.attr.href.not_allowed",
+      "message": "Attribute “href” not allowed on element “meta” at this point.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 120,
+        "byte_start": 41,
+        "col": 1,
+        "line": 3
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.meta.missing_content",
+      "message": "Element “meta” is missing one or more of the following attributes: “content”, “property”.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 120,
+        "byte_start": 41,
+        "col": 1,
+        "line": 3
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.input.button.value.nonempty",
+      "message": "Element “input” with attribute “type” whose value is “button” must have non-empty attribute “value”.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 594,
+        "byte_start": 506,
+        "col": 1,
+        "line": 12
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/the-button-element/command-and-commandfor/button-event-dispatch.html"
+}
+```

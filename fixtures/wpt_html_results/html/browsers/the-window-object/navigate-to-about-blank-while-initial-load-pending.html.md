@@ -1,0 +1,60 @@
+# html/browsers/the-window-object/navigate-to-about-blank-while-initial-load-pending.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/the-window-object/navigate-to-about-blank-while-initial-load-pending.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Test navigating to about:blank while window.open initial load pending.</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+async_test(t => {
+  // Open a new window and initiate a navigation. The test does not actually
+  // expect this navigation to complete so it does not matter what URL is
+  // used other than it must not be about:blank. The intent is to start a
+  // navigation to some URL and then assign about:blank to the location
+  // attribute. This assignment should stop the inital navigation and start a
+  // new navigation to about:blank. When the about:blank page finishes loading
+  // the load event is expected to fire and the document URL should to be set to
+  // about:blank.
+  var window1 = window.open('resources/post-to-opener.html', '_blank');
+  t.add_cleanup(() => {
+    window1.close();
+  });
+  window1.location = 'about:blank';
+  window1.onload = t.step_func_done(e => {
+    assert_equals(window1.document.URL, "about:blank");
+  });
+}, 'Navigating to about:blank while window.open initial load pending.');
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/the-window-object/navigate-to-about-blank-while-initial-load-pending.html"
+}
+```

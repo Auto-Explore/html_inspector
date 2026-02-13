@@ -1,0 +1,82 @@
+# html/dom/documents/dom-tree-accessors/document.title-04.xhtml
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/dom/documents/dom-tree-accessors/document.title-04.xhtml",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> document.title  and space normalization  </title>
+<link rel="author" title="Ms2ger" href="mailto:ms2ger@gmail.com"/>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#document.title"/>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+test(function() {
+  // Single space characters must be normalized. (WHATWG r4353)
+  assert_equals(document.title, "document.title and space normalization");
+
+  document.title = "one space";
+  assert_equals(document.title, "one space");
+
+  document.title = "two  spaces";
+  assert_equals(document.title, "two spaces");
+
+  document.title = "one\ttab";
+  assert_equals(document.title, "one tab");
+
+  document.title = "two\t\ttabs";
+  assert_equals(document.title, "two tabs");
+
+  document.title = "one\nnewline";
+  assert_equals(document.title, "one newline");
+
+  document.title = "two\n\nnewlines";
+  assert_equals(document.title, "two newlines");
+
+  document.title = "one\fform feed";
+  assert_equals(document.title, "one form feed");
+
+  document.title = "two\f\fform feeds";
+  assert_equals(document.title, "two form feeds");
+
+  document.title = "one\rcarriage return";
+  assert_equals(document.title, "one carriage return");
+
+  document.title = "two\r\rcarriage returns";
+  assert_equals(document.title, "two carriage returns");
+});
+</script>
+</body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/dom/documents/dom-tree-accessors/document.title-04.xhtml"
+}
+```

@@ -1,0 +1,113 @@
+# html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html
+
+Counts:
+- errors: 1
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<title>
+  Reports a browsing context group switch when an opener with COOP navigates.
+</title>
+<meta name=timeout content=long>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/common/get-host-info.sub.js></script>
+<script src="/common/utils.js"></script>
+<script src="/common/dispatcher/dispatcher.js"></script>
+<script src="/html/cross-origin-opener-policy/reporting/resources/reporting-common.js"></script>
+<script>
+
+const directory = "/html/cross-origin-opener-policy";
+const same_origin = get_host_info().HTTPS_ORIGIN;
+
+let escapeComma = url => url.replace(/,/g, '\\,');
+
+promise_test(async t => {
+  // The test window.
+  const this_window_token = token();
+
+  // The "opener" window.
+  const opener_token = token();
+  const opener_url = same_origin + executor_path + `&uuid=${opener_token}`;
+
+  // The "openee" window.
+  const openee_token = token();
+  const openee_url = same_origin + executor_path + `&uuid=${openee_token}`;
+
+  // The "final" url the opener will navigate to. It has COOP and a reporter.
+  const final_report_token = reportToken();
+  const final_token = token();
+  const final_reportTo = reportingEndpointsHeaders(final_report_token);
+  const final_url =  same_origin + executor_path + final_reportTo.header +
+    final_reportTo.coopSameOriginHeader +`&uuid=${final_token}`;
+
+  // 1. Create the opener window and ensure it doesn't have an opener.
+  let opener_window_proxy = window.open(opener_url, '_blank', 'noopener');
+  t.add_cleanup(() => send(opener_token, "window.close()"));
+
+  // 2. The opener opens a window.
+  send(opener_token, `
+    openee = window.open('${escapeComma(openee_url)}');
+  `);
+
+  // 3. Ensure the openee loads.
+  send(openee_token, `
+    send("${this_window_token}", "ACK");
+  `);
+  assert_equals("ACK", await receive(this_window_token));
+
+  // 4. The opener navigates.
+  send(opener_token, `
+    location.replace('${escapeComma(final_url)}');
+  `);
+
+  // 5. Check a report was sent to the opener.
+  let report =
+    await receiveReport(final_report_token, "navigation-to-response")
+  assert_equals(report.type, "coop");
+  assert_equals(report.url, final_url.replace(/"/g, '%22'));
+  assert_equals(report.body.disposition, "enforce");
+  assert_equals(report.body.effectivePolicy, "same-origin");
+  assert_equals(report.body.previousResponseURL, opener_url.replace(/"/g, '%22'));
+}, "navigation-report-from-opener-navigation");
+
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.parser.start_tag_without_doctype",
+      "message": "Start tag seen without seeing a doctype first. Expected “<!DOCTYPE html>”.",
+      "severity": "Error",
+      "span": {
+        "byte_end": 7,
+        "byte_start": 0,
+        "col": 1,
+        "line": 1
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html"
+}
+```

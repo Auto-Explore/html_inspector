@@ -1,0 +1,91 @@
+# html/interaction/focus/tab-table-caption.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/interaction/focus/tab-table-caption.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset="utf-8">
+<meta name="variant" content="?caption-side=top">
+<meta name="variant" content="?caption-side=bottom">
+<title>Tab navigation around table with caption</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script>
+  "use strict";
+
+  const searchParams = new URLSearchParams(document.location.search);
+  const captionSide = searchParams.get("caption-side");
+
+  addEventListener("DOMContentLoaded", () => {
+    document.querySelector("table").style.captionSide = captionSide;
+    const tabKey = "\uE004";
+    const shiftKey = "\uE008";
+    const firstTabbable = document.querySelector("body > span");
+    const lastTabbable = document.querySelector("table ~ span");
+    const tabbableInCaption = document.querySelector("caption > span");
+    const tabbableInCell = document.querySelector("td > span");
+    for (const data of [
+      {init: firstTabbable, prev: null, next: tabbableInCell },
+      {init: tabbableInCaption, prev: tabbableInCell, next: lastTabbable },
+      {init: tabbableInCell, prev: firstTabbable, next: tabbableInCaption },
+      {init: lastTabbable, prev: tabbableInCaption, next: null},
+    ]) {
+      if (data.prev) {
+        promise_test(async () => {
+          data.init.focus();
+          await new test_driver.Actions().keyDown(shiftKey).keyDown(tabKey).keyUp(tabKey).keyUp(shiftKey).send();
+          assert_equals(document.activeElement, data.prev);
+        }, `Shift+Tab on ${data.init.outerHTML} should move focus to ${data.prev.outerHTML}`);
+      }
+      if (data.next) {
+        promise_test(async () => {
+          data.init.focus();
+          await new test_driver.Actions().keyDown(tabKey).keyUp(tabKey).send();
+          assert_equals(document.activeElement, data.next);
+        }, `Tab on ${data.init.outerHTML} should move focus to ${data.next.outerHTML}`);
+      }
+    }
+  });
+</script>
+<span tabindex="0">First tabbable span</span>
+<table>
+  <tbody>
+    <tr>
+      <td><span tabindex="0">Tabbable in cell<span></td>
+    </tr>
+  </tbody>
+  <caption><span tabindex="0">Tabbable in caption</span></caption>
+</table>
+<span tabindex="0">Last tabbable span</span>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/interaction/focus/tab-table-caption.html"
+}
+```

@@ -185,7 +185,7 @@ fn xml_lang_mismatch_emits_error() {
 }
 
 #[test]
-fn meta_charset_non_utf8_emits_error() {
+fn meta_charset_non_utf8_emits_warning_in_risk_profile() {
     let src = VecSource::new(
         InputFormat::Html,
         vec![ParseEvent::StartTag {
@@ -204,7 +204,8 @@ fn meta_charset_non_utf8_emits_error() {
     assert!(report
         .messages
         .iter()
-        .any(|m| m.code == "i18n.meta.charset.mismatch"));
+        .any(|m| m.code == "i18n.meta.charset.mismatch"
+            && m.severity == html_inspector_core::Severity::Warning));
 }
 
 #[test]
@@ -656,6 +657,36 @@ fn http_equiv_charset_parsing_is_case_insensitive_for_charset_and_value() {
         .messages
         .iter()
         .any(|m| m.code.starts_with("i18n.meta.http_equiv_charset.")));
+    assert!(!report
+        .messages
+        .iter()
+        .any(|m| m.code == "i18n.charset.unsupported"));
+}
+
+#[test]
+fn http_equiv_charset_strips_leading_quote_in_label() {
+    let src = VecSource::new(
+        InputFormat::Html,
+        vec![ParseEvent::StartTag {
+            name: "meta".to_string(),
+            attrs: vec![
+                Attribute {
+                    name: "http-equiv".to_string(),
+                    value: Some("content-type".to_string()),
+                    span: None,
+                },
+                Attribute {
+                    name: "content".to_string(),
+                    value: Some("text/html; charset=\"windows-1251".to_string()),
+                    span: None,
+                },
+            ],
+            self_closing: true,
+            span: None,
+        }],
+    );
+    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(!report
         .messages
         .iter()

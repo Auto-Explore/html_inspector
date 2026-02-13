@@ -1,0 +1,106 @@
+# html/browsers/the-window-object/window-open-windowfeatures-values.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/the-window-object/window-open-windowfeatures-values.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>window.open() windowFeature value parsing</title>
+<link rel="author" href="mailto:masonf@chromium.org">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/window-object.html#concept-window-open-features-parse-boolean">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function testValueGeneric(val, expectTrue, property, testFn) {
+  const windowFeatureStr = val === "" ? property : `${property}=${val}`;
+  async_test(t => {
+    const windowName = '' + Math.round(Math.random()*1e12);
+    const channel = new BroadcastChannel(windowName);
+    channel.onmessage = t.step_func_done(e => {
+      // Send message first so if asserts throw the popup is still closed
+      channel.postMessage(null);
+      testFn(e.data);
+    });
+    window.open("support/windowFeature-values-target.html?" + windowName, windowName, windowFeatureStr);
+  },`Test ${windowFeatureStr}, expected interpretation is ${expectTrue ? 'true' : 'false'}`);
+}
+
+function testValueForNoReferrer(val, expectTrue) {
+  testValueGeneric(val, expectTrue, "noreferrer", (data) => {
+    if (expectTrue) {
+      assert_false(data.haveReferrer);
+      assert_false(data.haveOpener);
+    } else {
+      assert_true(data.haveReferrer);
+      assert_true(data.haveOpener);
+    }
+  });
+}
+
+function testValueForNoOpener(val, expectTrue) {
+  testValueGeneric(val, expectTrue, "noopener", (data) => {
+    assert_equals(data.haveOpener, !expectTrue);
+  });
+}
+
+function testValueForPopup(val, expectTrue) {
+  testValueGeneric(val, expectTrue, "popup", (data) => {
+    assert_equals(data.isPopup, expectTrue);
+  });
+}
+
+function testValue(val, expectTrue) {
+  const quotes = val === "" ? [''] : ['','"',"'"];
+  let noQuotes = true;
+  for (const quote of quotes) {
+    const thisExpectTrue = expectTrue && noQuotes;
+    const thisVal = quote + val + quote;
+    testValueForNoReferrer(thisVal, thisExpectTrue);
+    testValueForNoOpener(thisVal, thisExpectTrue);
+    testValueForPopup(thisVal, thisExpectTrue);
+    noQuotes = false;
+  }
+}
+
+testValue('',true); // Just the parameter means true
+testValue('yes',true); // Yes means true
+testValue('true',true); // True means true
+testValue('foo',false); // If parsing as an integer is an error, false
+testValue('0',false);   // 0 is false
+testValue('00',false);  // 0 is false
+testValue('1',true);    // Non-zero is true
+testValue('99999',true);    // Non-zero is true
+testValue('-1',true);    // Non-zero is true
+testValue('1foo',true); // This parses to 1
+testValue('0foo',false); // This parses to 0
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/the-window-object/window-open-windowfeatures-values.html"
+}
+```

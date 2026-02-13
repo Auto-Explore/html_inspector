@@ -53,9 +53,15 @@ impl Rule for MetaCharsetUtf8 {
         self.seen_charset_meta = true;
 
         if !charset.eq_ignore_ascii_case("utf-8") && !charset.eq_ignore_ascii_case("utf8") {
+            let severity = match ctx.config.severity_profile {
+                // Many real-world documents (and WPT fixtures) intentionally exercise legacy encodings.
+                // In risk mode, treat this as a warning rather than a hard error.
+                html_inspector_core::SeverityProfile::Risk => Severity::Warning,
+                html_inspector_core::SeverityProfile::Conformance => Severity::Error,
+            };
             out.push(Message::new(
                 "i18n.meta.charset.mismatch",
-                Severity::Error,
+                severity,
                 Category::I18n,
                 format!(
                     "Internal encoding declaration “{charset}” disagrees with the actual encoding of the document (“utf-8”)."

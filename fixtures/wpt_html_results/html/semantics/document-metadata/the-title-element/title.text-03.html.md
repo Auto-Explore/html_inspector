@@ -1,0 +1,66 @@
+# html/semantics/document-metadata/the-title-element/title.text-03.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/document-metadata/the-title-element/title.text-03.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title> title.text  and space normalization  </title>
+<link rel="author" title="Ms2ger" href="mailto:ms2ger@gmail.com">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#dom-title-text">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+test(function() {
+  assert_equals(document.getElementsByTagName("title")[0].text,
+    " title.text  and space normalization  ");
+  assert_equals(document.getElementsByTagName("title")[0].textContent,
+    " title.text  and space normalization  ");
+  assert_equals(document.getElementsByTagName("title")[0].firstChild.nodeValue,
+    " title.text  and space normalization  ");
+}, "title.text and space normalization (markup)");
+[
+  "one space", "two  spaces",
+  "one\ttab", "two\t\ttabs",
+  "one\nnewline", "two\n\nnewlines",
+  "one\fform feed", "two\f\fform feeds",
+  "one\rcarriage return", "two\r\rcarriage returns"
+].forEach(function(str) {
+  test(function() {
+    document.title = str;
+    var title = document.getElementsByTagName("title")[0];
+    assert_equals(title.text, str);
+    assert_equals(title.textContent, str);
+    assert_equals(title.firstChild.nodeValue, str);
+  }, "title.text and space normalization: " + format_value(str))
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/document-metadata/the-title-element/title.text-03.html"
+}
+```

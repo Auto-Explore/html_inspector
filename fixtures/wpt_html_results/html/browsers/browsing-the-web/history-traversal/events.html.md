@@ -1,0 +1,185 @@
+# html/browsers/browsing-the-web/history-traversal/events.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/browsing-the-web/history-traversal/events.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<title> PageTransitionEffect Event </title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+test(function() {
+  var e = new PageTransitionEvent("pageshow", {persisted:false, cancelable:false, bubbles:false});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+  assert_false(e.persisted, "persisted");
+}, "Constructing pageshow event");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide", {persisted:false, cancelable:false, bubbles:false});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pagehide event");
+
+test(function() {
+  var e = new PageTransitionEvent("pageshow", {persisted:true});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_true(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pageshow event, persisted true");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide", {persisted:true});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_true(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pagehide event, persisted true");
+
+test(function() {
+  var e = new PageTransitionEvent("pageshow", {});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pageshow event, empty options");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide", {});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pagehide event, empty options");
+
+test(function() {
+  var e = new PageTransitionEvent("pageshow");
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pageshow event, missing options");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide");
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pagehide event, missing options");
+
+test(function() {
+  var e = new PageTransitionEvent("pageshow", {persisted:null});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pageshow event, persisted:null");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide", {persisted:null});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pagehide event, persisted:null");
+
+test(function() {
+  var e = new PageTransitionEvent("pageshow", {persisted:undefined});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pageshow event, persisted:undefined");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide", {persisted:undefined});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pagehide event, persisted:undefined");
+
+test(function() {
+  var e = new PageTransitionEvent("pageshow", {bubbles:true});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_false(e.persisted, "persisted");
+  assert_true(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pageshow event, bubbles:true");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide", {bubbles:true});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_false(e.persisted, "persisted");
+  assert_true(e.bubbles, "bubbles");
+  assert_false(e.cancelable, "cancelable");
+}, "Constructing pagehide event, bubbles:true");
+
+test(function() {
+  var e = new PageTransitionEvent("pageshow", {cancelable:true});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pageshow");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_true(e.cancelable, "cancelable");
+}, "Constructing pageshow event, cancelable:true");
+
+test(function() {
+  var e = new PageTransitionEvent("pagehide", {cancelable:true});
+  assert_true(e instanceof PageTransitionEvent);
+  assert_equals(e.type, "pagehide");
+  assert_false(e.persisted, "persisted");
+  assert_false(e.bubbles, "bubbles");
+  assert_true(e.cancelable, "cancelable");
+}, "Constructing pagehide event, cancelable:true");
+
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/browsing-the-web/history-traversal/events.html"
+}
+```

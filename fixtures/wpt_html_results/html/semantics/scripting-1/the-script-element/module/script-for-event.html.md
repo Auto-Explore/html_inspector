@@ -1,0 +1,127 @@
+# html/semantics/scripting-1/the-script-element/module/script-for-event.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/scripting-1/the-script-element/module/script-for-event.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>Module scripts with for and event attributes</title>
+<link rel="author" title="Matheus Kerschbaum" href="mailto:matjk7@gmail.com">
+<link rel="author" title="Ms2ger" href="mailto:ms2ger@gmail.com">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#prepare-a-script">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+var expected = [
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+];
+var run = expected.map(function() { return false });
+</script>
+<script for="w&#x130;ndow" event="onload" type="module">
+run[0] = true;
+</script>
+<script for="window" event="onload x" type="module">
+run[1] = true;
+</script>
+<script for="window" event="onload(x" type="module">
+run[2] = true;
+</script>
+<script for="window" event="onload(x)" type="module">
+run[3] = true;
+</script>
+<script for="window" event="onclick" type="module">
+run[4] = true;
+</script>
+<script for="" event="onload" type="module">
+run[5] = true;
+</script>
+<script for="window" event="" type="module">
+run[6] = true;
+</script>
+<script for="" event="" type="module">
+run[7] = true;
+</script>
+<script for="&#xa0;window" event="onload" type="module">
+run[8] = true;
+</script>
+<script for="window&#xa0;" event="onload" type="module">
+run[9] = true;
+</script>
+<script for="window" event="&#xa0;onload" type="module">
+run[10] = true;
+</script>
+<script for="window" event="onload&#xa0;" type="module">
+run[11] = true;
+</script>
+<script for=" window " event=" onload " type="module">
+run[12] = true;
+</script>
+<script for=" window " event=" onload() " type="module">
+run[13] = true;
+</script>
+<script for="object" event="handler" type="module">
+run[14] = true;
+</script>
+<script event="handler" type="module">
+run[15] = true;
+</script>
+<script for="object" type="module">
+run[16] = true;
+</script>
+<script type="module">
+test(function() {
+  for (var i = 0; i < run.length; ++i) {
+    test(function() {
+      var script = document.querySelectorAll("script[for], script[event]")[i];
+      assert_equals(run[i], expected[i],
+                    "script for=" + format_value(script.getAttribute("for")) +
+                    " event=" + format_value(script.getAttribute("event")));
+    }, "Script " + i);
+  }
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/scripting-1/the-script-element/module/script-for-event.html"
+}
+```

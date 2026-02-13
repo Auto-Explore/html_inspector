@@ -1,0 +1,90 @@
+# html/semantics/text-level-semantics/the-bdi-element/bdi-neutral-missing-pdf.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/text-level-semantics/the-bdi-element/bdi-neutral-missing-pdf.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>HTML Test: BDI: neutral when contains LRO or RLO without PDF</title>
+    <link rel="match" href="bdi-neutral-missing-pdf-ref.html"/>
+    <link rel="author" title="Aharon Lanin" href="mailto:aharon@google.com"/>
+    <link rel="author" title="HTML5 bidi test WG" href="mailto:html5bidi@googlegroups.com"/>
+    <link rel="help" href="https://html.spec.whatwg.org/multipage/#the-bdi-element"/>
+    <meta name="assert" content="
+      'For the purposes of applying the bidirectional algorithm to the paragraph-level
+      container that a bdi element finds itself within, the bdi element must be treated
+      like a U+FFFC OBJECT REPLACEMENT CHARACTER.'
+      Thus, if a BDI contains LRO or RLO characters lacking a matching PDF, these must not affect
+      the visual ordering of the content outside the BDI."/>
+    <style>
+      body{
+        font-size:2em;
+      }
+      .test, .ref {
+        border: medium solid gray;
+        width: 400px;
+        margin: 20px;
+      }
+      .comments { display: none; }
+    </style>
+  </head>
+  <body>
+    <div class="instructions"><p>Test passes if the two boxes below look exactly the same.</p></div>
+    <div class="comments">
+      Key to entities used below:
+        &#x05D0; ... &#x05D5; - The first six Hebrew letters (strongly RTL).
+        &#x202D; - The LRO (left-to-right override) formatting character.
+        &#x202E; - the RLO (right-to-left-override) formatting character.
+        &#x202C; - The PDF (pop directional formatting) formatting character; closes LRO and RLO.
+      If the BDI in the test's first DIV were a SPAN, the RLO it contains, not being closed by a
+      PDF, would visually reorder the de into ed.
+    </div>
+    <div class="test">
+      <div dir="ltr"><bdi>&#x05D0;&#x202E;bc</bdi>de...</div>
+      <div dir="ltr"><bdi dir="ltr">&#x05D0;&#x202E;bc</bdi>de...</div>
+      <div dir="ltr"><bdi dir="rtl">&#x05D0;&#x202E;bc</bdi>de...</div>
+      <div dir="rtl"><bdi>a&#x202D;&#x05D1;&#x05D2;</bdi>&#x05D3;&#x05D4;...</div>
+      <div dir="rtl"><bdi dir="ltr">a&#x202D;&#x05D1;&#x05D2;</bdi>&#x05D3;&#x05D4;...</div>
+      <div dir="rtl"><bdi dir="rtl">a&#x202D;&#x05D1;&#x05D2;</bdi>&#x05D3;&#x05D4;...</div>
+    </div>
+    <div class="ref">
+      <div dir="ltr">&#x202D;cb&#x05D0;de...&#x202C;</div>
+      <div dir="ltr">&#x202D;cb&#x05D0;de...&#x202C;</div>
+      <div dir="ltr">&#x202D;cb&#x05D0;de...&#x202C;</div>
+      <div dir="rtl">&#x202D;...&#x05D4;&#x05D3;a&#x05D1;&#x05D2;&#x202C;</div>
+      <div dir="rtl">&#x202D;...&#x05D4;&#x05D3;a&#x05D1;&#x05D2;&#x202C;</div>
+      <div dir="rtl">&#x202D;...&#x05D4;&#x05D3;a&#x05D1;&#x05D2;&#x202C;</div>
+    </div>
+  </body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/text-level-semantics/the-bdi-element/bdi-neutral-missing-pdf.html"
+}
+```

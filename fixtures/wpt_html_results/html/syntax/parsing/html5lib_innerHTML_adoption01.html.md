@@ -1,0 +1,59 @@
+# html/syntax/parsing/html5lib_innerHTML_adoption01.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/syntax/parsing/html5lib_innerHTML_adoption01.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <title>HTML 5 Parser tests html5lib_innerHTML_adoption01.html</title>
+    <meta name="timeout" content="long">
+  </head>
+  <body>
+    <h1>html5lib Parser Test</h1>
+    <div id="log"></div>
+    <script src="common.js"></script>
+    <script src="test.js"></script>
+    <script src="template.js"></script>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script>
+      var num_iframes = 8;
+      var order = ['0bf80e1546d4c221354aa9734f61713b7d64ee6d',];
+      var tests = {
+          "0bf80e1546d4c221354aa9734f61713b7d64ee6d":[async_test('html5lib_innerHTML_adoption01.html 0bf80e1546d4c221354aa9734f61713b7d64ee6d'), "%3Cb%3E%3Cem%3E%3Cfoo%3E%3Cfoob%3E%3Cfooc%3E%3Caside%3E%3C/b%3E%3C/em%3E", "%23document%0A%7C%20%3Cb%3E%0A%7C%20%20%20%3Cem%3E%0A%7C%20%20%20%20%20%3Cfoo%3E%0A%7C%20%20%20%20%20%20%20%3Cfoob%3E%0A%7C%20%20%20%20%20%20%20%20%20%3Cfooc%3E%0A%7C%20%3Caside%3E%0A%7C%20%20%20%3Cb%3E", 'div'],
+      }
+      init_tests("innerHTML");
+    </script>
+  </body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/syntax/parsing/html5lib_innerHTML_adoption01.html"
+}
+```

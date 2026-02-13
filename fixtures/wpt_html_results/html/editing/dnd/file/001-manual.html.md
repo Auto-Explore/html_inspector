@@ -1,0 +1,137 @@
+# html/editing/dnd/file/001-manual.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/editing/dnd/file/001-manual.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>drag &amp; drop - simple file drop</title>
+<style>
+  body > div {
+    height: 200px;
+    width: 200px;
+    background-color: orange;
+  }
+</style>
+
+<script>
+var filename = 'fail.png', filesize = '759', filetype = 'image/png';
+var fails = [], finished = false;
+window.onload = function() {
+  var orange = document.getElementsByTagName('div')[0];
+  orange.ondragover = orange.ondragenter = function(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    if( !e.dataTransfer.files ) {
+      fails[fails.length] = 'No dataTransfer.files for '+e.type;
+    }
+    if( !window.FileList ) {
+      fails[fails.length] = 'No FileList interface object';
+      return;
+    }
+    if( !( e.dataTransfer.files instanceof FileList ) ) {
+      fails[fails.length] = 'dataTransfer.files is not a FileList';
+    }
+    if( e.dataTransfer.files.length ) {
+      fails[fails.length] = 'dataTransfer.files.length is '+e.dataTransfer.files.length+' instead of 0 for '+e.type;
+    }
+  };
+  orange.ondrop = function(e) {
+    e.preventDefault();
+    if( !e.dataTransfer.files ) {
+      fails[fails.length] = 'No dataTransfer.files for '+e.type;
+    }
+    if( !window.FileList ) {
+      fails[fails.length] = 'No FileList interface object';
+      finish();
+      return;
+    }
+    if( !( e.dataTransfer.files instanceof FileList ) ) {
+      fails[fails.length] = 'dataTransfer.files is not a FileList';
+    }
+    if( e.dataTransfer.files.length != 1 ) {
+      fails[fails.length] = 'dataTransfer.files.length is '+e.dataTransfer.files.length+' instead of 1 for '+e.type;
+    }
+    if( !e.dataTransfer.files[0] ) {
+      fails[fails.length] = 'no dataTransfer.files[0] for drop';
+      finish();
+      return;
+    }
+    if( e.dataTransfer.files[0].size != filesize ) {
+      fails[fails.length] = 'dataTransfer.files[0].size '+e.dataTransfer.files[0].size+' instead of '+filesize;
+    }
+    /*
+    if( !e.dataTransfer.files[0].lastModified ) {
+      fails[fails.length] = 'no dataTransfer.files[0].lastModified';
+    }
+    */
+    if( e.dataTransfer.files[0].name != filename ) {
+      fails[fails.length] = 'dataTransfer.files[0].name '+e.dataTransfer.files[0].name+' instead of '+filename;
+    }
+    if( e.dataTransfer.files[0].type != filetype ) {
+      fails[fails.length] = 'dataTransfer.files[0].type '+e.dataTransfer.files[0].type+' instead of '+filetype;
+    }
+    if( !window.FileReader ) {
+      fails[fails.length] = 'No FileReader constructor';
+      finish();
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      if( !reader.result ) {
+        fails[fails.length] = 'No file data after load';
+      }
+      if( reader.result.length != filesize ) {
+        fails[fails.length] = 'File data length '+reader.result.length+' instead of '+filesize;
+      }
+      finish();
+    };
+    reader.readAsBinaryString(e.dataTransfer.files[0]);
+    setTimeout(function () {
+      if( !reader.result ) {
+        fails[fails.length] = 'No file data after timeout';
+      }
+      finish();
+    },1000);
+  };
+
+};
+function finish() {
+  if( finished ) { return; }
+  finished = true;
+  document.getElementsByTagName('p')[0].innerHTML = fails.length ? ( 'FAIL: ' + fails.join('<br>') ) : 'PASS';
+}
+</script>
+
+<div></div>
+
+<p>Save <a href="../resources/fail.png">this image</a> to your desktop. Use your pointing device to drag the saved file from your desktop onto the orange box, and release it. If a confirmation dialog appears, accept it. Fail if nothing happens, or if the browser simply displays the image.</p>
+<noscript><p>Enable JavaScript and reload</p></noscript>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/editing/dnd/file/001-manual.html"
+}
+```

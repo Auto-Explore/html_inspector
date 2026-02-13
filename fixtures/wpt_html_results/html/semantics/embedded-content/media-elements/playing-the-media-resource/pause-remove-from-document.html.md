@@ -1,0 +1,71 @@
+# html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<title>paused state when removing from a document</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/media.js"></script>
+<div id="log"></div>
+<video hidden></video>
+<script>
+function afterStableState(func) {
+  var a = new Audio();
+  a.volume = 0;
+  a.addEventListener('volumechange', func);
+}
+
+async_test(function(t) {
+  var v = document.querySelector('video');
+  v.src = getVideoURI('/media/movie_300');
+  v.play();
+  v.onplaying = t.step_func(function() {
+    assert_false(v.paused, 'paused after playing');
+    v.parentNode.removeChild(v);
+    assert_false(v.paused, 'paused after removing');
+    afterStableState(t.step_func(function() {
+      assert_true(v.paused, 'paused after stable state');
+      v.onpause = t.step_func(function() {
+        assert_true(v.paused, 'paused in pause event');
+        // re-insert and verify that it stays paused
+        document.body.appendChild(v);
+        t.step_timeout(function() {
+          assert_true(v.paused, 'paused after re-inserting');
+          t.done();
+        }, 0);
+      });
+    }));
+  });
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html"
+}
+```

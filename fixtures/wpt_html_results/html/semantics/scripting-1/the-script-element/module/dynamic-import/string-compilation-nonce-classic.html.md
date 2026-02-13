@@ -1,0 +1,162 @@
+# html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-nonce-classic.html
+
+Counts:
+- errors: 0
+- warnings: 3
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-nonce-classic.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>import() inside compiled strings uses the appropriate nonce inside a classic script</title>
+<link rel="author" title="Domenic Denicola" href="mailto:d@domenic.me">
+
+<meta http-equiv="content-security-policy" content="script-src 'nonce-correct' 'unsafe-eval' 'unsafe-hashes' 'sha256-cAMzxBL19bKt4KwKGbxy/ZOFIIjH5AmRjlVbsD5pvNw=' 'sha256-3VjoJYNK/9HJMS8rrZHlqSZgUssDY+GPyc7AU8lNM3k='">
+
+<script nonce="correct" src="/resources/testharness.js"></script>
+<script nonce="correct" src="/resources/testharnessreport.js"></script>
+
+<div id="dummy"></div>
+
+<script nonce="correct">
+"use strict";
+const dummyDiv = document.querySelector("#dummy");
+
+function createTestPromise(t) {
+  t.add_cleanup(() => {
+    delete window.evaluated_imports_a;
+    delete window.unreached;
+    delete window.continueTest;
+    delete window.errorTest;
+  });
+
+  return new Promise((resolve, reject) => {
+    window.unreached = t.unreached_func("Must not reach this");
+    window.continueTest = resolve;
+    window.errorTest = reject;
+  });
+}
+
+function assertSuccessful(module) {
+  assert_true(window.evaluated_imports_a, "The module must have been evaluated");
+  assert_equals(module.A.from, "imports-a.js", "The module namespace object must be correct");
+}
+
+promise_test(t => {
+  const promise = createTestPromise(t);
+
+  setTimeout(`import('../imports-a.js?label=setTimeout').then(window.continueTest, window.errorTest)`, 0);
+
+  return promise.then(assertSuccessful);
+}, "setTimeout must inherit the nonce from the triggering script, thus execute");
+
+promise_test(t => {
+  const promise = createTestPromise(t);
+
+  eval(`import('../imports-a.js?label=direct eval').then(window.continueTest, window.errorTest)`);
+
+  return promise.then(assertSuccessful);
+}, "direct eval must inherit the nonce from the triggering script, thus execute");
+
+promise_test(t => {
+  const promise = createTestPromise(t);
+
+  const evalAlias = eval;
+  evalAlias(`import('../imports-a.js?label=indirect eval').then(window.continueTest, window.errorTest)`);
+
+  return promise.then(assertSuccessful);
+}, "indirect eval must inherit the nonce from the triggering script, thus execute");
+
+promise_test(t => {
+  const promise = createTestPromise(t);
+
+  Function(`import('../imports-a.js?label=the Function constructor').then(window.continueTest, window.errorTest)`)();
+
+  return promise.then(assertSuccessful);
+}, "the Function constructor must inherit the nonce from the triggering script, thus execute");
+
+promise_test(t => {
+  t.add_cleanup(() => {
+    dummyDiv.removeAttribute("onclick");
+  });
+
+  const promise = createTestPromise(t);
+
+  // This only works because of the 'unsafe-hashes' and the hash in the CSP policy
+  dummyDiv.setAttribute(
+    "onclick",
+    `import('../imports-a.js?label=reflected inline event handlers').then(window.continueTest, window.errorTest)`
+  );
+  dummyDiv.onclick();
+
+  return promise_rejects_js(t, TypeError, promise);
+}, "reflected inline event handlers must not inherit the nonce from the triggering script, thus fail");
+
+promise_test(t => {
+  t.add_cleanup(() => {
+    dummyDiv.removeAttribute("onclick");
+  });
+
+  const promise = createTestPromise(t);
+
+  // This only works because of the 'unsafe-hashes' and the hash in the CSP policy
+  dummyDiv.setAttribute(
+    "onclick",
+    `import('../imports-a.js?label=inline event handlers triggered via UA code').then(window.continueTest, window.errorTest)`
+  );
+  assert_equals(typeof dummyDiv.onclick, "function", "the browser must be able to parse a string containing the import() syntax into a function");
+  dummyDiv.click(); // different from **on**click()
+
+  return promise_rejects_js(t, TypeError, promise);
+}, "inline event handlers triggered via UA code must not inherit the nonce from the triggering script, thus fail");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.csp.external_script.blocked",
+      "message": "Resource violates Content Security Policy (meta tag): external script “/resources/testharness.js” blocked by “script-src” directive.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 487,
+        "byte_start": 431,
+        "col": 1,
+        "line": 8
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.csp.external_script.blocked",
+      "message": "Resource violates Content Security Policy (meta tag): external script “/resources/testharnessreport.js” blocked by “script-src” directive.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 559,
+        "byte_start": 497,
+        "col": 1,
+        "line": 9
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-nonce-classic.html"
+}
+```

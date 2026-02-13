@@ -1,0 +1,103 @@
+# html/user-activation/navigation-state-reset-sameorigin.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/user-activation/navigation-state-reset-sameorigin.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/resources/testdriver.js"></script>
+    <script src="/resources/testdriver-vendor.js"></script>
+  </head>
+  <body>
+    <h1>Post-navigation activation state in child</h1>
+    <p>
+      Tests that navigating a same-origin child frame resets its activation
+      states.
+    </p>
+    <ol id="instructions">
+      <li>Click inside the yellow area.</li>
+    </ol>
+
+    <iframe id="child" width="200" height="50"> </iframe>
+    <script>
+      function message(type) {
+        return new Promise((resolve) => {
+          window.addEventListener("message", function listener(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === type) {
+              window.removeEventListener("message", listener);
+              resolve(data);
+            }
+          });
+        });
+      }
+      promise_test(async (t) => {
+        var child = document.getElementById("child");
+        child.src = "./resources/child-one.html";
+        const unclickeData = await message("child-one-loaded");
+        assert_false(navigator.userActivation.isActive);
+        assert_false(navigator.userActivation.hasBeenActive);
+        assert_false(unclickeData.isActive);
+        assert_false(unclickeData.hasBeenActive);
+
+        const [, child1Data] = await Promise.all([
+          test_driver.click(child),
+          message("child-one-clicked"),
+        ]);
+
+        assert_true(navigator.userActivation.isActive);
+        assert_true(navigator.userActivation.hasBeenActive);
+        assert_true(child1Data.isActive);
+        assert_true(child1Data.hasBeenActive);
+
+        child.src = "./resources/child-two.html";
+
+        const child2Data = await message("child-two-loaded");
+
+        assert_true(navigator.userActivation.isActive);
+        assert_true(navigator.userActivation.hasBeenActive);
+        assert_false(child2Data.isActive);
+        assert_false(child2Data.hasBeenActive);
+      }, "Post-navigation state reset.");
+    </script>
+  </body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/user-activation/navigation-state-reset-sameorigin.html"
+}
+```

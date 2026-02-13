@@ -1,0 +1,59 @@
+# html/browsers/browsing-the-web/scroll-to-fragid/scroll-position.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/browsing-the-web/scroll-to-fragid/scroll-position.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fragment Navigation: Scroll to block start position</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="test" style="position: absolute; top: 5px; left: 7px; margin: 5px 7px; border-style: solid; border-width: 5px 7px; padding: 5px 7px; height: 5px; width: 7px;"></div>
+<div style="height: 200vh;"></div>
+<script>
+async_test(function (t) {
+    on_event(window, 'load', function () {
+        t.step(function () {
+            window.scrollTo(0, 0);
+            location.hash = 'test';
+            assert_equals(window.scrollY, 10, 'Scroll to the top border edge of #test');
+        });
+        t.done();
+    });
+}, '');
+</script>
+</body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/browsing-the-web/scroll-to-fragid/scroll-position.html"
+}
+```

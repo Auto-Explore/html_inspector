@@ -1,0 +1,60 @@
+# html/interaction/focus/the-autofocus-attribute/first-when-later.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/interaction/focus/the-autofocus-attribute/first-when-later.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>The first autofocus in the document wins, even if elements are inserted later</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#autofocusing-a-form-control:-the-autofocus-attribute">
+<link rel="author" title="Domenic Denicola" href="d@domenic.me">
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/utils.js"></script>
+
+<input autofocus>
+
+<script>
+"use strict";
+
+promise_test(async () => {
+  const input1 = document.querySelector("input");
+  const input2 = document.createElement("input");
+  input2.autofocus = true;
+  document.body.appendChild(input2);
+
+  await waitUntilStableAutofocusState();
+  assert_equals(document.activeElement, input1);
+  assert_not_equals(document.activeElement, input2);
+}, 'The first autofocus in the document wins, even if elements are inserted later.');
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/interaction/focus/the-autofocus-attribute/first-when-later.html"
+}
+```

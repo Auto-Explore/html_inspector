@@ -1,0 +1,100 @@
+# html/interaction/focus/focusgroup/tentative/sequential-navigation/nested-focusgroups.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/interaction/focus/focusgroup/tentative/sequential-navigation/nested-focusgroups.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML Test: focusgroup - Nested focusgroup navigation</title>
+<link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+<link rel="help" href="https://open-ui.org/components/scoped-focusgroup.explainer/">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/shadow-dom/focus-navigation/resources/focus-utils.js"></script>
+<script src="../resources/focusgroup-utils.js"></script>
+
+<!-- Test forward navigation through nested focusgroups -->
+<div id=before1 tabindex=0>Before outer</div>
+
+<div id=outer focusgroup="toolbar">
+  <span id=outer1 tabindex=0 focusgroupstart>Outer 1 (priority)</span>
+  <div id=inner focusgroup="toolbar no-memory">
+    <span id=inner1 tabindex=0 focusgroupstart>Inner 1 (priority)</span>
+    <span id=inner2 tabindex=0>Inner 2</span>
+  </div>
+  <span id=outer2 tabindex=0>Outer 2</span>
+</div>
+
+<div id=after1 tabindex=0>After outer</div>
+
+<script>
+  promise_test(async t => {
+    document.getElementById("before1").focus();
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("outer1"),
+                  "Tab enters outer focusgroup at focusgroupstart element");
+
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("inner1"),
+                  "Tab enters nested inner focusgroup at focusgroupstart element");
+
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("outer2"),
+                  "Tab moves to second segment of outer focusgroup");
+
+    await navigateFocusForward();
+    assert_equals(document.activeElement, document.getElementById("after1"),
+                  "Tab moves outside both focusgroups");
+  }, "Forward Tab navigation through nested focusgroups");
+
+  promise_test(async t => {
+    document.getElementById("after1").focus();
+    await sendTabBackward();
+    assert_equals(document.activeElement, document.getElementById("outer2"),
+                  "Shift+Tab enters second segment of outer focusgroup");
+
+    await sendTabBackward();
+    assert_equals(document.activeElement, document.getElementById("inner1"),
+                  "Shift+Tab enters nested focusgroup at focusgroupstart element");
+
+    await sendTabBackward();
+    assert_equals(document.activeElement, document.getElementById("outer1"),
+                  "Shift+Tab moves to outer focusgroup");
+
+    await sendTabBackward();
+    assert_equals(document.activeElement, document.getElementById("before1"),
+                  "Shift+Tab exits both focusgroups");
+  }, "Reverse Shift+Tab navigation through nested focusgroups");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/interaction/focus/focusgroup/tentative/sequential-navigation/nested-focusgroups.html"
+}
+```

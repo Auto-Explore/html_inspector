@@ -1,0 +1,194 @@
+# html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-traversal-cross-document-traversal.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-traversal-cross-document-traversal.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Cross-document traversals during cross-document traversals</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!--
+  In the spec, all traversals are queued, and that includes computing what
+  "back" and "forward" mean, based on the "current session history step". The
+  "current session history step" is updated at the end of "apply the history
+  step", at which point the queued steps in "traverse history by a delta" get to
+  run and compute what is back/forward. So the basic structure is:
+
+  - back(), back(): go back once, then again.
+  - back(), forward(): go back once, then go forward.
+
+  However, note that these observable effects (e.g., actually loading an
+  intermediate document) are done via queued tasks. Those tasks will end up not
+  running, once we switch the active document due to the second traversal. So
+  the end observable result looks like:
+
+  - back(), back(): go back -2.
+  - back(), forward(): go nowhere.
+-->
+
+<body>
+<script type="module">
+import { createIframe, waitForLoad, delay, waitForPotentialNetworkLoads } from "./resources/helpers.mjs";
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+
+  // Setup
+  // Extra delay()s are necessary because if we navigate "inside" the load
+  // handler (i.e. in a promise reaction for the load handler) then it will
+  // be a replace navigation.
+  iframe.contentWindow.location.search = "?1";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.location.search = "?2";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.location.search = "?3";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.history.back();
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  assert_equals(iframe.contentWindow.location.search, "?2", "we made our way to ?2 for setup");
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.search, "?2", "must not go back synchronously");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.search, "?2", "must not go forward synchronously");
+
+  iframe.onload = t.unreached_func("second load event");
+
+  await waitForPotentialNetworkLoads(t);
+  assert_equals(iframe.contentWindow.location.search, "?2", "must stay on ?2");
+}, "cross-document traversals in opposite directions: the result is going nowhere");
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+
+  // Setup
+  // Extra delay()s are necessary because if we navigate "inside" the load
+  // handler (i.e. in a promise reaction for the load handler) then it will
+  // be a replace navigation.
+  iframe.contentWindow.location.search = "?1";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.location.search = "?2";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.search, "?2", "must not go back synchronously");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.search, "?2", "must not go forward synchronously");
+
+  iframe.onload = t.unreached_func("second load event");
+
+  await waitForPotentialNetworkLoads(t);
+  assert_equals(iframe.contentWindow.location.search, "?2", "must stay on ?2");
+}, "cross-document traversals in opposite directions, second traversal invalid at queuing time but valid at the time it is run: the result is going nowhere");
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+
+  // Setup
+  // Extra delay()s are necessary because if we navigate "inside" the load
+  // handler (i.e. in a promise reaction for the load handler) then it will
+  // be a replace navigation.
+  iframe.contentWindow.location.search = "?1";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.location.search = "?2";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.location.search = "?3";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.search, "?3", "must not go back synchronously (1)");
+
+  iframe.contentWindow.history.back();
+  assert_equals(iframe.contentWindow.location.search, "?3", "must not go back synchronously (2)");
+
+  await waitForLoad(iframe);
+  assert_equals(iframe.contentWindow.location.search, "?1", "first load event must be going back");
+
+  iframe.onload = t.unreached_func("second load event");
+
+  await waitForPotentialNetworkLoads(t);
+  assert_equals(iframe.contentWindow.location.search, "?1", "must stay on ?1");
+}, "cross-document traversals in the same (back) direction: the result is going -2 with only one load event");
+
+promise_test(async t => {
+  const iframe = await createIframe(t);
+
+  // Setup
+  // Extra delay()s are necessary because if we navigate "inside" the load
+  // handler (i.e. in a promise reaction for the load handler) then it will
+  // be a replace navigation.
+  iframe.contentWindow.location.search = "?1";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.location.search = "?2";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.location.search = "?3";
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  iframe.contentWindow.history.back();
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  assert_equals(iframe.contentWindow.location.search, "?2", "we made our way to ?2 for setup");
+  iframe.contentWindow.history.back();
+  await waitForLoad(iframe);
+  await delay(t, 0);
+  assert_equals(iframe.contentWindow.location.search, "?1", "we made our way to ?1 for setup");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.search, "?1", "must not go forward synchronously (1)");
+
+  iframe.contentWindow.history.forward();
+  assert_equals(iframe.contentWindow.location.search, "?1", "must not go forward synchronously (2)");
+
+  await waitForLoad(iframe);
+  assert_equals(iframe.contentWindow.location.search, "?3", "first load event must be going forward");
+
+  iframe.onload = t.unreached_func("second load event");
+
+  await waitForPotentialNetworkLoads(t);
+  assert_equals(iframe.contentWindow.location.search, "?3", "must stay on ?3");
+}, "cross-document traversals in the same (forward) direction: the result is going +2 with only one load event");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-traversal-cross-document-traversal.html"
+}
+```

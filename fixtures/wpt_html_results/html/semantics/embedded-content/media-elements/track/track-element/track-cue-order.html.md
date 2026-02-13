@@ -1,0 +1,117 @@
+# html/semantics/embedded-content/media-elements/track/track-element/track-cue-order.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/media-elements/track/track-element/track-cue-order.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>Text track cue order</title>
+<link rel="help" href="https://html.spec.whatwg.org/#text-track-cue-order">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function concat_cuetext(cues) {
+    return Array.prototype.reduce.call(cues, function(acc, value) {
+        return acc + value.text;
+    }, "");
+}
+
+setup(function() {
+    window.video = document.createElement('video');
+});
+
+test(function() {
+    let track = video.addTextTrack('subtitles');
+    track.addCue(new VTTCue(8, 9, '1'));
+    track.addCue(new VTTCue(4, 5, '2'));
+    track.addCue(new VTTCue(2, 3, '3'));
+    assert_equals(concat_cuetext(track.cues), '321');
+}, document.title + ', decreasing start times.');
+
+test(function() {
+    let track = video.addTextTrack('subtitles');
+    track.addCue(new VTTCue(2, 9, '1'));
+    track.addCue(new VTTCue(2, 3, '2'));
+    track.addCue(new VTTCue(2, 5, '3'));
+    assert_equals(concat_cuetext(track.cues), '132');
+}, document.title + ', equal start times varying end times.');
+
+test(function() {
+    let track = video.addTextTrack('subtitles');
+    track.addCue(new VTTCue(2, 3, '1'));
+    track.addCue(new VTTCue(2, 3, '2'));
+    track.addCue(new VTTCue(2, 3, '3'));
+    assert_equals(concat_cuetext(track.cues), '123');
+}, document.title + ', equal start and end times.');
+
+test(function() {
+    let track = video.addTextTrack('subtitles');
+    track.addCue(new VTTCue(2, 5, '1'));
+    track.addCue(new VTTCue(2, 5, '2'));
+    track.addCue(new VTTCue(2, 5, '3'));
+    assert_equals(concat_cuetext(track.cues), '123', 'initial order');
+
+    let cue = track.cues[0];
+    track.removeCue(cue);
+    assert_equals(concat_cuetext(track.cues), '23', '"1" removed');
+
+    track.addCue(cue);
+    assert_equals(concat_cuetext(track.cues), '231', '"1" reinserted');
+}, document.title + ', after re-insertion.');
+
+test(function() {
+    let track = video.addTextTrack('subtitles');
+    track.addCue(new VTTCue(2, 5, '1'));
+    track.addCue(new VTTCue(2, 5, '2'));
+    track.addCue(new VTTCue(2, 5, '3'));
+    assert_equals(concat_cuetext(track.cues), '123', 'initial order');
+
+    track.cues[0].startTime = 4;
+    assert_equals(concat_cuetext(track.cues), '231', '"1" moved last');
+
+    track.cues[2].startTime = 2;
+    assert_equals(concat_cuetext(track.cues), '123', '"1" moved first');
+}, document.title + ', equal start and end times with startTime mutations.');
+
+test(function() {
+    let track = video.addTextTrack('subtitles');
+    track.addCue(new VTTCue(2, 5, '1'));
+    track.addCue(new VTTCue(2, 5, '2'));
+    track.addCue(new VTTCue(2, 5, '3'));
+    assert_equals(concat_cuetext(track.cues), '123', 'initial order');
+
+    track.cues[2].endTime = 9;
+    assert_equals(concat_cuetext(track.cues), '312', '"3" moved first');
+
+    track.cues[1].endTime = 3;
+    assert_equals(concat_cuetext(track.cues), '321', '"1" moved last');
+}, document.title + ', equal start and end times with endTime mutations.');
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/media-elements/track/track-element/track-cue-order.html"
+}
+```

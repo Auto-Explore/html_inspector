@@ -402,13 +402,24 @@ mod tests {
             .any(|m| m.code == "html.meta.csp.invalid"
                 && m.severity == html_inspector_core::Severity::Warning));
     }
+
+    #[test]
+    fn csp_unsafe_hashes_is_allowed() {
+        let report = validate(
+            r#"<meta http-equiv="content-security-policy" content="script-src 'unsafe-hashes'">"#,
+        );
+        assert!(!report.messages.iter().any(|m| m.code == "html.meta.csp.invalid"));
+    }
 }
 
 fn is_valid_csp_keyword_or_nonce_or_hash(token: &str) -> bool {
     match token {
-        "'self'" | "'none'" | "'unsafe-inline'" | "'unsafe-eval'" | "'strict-dynamic'" => {
-            return true
-        }
+        "'self'"
+        | "'none'"
+        | "'unsafe-inline'"
+        | "'unsafe-eval'"
+        | "'unsafe-hashes'"
+        | "'strict-dynamic'" => return true,
         _ => {}
     }
     if token.starts_with("'nonce-") && token.ends_with('\'') {

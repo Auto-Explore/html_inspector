@@ -1,0 +1,90 @@
+# html/semantics/embedded-content/the-audio-element/audio_constructor.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-audio-element/audio_constructor.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset=utf-8>
+<title>Audio constructor</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id=log></div>
+<script>
+test(function() {
+  var throwingObject = {
+    toString: function() { throw Error() },
+    valueOf: function() { throw Error() }
+  };
+  var tests = [
+    [function() { return new Audio() }, null, "No arguments"],
+    [function() { return new Audio("") }, "", "Empty string argument"],
+    [function() { return new Audio("src") }, "src", "Non-empty string argument"],
+    [function() { return new Audio(null) }, "null", "Null argument"],
+    [function() { return new Audio(undefined) }, null, "Undefined argument"],
+    [function() { return new Audio("", throwingObject) }, "", "Extra argument"],
+  ];
+  tests.forEach(function(t) {
+    var fn = t[0], expectedSrc = t[1], description = t[2];
+    test(function() {
+      var element = fn();
+      assert_equals(element.localName, "audio");
+      assert_equals(element.tagName, "AUDIO");
+      assert_equals(element.namespaceURI, "http://www.w3.org/1999/xhtml");
+      assert_equals(element.nodeType, Node.ELEMENT_NODE);
+      assert_equals(element.getAttribute("preload"), "auto");
+      assert_equals(element.getAttribute("src"), expectedSrc);
+      assert_equals(element.ownerDocument, document);
+    }, description);
+  });
+});
+
+test(function() {
+  var audio = new Audio();
+  assert_equals(Object.getPrototypeOf(audio), HTMLAudioElement.prototype);
+}, "Prototype of object created with named constructor");
+
+test(function() {
+  assert_throws_js(TypeError, function() {
+    Audio();
+  });
+}, "Calling Audio should throw");
+test(function() {
+  assert_throws_js(TypeError, function() {
+    HTMLAudioElement();
+  });
+}, "Calling HTMLAudioElement should throw");
+test(function() {
+  assert_throws_js(TypeError, function() {
+    new HTMLAudioElement();
+  });
+}, "Constructing HTMLAudioElement should throw");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-audio-element/audio_constructor.html"
+}
+```

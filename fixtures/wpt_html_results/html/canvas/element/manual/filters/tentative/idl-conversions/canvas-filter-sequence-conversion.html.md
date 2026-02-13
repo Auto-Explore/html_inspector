@@ -1,0 +1,89 @@
+# html/canvas/element/manual/filters/tentative/idl-conversions/canvas-filter-sequence-conversion.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/canvas/element/manual/filters/tentative/idl-conversions/canvas-filter-sequence-conversion.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>Canvas test: canvas-filter-sequence-conversion</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/html/canvas/resources/canvas-tests.js"></script>
+<link rel="stylesheet" href="/html/canvas/resources/canvas-tests.css">
+<body class="show_output">
+
+<h1>canvas-filter-sequence-conversion</h1>
+<p class="desc">Test converting types into sequences</p>
+
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+var t = async_test("Test pixels on CanvasFilter() various inputs to tableValues (which is a sequence)");
+_addTest(function(canvas, ctx) {
+
+  // Inputs to parameters that are expecting sequence<long>. Results are either the value of the
+  // red pixel drawing using the resultant filter or that we expect this input to throw an error.
+  const testCases = [
+    {input: [], result: 0},
+    {input: [0.5], result: 127},
+    {input: ["0.5"], result: 127},
+    {input: 1, result: "throws"},
+    {input: {}, result: "throws"},
+    {input: false, result: "throws"},
+    {input: true, result: "throws"},
+    {input: NaN, result: "throws"},
+    {input: { valueOf() { return [1]; }}, result: "throws"},
+  ];
+
+  // A simple filter that just overrides the red channel if successful.
+  function makeFilter(value) {
+    return new CanvasFilter({
+      name: "componentTransfer",
+      funcR: {type: "table", tableValues: value}
+    });
+  }
+
+  for (const tc of testCases) {
+    if (tc.result === "throws") {
+      assert_throws_js(TypeError, function(){ makeFilter(tc.input) });
+    } else {
+      ctx.reset();
+      ctx.filter = makeFilter(tc.input);
+      ctx.fillRect(0, 0, 100, 100);
+      _assertPixelApprox(canvas, 5, 5, tc.result,0,0,255, 2);
+    }
+  }
+  t.done();
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/canvas/element/manual/filters/tentative/idl-conversions/canvas-filter-sequence-conversion.html"
+}
+```

@@ -1,0 +1,113 @@
+# html/editing/dnd/images/003-manual.html
+
+Counts:
+- errors: 2
+- warnings: 3
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/editing/dnd/images/003-manual.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<head>
+<title>Image drag and drop outside browser window</title>
+<style type="text/css">
+div[ondragenter]
+  {width:105px;
+  min-height:105px;
+  text-align:center;
+  margin-top:20px;
+  padding:10px;
+  border:solid thin navy;}
+p:first-child
+  {padding-left:12px;}
+</style>
+<script type="application/ecmascript">
+function addImage(event)
+  {var c = document.createElement('img');
+  c.setAttribute('src',event.dataTransfer.getData('text/uri-list').replace(/\r\n$/,''));
+  document.querySelector('div').appendChild(c);}
+</script>
+</head>
+<body>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAEq0lEQVR42u1dvU4bQRAeR0RCCilSp0peIoKGB4DSXYRDlcZlFClKBI4bB/kV/AymIDwCTahiicaioEOxhCsjWVTJziyKMfYZn+9ud3bvG2mEZB13u9+nndmf2Rki7fKFXtEBbVKD9o22jB4bPaND6hm9Mjo0enevw/vfevKMfbYl/8vv4HdBUkvFALhltG2A7dN3+pur8jv53fwN/hZkjjRo3eiuAatjdJA7CcnkDOSb/G1uQ6mFzUeDagaQrvl764yEJOU22LbUymXaGrRhOt40OvJOQvLIGUkbP9GLeIn4SM9NJ+tOTVI+Jq0ubY9sVFRNxy6DIWKWmEvpQ/ByQNumI+fBEjHrZ86lT8HJV3ptGn8aDRGzxJxKHwMZFe9Mg6+jJWNCyrX0VbUc0nuj4+jJmPiWsfRZodN+ZvSoNETMjpYjwUCFfKaXpjEnpSVjQsqJYOF5ZLw1elF6MiakXAgmnpw378DegIgZUm4EGw8jA2QsIuUbvXHpM2CmljFfhfsUO5uCA0/j6AudfZV5arv6WuVHcYs+ALwqKTkvHnmLoEwr8CJW9Llts9iNwvj3plzsfeWyIRnzrq37kfIzq6naBpA5a6bzlJgOl/SMkl+rklEFgIX5k5THwTYgIdwzcP2jhM/o19KsOeoArnBS6suaqo2gQnXCJWSwXNwXB4gBMFekNBeTwSGUmiMK4yNktDhsleNaAZRrUvYWmasuQHJOSDdpdKyriEIvo9maexWC70gAIF/bKTvzzFUH4HgbJZ3HdFSw9vC6lfKHpq7X8X07AOOblK2HhLQBindC2g/9Rx+gePcj/cnqHIDoUFm1c9gjwNAy/d0kyXIAMLSYrQ8kqScAhhbH3iLJBwIwtBByTJKkBWBoIeSMJHMOwNBCyG+SdEYAQ4tTvyLJMQUwtBAyJEn8BTC0EHIHQhQSApOlzGTBqaty6jzVAhhaCOlhYahuYYitE02EHGNzURchLZItX4ChhZB9HFBpUjmgwhGuHv0feI0gBw1T3j7CgHT5jzYC5XQRsjUdSsrhjADGl7ka0EylBgRb+ySkMy9rww7A8Waududf2MH9Qh9k3CbXLsGVNh/mqrvojuEeQHI+Qmq4Fq1ndIyeruaDxAEuCWk+ncmB0z3gepubtQenMUHyGTWELJl8xk6B15CeqVAyLtPXtUICsyJnVivWs+J0dAAwbzLOkQRTk2YuKsapTQFkXqPjlDILEinnRcZ1fpXdkGo866xqnH9FNyTjz0JIQZXcuPQCAE5rqo6oMEFBl7RknBRfTg8lj5Yl48JdGT0ueIWiYIvIuHFfPg9l85LJcF42b+JTUFjysZnyVlhy2qfA0asovTo9+0JxYnWC8t0KBQXuFYrdkIy3mBj3LbeNQrejZTuqOlbcl8znGTqcfjXoM3pboqgaPhEPxda1qgcVYsRt5TanDkgISWzcV1N1hCS3jdu4dNxUDMIhlBzXysHGGspkcBtsW2pPh3fGLrZ2ya5cXHFp0qxJ6si3E68EQCpy344vQRZxO5jfye+2d/oqgHsV02Z3lvcl9QTnA+EkLZw5h9MZcY4pTvxldXj/W0+esc+25H/5HQGYon+Q5f+MwFz+8QAAAABJRU5ErkJggg==" alt="PNG circle" ondragstart="event.dataTransfer.effectAllowed = 'copy'"/></p>
+<p>Drag circle above outside the window and then back inside and drop in the box below. It should be copied to the box once you drop it there.</p>
+<div
+  ondragenter="event.preventDefault()"
+  ondragover="return false"
+  ondrop="addImage(event)"
+/>
+</body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.style.type.unnecessary",
+      "message": "The “type” attribute for the “style” element is not needed and should be omitted.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 104,
+        "byte_start": 81,
+        "col": 1,
+        "line": 4
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 325,
+        "byte_start": 287,
+        "col": 1,
+        "line": 15
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.parse.self_closing.non_void",
+      "message": "Self-closing syntax (“/>”) used on a non-void HTML element. Ignoring the slash and treating as a start tag.",
+      "severity": "Error",
+      "span": {
+        "byte_end": 2592,
+        "byte_start": 2491,
+        "col": 1,
+        "line": 25
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.parser.stray_end_tag",
+      "message": "Stray end tag “html”.",
+      "severity": "Error",
+      "span": {
+        "byte_end": 2608,
+        "byte_start": 2601,
+        "col": 1,
+        "line": 31
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/editing/dnd/images/003-manual.html"
+}
+```

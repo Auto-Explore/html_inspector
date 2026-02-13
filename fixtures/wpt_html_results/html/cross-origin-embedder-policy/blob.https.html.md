@@ -1,0 +1,119 @@
+# html/cross-origin-embedder-policy/blob.https.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/cross-origin-embedder-policy/blob.https.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset=utf-8>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/dispatcher/dispatcher.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/common/utils.js"></script>
+<div id=log></div>
+<script>
+const origins = get_host_info();
+[
+  {
+    "origin": origins.HTTPS_ORIGIN,
+    "crossOrigin": origins.HTTPS_REMOTE_ORIGIN
+  },
+  {
+    "origin": origins.HTTPS_REMOTE_ORIGIN,
+    "crossOrigin": origins.HTTPS_NOTSAMESITE_ORIGIN
+  },
+  {
+    "origin": origins.HTTPS_NOTSAMESITE_ORIGIN,
+    "crossOrigin": origins.HTTPS_ORIGIN
+  }
+].forEach(({ origin, crossOrigin }) => {
+  ["subframe", "navigate", "popup"].forEach(variant => {
+    // Due to `noopener` being enforced on Blob URLs where the corresponding
+    // origin is cross-site to the opening context's top-level site, require
+    // dispatcher.js to pass information back after window.open().
+    if (origin === origins.HTTPS_NOTSAMESITE_ORIGIN &&
+        crossOrigin === origins.HTTPS_ORIGIN &&
+        variant === "popup") {
+      return;
+    }
+    async_test(t => {
+      const id = token();
+      const frame = document.createElement("iframe");
+      t.add_cleanup(() => { frame.remove(); });
+      const path = new URL("resources/blob-url-factory.html", window.location).pathname;
+      frame.src = `${origin}${path}?id=${id}&variant=${variant}&crossOrigin=${crossOrigin}`;
+      window.addEventListener("message", t.step_func(({ data }) => {
+        if (data.id !== id) {
+          return;
+        }
+        assert_equals(data.origin, origin);
+        assert_true(data.sameOriginNoCORPSuccess, "Same-origin without CORP did not succeed");
+        assert_true(data.crossOriginNoCORPFailure, "Cross-origin without CORP did not fail");
+        t.done();
+      }));
+      document.body.append(frame);
+    }, `Cross-Origin-Embedder-Policy and blob: URL from ${origin} in subframe via ${variant}`);
+  });
+});
+
+// New test for the specific case using dispatcher.js for popups.
+promise_test(async t => {
+  const origin = origins.HTTPS_NOTSAMESITE_ORIGIN;
+  const crossOrigin = origins.HTTPS_ORIGIN;
+  const variant = "popup-dispatch";
+  const id = token();
+
+  const frame = document.createElement("iframe");
+  t.add_cleanup(() => { frame.remove(); });
+
+  const path = new URL("resources/blob-url-factory.html", window.location).pathname;
+  frame.src = `${origin}${path}?id=${id}&variant=${variant}&crossOrigin=${crossOrigin}`;
+  document.body.append(frame);
+
+  // Use dispatcher to wait for the message.
+  const message = await receive(id);
+  const data = JSON.parse(message);
+
+  assert_equals(data.origin, origin, "Message origin should match test origin");
+  assert_true(data.sameOriginNoCORPSuccess, "Same-origin fetch without CORP should succeed");
+  assert_true(data.crossOriginNoCORPFailure, "Cross-origin fetch without CORP should fail");
+
+}, `Cross-Origin-Embedder-Policy and blob: URL from ${origins.HTTPS_NOTSAMESITE_ORIGIN} in popup (using dispatcher)`);
+
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/cross-origin-embedder-policy/blob.https.html"
+}
+```

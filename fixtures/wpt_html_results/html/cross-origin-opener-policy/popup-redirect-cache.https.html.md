@@ -1,0 +1,131 @@
+# html/cross-origin-opener-policy/popup-redirect-cache.https.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/cross-origin-opener-policy/popup-redirect-cache.https.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<meta name="variant" content="?0-1">
+<meta name="variant" content="?2-3">
+<meta name="variant" content="?4-5">
+<meta name="variant" content="?6-7">
+<meta name="variant" content="?8-last">
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src="/common/dispatcher/dispatcher.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/common/subset-tests.js"></script>
+<script src="/common/utils.js"></script>
+<script src="resources/common.js"></script>
+
+<div id=log></div>
+<script>
+
+function url_test_cache(t, url, responseToken, iframeToken, hasOpener) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await dispatcher_url_test(t, url, responseToken, iframeToken, hasOpener, undefined /* OpenerDomAccess */, resolve);
+    } catch(e) {
+      reject(e);
+    }
+  }).then(() => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Test the same url for cache.
+        // Note that at this point the popup from the first
+        // `dispatcher_url_test()` call hasn't been closed yet, but once this
+        // test has finished both will be cleaned up.
+        await dispatcher_url_test(t, url, responseToken, iframeToken, hasOpener, undefined /* OpenerDomAccess */, resolve);
+      } catch(e) {
+        reject(e);
+      }
+    });
+  });
+}
+
+// Redirect from hostA to hostB with same coop and coep.
+// Cache the hostA page if redirectCache is true.
+// Cache the hostB page if destCache is true.
+function coop_redirect_cache_test(t, hostA, hostB, coop, coep, redirectCache, destCache, hasOpener) {
+  let redirectUrl = `${hostA.origin}/html/cross-origin-opener-policy/resources/coop-coep.py`;
+  let redirectCacheString = redirectCache ? "&cache=1" : "";
+  let destCacheString = destCache ? "&cache=1" : "";
+  let responseToken = token();
+  let iframeToken = token();
+  let destUrl = `${hostB.origin}/html/cross-origin-opener-policy/resources/coop-coep.py?coop=${coop}&coep=${coep}${destCacheString}&responseToken=${responseToken}&iframeToken=${iframeToken}`;
+  let url = `${redirectUrl}?coop=${coop}&coep=${coep}${redirectCacheString}&redirect=${encodeURIComponent(destUrl)}`;
+
+  return url_test_cache(t, url, responseToken, iframeToken, hasOpener);
+}
+
+function run_redirect_cache_tests(documentCOOPValueTitle, testArray) {
+  testArray.forEach((test, i) => {
+    // Only run specified variants
+    if (!shouldRunSubTest(i)) {
+      return;
+    }
+
+    promise_test(t => {
+      return coop_redirect_cache_test(t, test[0], test[1], "same-origin", "require-corp", test[2], test[3], test[4]);
+    }, `${documentCOOPValueTitle} document opening popup redirect from ${test[0].origin} to ${test[1].origin} with redirectCache ${test[2]} and destCache ${test[3]}`);
+  });
+}
+
+const tests = [
+  // popup Origin, final Origin, isCacheRedirect, isCacheDestination, hasOpener
+  // Origin A->A->B
+  [SAME_ORIGIN, CROSS_ORIGIN, true, false, false],
+  [SAME_ORIGIN, CROSS_ORIGIN, false, true, false],
+  [SAME_ORIGIN, CROSS_ORIGIN, true, true, false],
+
+  // Origin A->B->B
+  [CROSS_ORIGIN, SAME_ORIGIN, true, false, false],
+  [CROSS_ORIGIN, SAME_ORIGIN, false, true, false],
+  [CROSS_ORIGIN, SAME_ORIGIN, true, true, false],
+
+  // Origin A->B->C
+  [SAME_SITE, CROSS_ORIGIN, true, false, false],
+  [SAME_SITE, CROSS_ORIGIN, false, true, false],
+  [SAME_SITE, CROSS_ORIGIN, true, true, false],
+];
+
+run_redirect_cache_tests("same-origin", tests);
+
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/cross-origin-opener-policy/popup-redirect-cache.https.html"
+}
+```

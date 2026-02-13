@@ -1,0 +1,107 @@
+# html/semantics/embedded-content/media-elements/ready-states/autoplay.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/media-elements/ready-states/autoplay.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<title>autoplay</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/media.js"></script>
+<div id="log"></div>
+<script>
+function autoplay_test(tagName, src) {
+  function expect_events(t, e, expected_events) {
+    var actual_events = [];
+    var callback = t.step_func(function(ev) {
+      actual_events.push(ev.type);
+      assert_array_equals(actual_events,
+                          expected_events.slice(0, actual_events.length));
+      if (expected_events.length == actual_events.length) {
+        t.done();
+      }
+    });
+    ['canplay', 'canplaythrough',
+     'pause', 'play', 'playing', 'error'].forEach(function(type) {
+      e.addEventListener(type, callback);
+    });
+  }
+
+  async_test(function(t) {
+    var e = document.createElement(tagName);
+    e.src = src;
+    e.autoplay = true;
+    expect_events(t, e, ['canplay', 'canplaythrough', 'play', 'playing']);
+  }, tagName + '.autoplay');
+
+  async_test(function(t) {
+    var e = document.createElement(tagName);
+    e.src = src;
+    e.autoplay = true;
+    e.pause(); // sets the autoplaying flag to false
+    e.load(); // sets the autoplaying flag to true
+    expect_events(t, e, ['canplay', 'canplaythrough', 'play', 'playing']);
+  }, tagName + '.autoplay and load()');
+
+  async_test(function(t) {
+    var e = document.createElement(tagName);
+    e.src = src;
+    e.autoplay = true;
+    e.play(); // sets the autoplaying flag to false
+    // play() also sets the paused attribute to false; there is no way for the
+    // autoplaying flag to be true when the paused attribute is false.
+    assert_equals(e.paused, false);
+    expect_events(t, e, ['play', 'canplay', 'playing', 'canplaythrough']);
+  }, tagName + '.autoplay and play()');
+
+  async_test(function(t) {
+    var e = document.createElement(tagName);
+    e.src = src;
+    e.autoplay = true;
+    e.pause(); // sets the autoplaying flag to false
+    expect_events(t, e, ['canplay', 'canplaythrough']);
+  }, tagName + '.autoplay and pause()');
+
+  async_test(function(t) {
+    var e = document.createElement(tagName);
+    e.src = src;
+    e.autoplay = true;
+    document.body.appendChild(e);
+    document.body.removeChild(e);
+    // in stable state, internal pause steps sets the autoplaying flag to false
+    expect_events(t, e, ['canplay', 'canplaythrough']);
+  }, tagName + '.autoplay and internal pause steps');
+}
+
+autoplay_test('audio', getAudioURI('/media/sound_5'));
+autoplay_test('video', getVideoURI('/media/movie_5'));
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/media-elements/ready-states/autoplay.html"
+}
+```

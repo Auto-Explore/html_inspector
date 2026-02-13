@@ -1,0 +1,109 @@
+# html/semantics/embedded-content/the-img-element/image-loading-lazy-base-url.html
+
+Counts:
+- errors: 0
+- warnings: 3
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-img-element/image-loading-lazy-base-url.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<head>
+  <title>Deferred images with loading='lazy' use the original
+         base URL specified at parse-time</title>
+  <link rel="author" title="Rob Buis" href="mailto:rbuis@igalia.com">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <script src="../resources/common.js"></script>
+  <base href='/html/semantics/embedded-content/the-img-element/resources/'>
+</head>
+
+<script>
+  const below_viewport_img = new ElementLoadPromise("below-viewport");
+
+  let has_window_loaded = false;
+
+  async_test(t => {
+    // At this point, the below-viewport image's request has been set-up, and
+    // its URL is the URL that was parsed relative to the document's base URL
+    // at this time. Any changes to the document's base URL from this point
+    // forward should not impact the image when we scroll it in-view. This is
+    // because the next step in the #updating-the-img-data algorithm is to to
+    // fetch the request that has already been set up. Now we'll change the
+    // document's base URL, and scroll the image in-view.
+    window.addEventListener("load", t.step_func(() => {
+      const base = document.querySelector('base');
+      base.href = '/invalid-url-where-no-subresources-exist/';
+      has_window_loaded = true;
+      below_viewport_img.element().scrollIntoView();
+    }));
+
+    below_viewport_img.promise.then(t.step_func_done(() => {
+      assert_true(has_window_loaded,
+                  "Below-viewport loading=lazy images do not block the " +
+                  "window load event");
+    }));
+
+    below_viewport_img.promise.catch(
+      t.unreached_func("The image request should not load relative to the " +
+                       "current (incorrect) base URL.")
+    );
+  }, "When a loading=lazy image is loaded, it loads relative to the " +
+     "document's base URL computed at parse-time.");
+</script>
+
+<body>
+  <div style="height:1000vh"></div>
+  <img id="below-viewport" src="image.png?base-url" loading="lazy"
+       onload="below_viewport_img.resolve()"
+       onerror="below_viewport_img.reject()">
+</body>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.base.must_come_before_link_or_script",
+      "message": "The “base” element must come before any “link” or “script” elements in the document.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 439,
+        "byte_start": 366,
+        "col": 3,
+        "line": 9
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.img.alt.missing",
+      "message": "An “img” element must have an “alt” attribute, except under certain conditions. For details, consult guidance on providing text alternatives for images.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 2109,
+        "byte_start": 1954,
+        "col": 3,
+        "line": 48
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-img-element/image-loading-lazy-base-url.html"
+}
+```

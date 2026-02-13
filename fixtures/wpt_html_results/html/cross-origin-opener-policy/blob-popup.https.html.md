@@ -1,0 +1,80 @@
+# html/cross-origin-opener-policy/blob-popup.https.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/cross-origin-opener-policy/blob-popup.https.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<title>Cross-Origin-Opener-Policy and a blob URL popup</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/common/get-host-info.sub.js></script>
+<script src=/common/utils.js></script>
+<script src=/common/dispatcher/dispatcher.js></script>
+<script>
+promise_test(async t => {
+  window.furtherPopup = null;
+
+  const responseToken = token();
+  const iframeToken = token();
+
+  const blobContents = `<script>
+const w = window.open("${get_host_info().HTTPS_REMOTE_ORIGIN}/html/cross-origin-opener-policy/resources/coop-coep.py?coop=x&coep=x&responseToken=${responseToken}&iframeToken=${iframeToken}", "${responseToken}");
+window.opener.furtherPopup = w;
+<\/script>`;
+  const blob = new Blob([blobContents], { type: "text/html" });
+  const blobURL = URL.createObjectURL(blob);
+  const popup = window.open(blobURL);
+  t.add_cleanup(async () => {
+    // Close the popups once the test is complete.
+    // The browsing context of the second popup is closed hence use the
+    //  broadcast channel to trigger the closure.
+    await send(iframeToken, "close");
+    popup.close();
+  });
+
+  let popupOnloadHappened = false;
+  popup.onload = t.step_func(() => {
+    assert_equals(popup.opener, window);
+    assert_equals(popup.location.href, blobURL);
+    assert_equals(popup.document.URL, blobURL);
+    assert_equals(popup.origin, window.origin);
+    popupOnloadHappened = true;
+  });
+
+  const data = JSON.parse(await receive(responseToken));
+
+  assert_true(popupOnloadHappened);
+  assert_equals(data.name.length, 0);
+  assert_false(data.opener);
+  assert_true(furtherPopup.closed);
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/cross-origin-opener-policy/blob-popup.https.html"
+}
+```

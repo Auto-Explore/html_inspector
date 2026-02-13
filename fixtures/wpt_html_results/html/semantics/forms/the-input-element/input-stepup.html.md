@@ -1,0 +1,173 @@
+# html/semantics/forms/the-input-element/input-stepup.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/forms/the-input-element/input-stepup.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>StepUp() method of HTMLInputElement</title>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+        <link rel="author" title="Simon Wülker" href="mailto:simon.wuelker@arcor.de">
+        <link rel="help" href="https://html.spec.whatwg.org/multipage/input.html#the-step-attribute">
+    </head>
+    <body>
+        <script>
+            const INPUT_TYPES_THAT_CANT_STEP = [
+              "button",
+              "checkbox",
+              "color",
+              "email",
+              "file",
+              "hidden",
+              "image",
+              "password",
+              "radio",
+              "reset",
+              "search",
+              "submit",
+              "tel",
+              "text",
+              "url"
+            ];
+            const INPUT_TYPES_THAT_CAN_STEP = [
+              "date",
+              "datetime-local",
+              "month",
+              "number",
+              "range",
+              "time",
+              "week",
+            ];
+
+            for (input_type of INPUT_TYPES_THAT_CANT_STEP) {
+              test(() => {
+                let input = document.createElement("input");
+                input.setAttribute("type", input_type);
+                assert_throws_dom("InvalidStateError", () => {
+                  input.stepUp();
+                });
+              }, "Calling stepUp on input type=" + input_type + " should throw a DOMException")
+            }
+
+            test(() => {
+              let input = document.createElement("input");
+              input.setAttribute("type", "number");
+              input.setAttribute("step", "any");
+              assert_throws_dom("InvalidStateError", () => {
+                input.stepUp();
+              });
+            }, "Calling stepUp when the step attribute is \"any\" should throw a DOMException")
+
+            const DEFAULT_STEP_SIZES = {
+              "date": 1,
+              "datetime-local": 60,
+              "month": 1,
+              "number": 1,
+              "time": 60,
+              "range": 1,
+              "week": 1,
+            };
+            const STEP_SCALE_FACTORS = {
+              "date": 86400000,
+              "datetime-local": 1000,
+              "month": 1,
+              "number": 1,
+              "range": 1,
+              "time": 1000,
+              "week": 604800000,
+            };
+            for (const input_type of INPUT_TYPES_THAT_CAN_STEP) {
+              const default_step_size = DEFAULT_STEP_SIZES[input_type];
+              const step_scale_factor = STEP_SCALE_FACTORS[input_type];
+
+              // Some input types (like "week") can't be reset with
+              // valueAsNumber=0
+              test(() => {
+                let input = document.createElement("input");
+                input.setAttribute("type", input_type);
+                input.stepUp();
+
+                const previous = input.valueAsNumber;
+                input.stepUp();
+                assert_equals(input.valueAsNumber, previous + default_step_size * step_scale_factor);
+              }, "Step delta from stepUp on input type=" + input_type + " with no step attribute");
+
+              for (step of ["0", "-2", "bogus"]) {
+                test(() => {
+                  let input = document.createElement("input");
+                  input.setAttribute("type", input_type);
+                  input.setAttribute("step", step);
+                  input.stepUp();
+
+                  const previous = input.valueAsNumber;
+                  input.stepUp();
+                  assert_equals(input.valueAsNumber, previous + default_step_size * step_scale_factor);
+                }, "Step delta from stepUp on input type=" + input_type + " with step=" + step);
+              }
+
+              test(() => {
+                let input = document.createElement("input");
+                input.setAttribute("type", input_type);
+                input.setAttribute("step", "2");
+                input.stepUp();
+
+                const previous = input.valueAsNumber;
+                input.stepUp();
+                assert_equals(input.valueAsNumber, previous + 2 * step_scale_factor);
+              }, "Step delta from stepUp on input type=" + input_type + " with step=2");
+            }
+
+            test(() => {
+              let input = document.createElement("input");
+              input.setAttribute("type", "number");
+              input.valueAsNumber = 0;
+              input.min = 10;
+              input.max = 5;
+              input.stepUp();
+              assert_equals(input.valueAsNumber, 0);
+            }, "stepUp should do nothing if the input minimum is larger than the input maximum")
+
+            test(() => {
+              let input = document.createElement("input");
+              input.setAttribute("type", "number");
+              input.valueAsNumber = 0;
+              input.step = 3;
+              input.max = 7;
+              input.stepUp(3);
+              assert_equals(input.valueAsNumber, 6);
+            }, "stepUp should clamp to the input maximum");
+        </script>
+    </body>
+
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/forms/the-input-element/input-stepup.html"
+}
+```

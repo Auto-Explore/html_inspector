@@ -1,0 +1,256 @@
+# html/semantics/popovers/toggleevent-interface.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/popovers/toggleevent-interface.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="author" href="mailto:masonf@chromium.org">
+<link rel=help href="https://open-ui.org/components/popover.research.explainer">
+<link rel=help href="https://html.spec.whatwg.org/multipage/popover.html">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<script>
+test(function() {
+  var event = new ToggleEvent("");
+  assert_true(event instanceof window.ToggleEvent);
+}, "the event is an instance of ToggleEvent");
+
+test(function() {
+  var event = new ToggleEvent("");
+  assert_true(event instanceof window.Event);
+}, "the event inherts from Event");
+
+test(function() {
+  assert_throws_js(TypeError, function() {
+    new ToggleEvent();
+  }, 'First argument (type) is required, so was expecting a TypeError.');
+}, 'Missing type argument');
+
+test(function() {
+  var event = new ToggleEvent("test");
+  assert_equals(event.type, "test");
+}, "type argument is string");
+
+test(function() {
+  var event = new ToggleEvent(null);
+  assert_equals(event.type, "null");
+}, "type argument is null");
+
+test(function() {
+  var event = new ToggleEvent(undefined);
+  assert_equals(event.type, "undefined");
+}, "event type set to undefined");
+
+test(function() {
+  var event = new ToggleEvent("test");
+  assert_equals(event.oldState, "");
+}, "oldState has default value of empty string");
+
+test(function() {
+  var event = new ToggleEvent("test");
+  assert_readonly(event, "oldState", "readonly attribute value");
+}, "oldState is readonly");
+
+test(function() {
+  var event = new ToggleEvent("test");
+  assert_equals(event.newState, "");
+}, "newState has default value of empty string");
+
+test(function() {
+  var event = new ToggleEvent("test");
+  assert_readonly(event, "newState", "readonly attribute value");
+}, "newState is readonly");
+
+test(function() {
+  var event = new ToggleEvent("test", null);
+  assert_equals(event.oldState, "");
+  assert_equals(event.newState, "");
+}, "ToggleEventInit argument is null");
+
+test(function() {
+  var event = new ToggleEvent("test", undefined);
+  assert_equals(event.oldState, "");
+  assert_equals(event.newState, "");
+}, "ToggleEventInit argument is undefined");
+
+test(function() {
+  var event = new ToggleEvent("test", {});
+  assert_equals(event.oldState, "");
+  assert_equals(event.newState, "");
+}, "ToggleEventInit argument is empty dictionary");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: "sample"});
+  assert_equals(event.oldState, "sample");
+}, "oldState set to 'sample'");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: undefined});
+  assert_equals(event.oldState, "");
+}, "oldState set to undefined");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: null});
+  assert_equals(event.oldState, "null");
+}, "oldState set to null");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: false});
+  assert_equals(event.oldState, "false");
+}, "oldState set to false");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: true});
+  assert_equals(event.oldState, "true");
+}, "oldState set to true");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: 0.5});
+  assert_equals(event.oldState, "0.5");
+}, "oldState set to a number");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: []});
+  assert_equals(event.oldState, "");
+}, "oldState set to []");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: [1, 2, 3]});
+  assert_equals(event.oldState, "1,2,3");
+}, "oldState set to [1, 2, 3]");
+
+test(function() {
+  var event = new ToggleEvent("test", {oldState: {sample: 0.5}});
+  assert_equals(event.oldState, "[object Object]");
+}, "oldState set to an object");
+
+test(function() {
+  var event = new ToggleEvent("test",
+      {oldState: {valueOf: function () { return 'sample'; }}});
+  assert_equals(event.oldState, "[object Object]");
+}, "oldState set to an object with a valueOf function");
+
+test(function() {
+  var eventInit = {oldState: "sample",newState: "sample2"};
+  var event = new ToggleEvent("test", eventInit);
+  assert_equals(event.oldState, "sample");
+  assert_equals(event.newState, "sample2");
+}, "ToggleEventInit properties set value");
+
+test(function() {
+  var eventInit = {oldState: "open",newState: "closed"};
+  var event = new ToggleEvent("beforetoggle", eventInit);
+  assert_equals(event.oldState, "open");
+  assert_equals(event.newState, "closed");
+}, "ToggleEventInit properties set value 2");
+
+test(function() {
+  var eventInit = {oldState: "closed",newState: "open"};
+  var event = new ToggleEvent("toggle", eventInit);
+  assert_equals(event.oldState, "closed");
+  assert_equals(event.newState, "open");
+}, "ToggleEventInit properties set value 3");
+
+test(function() {
+  var eventInit = {oldState: "open",newState: "open"};
+  var event = new ToggleEvent("beforetoggle", eventInit);
+  assert_equals(event.oldState, "open");
+  assert_equals(event.newState, "open");
+}, "ToggleEventInit properties set value 4");
+
+test(function() {
+  const div = document.createElement('div');
+  const eventInit = {source: div};
+  const event = new ToggleEvent('beforetoggle', eventInit);
+  assert_equals(event.source, div);
+}, 'ToggleEventInit with source.');
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: "sample"});
+  assert_equals(event.newState, "sample");
+}, "newState set to 'sample'");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: undefined});
+  assert_equals(event.newState, "");
+}, "newState set to undefined");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: null});
+  assert_equals(event.newState, "null");
+}, "newState set to null");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: false});
+  assert_equals(event.newState, "false");
+}, "newState set to false");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: true});
+  assert_equals(event.newState, "true");
+}, "newState set to true");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: 0.5});
+  assert_equals(event.newState, "0.5");
+}, "newState set to a number");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: []});
+  assert_equals(event.newState, "");
+}, "newState set to []");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: [1, 2, 3]});
+  assert_equals(event.newState, "1,2,3");
+}, "newState set to [1, 2, 3]");
+
+test(function() {
+  var event = new ToggleEvent("test", {newState: {sample: 0.5}});
+  assert_equals(event.newState, "[object Object]");
+}, "newState set to an object");
+
+test(function() {
+  var event = new ToggleEvent("test",
+      {newState: {valueOf: function () { return 'sample'; }}});
+  assert_equals(event.newState, "[object Object]");
+}, "newState set to an object with a valueOf function");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/popovers/toggleevent-interface.html"
+}
+```

@@ -54,10 +54,11 @@ impl Rule for MetaHttpEquivCharset {
             return;
         };
         let charset_part = &content[idx + "charset=".len()..];
-        let charset = charset_part
+        let raw_charset = charset_part
             .split_once(';')
             .map_or(charset_part, |(before, _)| before)
             .trim();
+        let charset = normalize_charset_label(raw_charset);
 
         if charset.is_empty() {
             out.push(Message::new(
@@ -84,11 +85,34 @@ impl Rule for MetaHttpEquivCharset {
     }
 }
 
+fn normalize_charset_label(label: &str) -> &str {
+    let mut s = label.trim();
+    // `content='charset=\"windows-1251'` is used in WPT to exercise edge cases; strip a leading
+    // quote so we treat the label itself consistently.
+    if let Some(rest) = s.strip_prefix('"').or_else(|| s.strip_prefix('\'')) {
+        s = rest.trim_start();
+    }
+
+    let end = s
+        .find(|c: char| c == '"' || c == '\'' || c.is_ascii_whitespace())
+        .unwrap_or(s.len());
+    s[..end].trim()
+}
+
 fn is_supported_charset(name: &str) -> bool {
     let n = name.trim();
     n.eq_ignore_ascii_case("utf-8")
         || n.eq_ignore_ascii_case("utf8")
+        || n.eq_ignore_ascii_case("gbk")
         || n.eq_ignore_ascii_case("iso-8859-1")
+        || n.eq_ignore_ascii_case("iso-8859-5")
+        || n.eq_ignore_ascii_case("iso-8859-8")
+        || n.eq_ignore_ascii_case("iso-8859-15")
+        || n.eq_ignore_ascii_case("koi8-r")
+        || n.eq_ignore_ascii_case("windows-1250")
+        || n.eq_ignore_ascii_case("windows-1251")
         || n.eq_ignore_ascii_case("windows-1252")
+        || n.eq_ignore_ascii_case("windows-1253")
+        || n.eq_ignore_ascii_case("windows-1254")
         || n.eq_ignore_ascii_case("us-ascii")
 }

@@ -1,0 +1,63 @@
+# html/browsers/browsing-the-web/navigating-across-documents/anchor-fragment-form-submit.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/browsing-the-web/navigating-across-documents/anchor-fragment-form-submit.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="author" title="Joey Arhar" href="mailto:jarhar@chromium.org">
+<link rel="help" href="https://html.spec.whatwg.org/C/#following-hyperlinks">
+<title>Anchor element with onclick form submission and href to fragment</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!-- When an anchor element has an onclick handler which submits a form,
+  the anchor's navigation should occur instead of the form's navigation.
+  However, if the anchor has an href which is just a fragment like "#",
+  then the form should be submitted. Many sites rely on this behavior. -->
+
+<iframe name="test"></iframe>
+<form target="test" action="resources/form.html"></form>
+<a id="anchor" target="test" onclick="document.forms[0].submit()" href="#">Test</a>
+
+<script>
+async_test(t => {
+  const anchor = document.getElementById('anchor');
+  t.step(() => anchor.click());
+  window.onmessage = t.step_func(event => {
+    if (typeof event.data === 'string' && event.data.includes('navigation')) {
+      assert_equals(event.data, 'form navigation');
+      t.done();
+    }
+  });
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/browsing-the-web/navigating-across-documents/anchor-fragment-form-submit.html"
+}
+```

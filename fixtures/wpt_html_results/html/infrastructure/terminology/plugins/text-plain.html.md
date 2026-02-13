@@ -1,0 +1,58 @@
+# html/infrastructure/terminology/plugins/text-plain.html
+
+Counts:
+- errors: 0
+- warnings: 0
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/infrastructure/terminology/plugins/text-plain.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title id='title'>Media Types</title>
+    <link rel="author" title="Philippe Le Hegaret" href="mailto:plh@w3.org"/>
+    <link rel="help" href="https://html.spec.whatwg.org/multipage/#plugins"/>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+
+  <body>
+    <script>
+      var t = async_test("A user agent must not consider the type text/plain as having a registered plugin.");
+
+      window.onload =
+        t.step_func(function() {
+        assert_equals(document.getElementById("frameContext").contentDocument.body.firstChild.nodeName, "PRE");
+        t.done();
+      });
+    </script>
+
+    <h1>Test of plugin support</h1>
+    <p class='assert'>A user agent must not consider the types text/plain and application/octet-stream as having a registered plugin.</p>
+
+    <iframe id="frameContext" src="sample.txt"></iframe>
+
+
+    <div id="log">Running test...</div>
+
+  </body>
+</html>
+```
+
+```json
+{
+  "messages": [],
+  "source_name": "html/infrastructure/terminology/plugins/text-plain.html"
+}
+```

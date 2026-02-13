@@ -1,0 +1,100 @@
+# html/browsers/windows/embedded-opener-remove-frame.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/windows/embedded-opener-remove-frame.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<title>opener and discarded browsing contexts</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<div id=log></div>
+<iframe name=matchesastring></iframe>
+<script>
+function testOpener(t, otherW, thisW, discardOtherBC, isDiscardedFromATask) {
+  assert_equals(otherW.opener, thisW, "opener before removal");
+
+  const openerDesc = Object.getOwnPropertyDescriptor(otherW, "opener"),
+        openerGet = openerDesc.get;
+
+  assert_equals(openerGet(), thisW, "opener before removal via directly invoking the getter");
+  discardOtherBC();
+  if (isDiscardedFromATask) {
+    t.step_timeout(() => {
+      testOpenerRemainder(t, otherW, openerDesc, openerGet);
+    }, 250);
+  } else {
+    testOpenerRemainder(t, otherW, openerDesc, openerGet);
+  }
+}
+
+function testOpenerRemainder(t, otherW, openerDesc, openerGet) {
+  assert_equals(otherW.opener, null, "opener after removal");
+  assert_equals(openerGet(), null, "opener after removal via directly invoking the getter");
+
+  otherW.opener = null;
+  assert_equals(openerGet(), null, "opener after setting it null via directly invoking the getter");
+  const openerDescNull = Object.getOwnPropertyDescriptor(otherW, "opener");
+  assert_not_equals(openerDescNull, openerDesc);
+  assert_object_equals(openerDescNull, openerDesc);
+
+  otherW.opener = "immaterial";
+  assert_equals(openerGet(), null, "opener after setting it \"immaterial\" via directly invoking the getter");
+  const openerDescImmaterial = Object.getOwnPropertyDescriptor(otherW, "opener");
+  assert_equals(openerDescImmaterial.value, "immaterial");
+  assert_true(openerDescImmaterial.writable);
+  assert_true(openerDescImmaterial.enumerable);
+  assert_true(openerDescImmaterial.configurable);
+
+  t.done();
+}
+
+async_test(t => {
+  const frame = document.querySelector("iframe"),
+        frameW = frame.contentWindow;
+  frame.onload = t.step_func(() => {
+    // Firefox and Chrome/Safari load differently
+    if (frame.contentWindow.location.href === "about:blank") {
+      return;
+    }
+
+    testOpener(t, frameW, window, () => frame.remove(), false);
+  });
+  window.open("/common/blank.html", "matchesastring");
+}, "opener of discarded nested browsing context");
+
+async_test(t => {
+  const popupW = window.open("/common/blank.html");
+  popupW.onload = t.step_func(() => {
+    testOpener(t, popupW, window, () => popupW.close(), true);
+  });
+}, "opener of discarded auxiliary browsing context");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/windows/embedded-opener-remove-frame.html"
+}
+```

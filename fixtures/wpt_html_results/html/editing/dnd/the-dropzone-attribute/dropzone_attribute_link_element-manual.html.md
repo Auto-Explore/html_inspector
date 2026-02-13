@@ -1,0 +1,82 @@
+# html/editing/dnd/the-dropzone-attribute/dropzone_attribute_link_element-manual.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/editing/dnd/the-dropzone-attribute/dropzone_attribute_link_element-manual.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>HTML Test: dropzone_attribute_element_link</title>
+    <link rel='author' title='Intel' href='http://www.intel.com'>
+    <link rel='help' href='https://html.spec.whatwg.org/multipage/#the-dropzone-attribute'>
+    <script src='/resources/testharness.js'></script>
+    <script src='/resources/testharnessreport.js'></script>
+    <style>
+      #drop {
+        border: 2px solid black;
+        width: 100px;
+        height: 100px;
+        padding: 20px;
+      }
+      div { margin: 20px 0px;}
+    </style>
+  </head>
+
+  <body>
+    <div>Select and drag the all the text of link below to rectangular box.</div>
+    <a href="http://w3.org" title="World Wide Web Consortium">w3.org</a>
+    <div id='drop' dropzone='link string:text/plain'></div>
+    <div id='log'> </div>
+
+    <script>
+      var drop;
+      setup(function() {
+          drop = document.querySelector('#drop');
+      }, {explicit_done: true, explicit_timeout: true});
+
+      on_event(drop, 'drop', function(event) {
+
+        test(function() {
+          assert_equals(event.dataTransfer.dropEffect, 'link',  'dropzone content attribute value is "link"');
+        }, 'dropzone content attribute value is "link"');
+
+        test(function() {
+          var item = item = event.dataTransfer.items[0];
+          assert_equals(event.dataTransfer.getData(item.type), 'w3.org',  'The dropped link value is "w3.org"');
+        }, 'The dropped link value is "w3.org"');
+
+        done();
+      });
+    </script>
+  </body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/editing/dnd/the-dropzone-attribute/dropzone_attribute_link_element-manual.html"
+}
+```

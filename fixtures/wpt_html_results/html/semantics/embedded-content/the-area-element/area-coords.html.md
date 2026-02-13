@@ -1,0 +1,93 @@
+# html/semantics/embedded-content/the-area-element/area-coords.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-area-element/area-coords.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset=utf-8>
+<title>HTMLAreaElement coords parsing</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<style>
+ body { margin: 0 }
+</style>
+<img src=/images/threecolors.png usemap=#x id=img width=300 height=300>
+<map name=x><area id=area></map>
+<script src=support/hit-test.js></script>
+<script>
+tests = [
+  {desc: 'COMMA', shape: 'rect', coords: "2,2,10,10", hit: hitRect},
+  {desc: 'SEMICOLON', shape: 'rect', coords: "2;2;10;10", hit: hitRect},
+  {desc: 'SPACE', shape: 'rect', coords: "2 2 10 10", hit: hitRect},
+  {desc: 'TAB', shape: 'rect', coords: "2\t2\t10\t10", hit: hitRect},
+  {desc: 'FORM FEED', shape: 'rect', coords: "2\f2\f10\f10", hit: hitRect},
+  {desc: 'LINE FEED', shape: 'rect', coords: "2\n2\n10\n10", hit: hitRect},
+  {desc: 'CARRIGAGE RETURN', shape: 'rect', coords: "2\r2\r10\r10", hit: hitRect},
+  {desc: 'LINE TABULATION', shape: 'rect', coords: "2\u000b2\u000b10\u000b10", hit: hitNone},
+  {desc: 'LINE NEXT', shape: 'rect', coords: "2\u00852\u008510\u008510", hit: hitNone},
+  {desc: 'EN QUAD', shape: 'rect', coords: "2\u20002\u200010\u200010", hit: hitNone},
+  {desc: 'abc between numbers', shape: 'rect', coords: "2a2b20c20,2,10,10", hit: hitRect},
+  {desc: 'COLON between numbers', shape: 'rect', coords: "2:2:20:20,2,10,10", hit: hitRect},
+  {desc: 'U+0000 between numbers', shape: 'rect', coords: "2\u00002\u000020\u000020,2,10,10", hit: hitRect},
+  {desc: 'leading COMMA', shape: 'rect', coords: ",2,2,10,10", hit: hitRect},
+  {desc: 'leading SPACE', shape: 'rect', coords: " 2,2,10,10", hit: hitRect},
+  {desc: 'leading SEMICOLON', shape: 'rect', coords: ";2,2,10,10", hit: hitRect},
+  {desc: 'trailing COMMA', shape: 'rect', coords: "2,2,10,", hit: hitNone},
+  {desc: 'trailing SPACE', shape: 'rect', coords: "2,2,10 ", hit: hitNone},
+  {desc: 'trailing SEMICOLON', shape: 'rect', coords: "2,2,10;", hit: hitNone},
+  {desc: 'PERCENT', shape: 'rect', coords: "2%,2%,10%,10%", hit: hitRect},
+  {desc: 'CSS units', shape: 'rect', coords: "2in,2in,10cm,10cm", hit: hitRect},
+  {desc: 'float', shape: 'rect', coords: "1.4,1.4,10,10", hit: hitRect},
+  {desc: 'number starting with PERIOD', shape: 'rect', coords: ".4,.4,10,10", hit: [[area, 1, 1], [img, 0, 0]]},
+  {desc: 'sci-not', shape: 'rect', coords: "2,2,1e1,1e1", hit: hitRect},
+  {desc: 'leading/trailing garbage', shape: 'rect', coords: "='2,2,10,10' ", hit: hitRect},
+  {desc: 'non-ascii garbage', shape: 'rect', coords: "“2,2,10,10\"", hit: hitRect},
+  {desc: 'URL garbage with number', shape: 'rect', coords: "2,2,10ls/spain/holidays/regions/10/Canary+Islands/Canary+Islands.html", hit: hitNone},
+  {desc: 'consecutive COMMAs', shape: 'rect', coords: "2,,10,10", hit: hitNone},
+  {desc: 'consecutive SPACEs', shape: 'rect', coords: "2  10,10", hit: hitNone},
+  {desc: 'consecutive SEMICOLONs', shape: 'rect', coords: "2;;10,10", hit: hitNone},
+  {desc: 'several consecutive separators', shape: 'rect', coords: ",,2;,;2,;,10 \t\r\n10;;", hit: hitRect},
+  {desc: 'one too many numbers, trailing COMMA', shape: 'poly', coords: "100,100,120,100,100,120,300,", hit: hitPoly},
+];
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.img.alt.missing",
+      "message": "An “img” element must have an “alt” attribute, except under certain conditions. For details, consult guidance on providing text alternatives for images.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 293,
+        "byte_start": 222,
+        "col": 1,
+        "line": 9
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-area-element/area-coords.html"
+}
+```

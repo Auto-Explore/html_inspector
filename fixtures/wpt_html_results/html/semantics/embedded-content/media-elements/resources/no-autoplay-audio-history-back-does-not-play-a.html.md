@@ -1,0 +1,99 @@
+# html/semantics/embedded-content/media-elements/resources/no-autoplay-audio-history-back-does-not-play-a.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/media-elements/resources/no-autoplay-audio-history-back-does-not-play-a.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset="utf-8">
+<title>History back page A</title>
+<script src="/resources/testharness.js"></script>
+
+<body>
+  <audio id="a" preload="auto" src="/media/sound_5.oga"></audio>
+  <script>
+    "use strict";
+
+    const audio = document.getElementById("a");
+
+    let playCount = 0;
+    let playingCount = 0;
+    audio.addEventListener("play", () => playCount++);
+    audio.addEventListener("playing", () => playingCount++);
+
+    function sleep(ms) {
+      return new Promise(resolve => step_timeout(resolve, ms));
+    }
+
+    function post(type, extra) {
+      if (!window.parent) return;
+      window.parent.postMessage({ type, ...(extra || {}) }, "*");
+    }
+
+    async function maybeRunCheck() {
+      if (!parent.visitedA) {
+        parent.visitedA = true;
+        post("ready_a");
+        return;
+      }
+
+
+      const t0 = audio.currentTime;
+      await sleep(1000);
+
+      const pass =
+        audio.paused &&
+        playCount === 0 &&
+        playingCount === 0 &&
+        (audio.currentTime - t0) <= 0.05;
+
+      post("result", {
+        pass,
+        details: {
+          paused: audio.paused,
+          playCount,
+          playingCount,
+          t0,
+          t1: audio.currentTime
+        }
+      });
+    }
+
+    // We need both load and pageshow because they cover different navigation paths.
+    // load fires on the initial fresh navigation to A (needed to post ready_a),
+    // but on history.back() A may be restored from Bfcache, in which case load
+    // typically does not fire again while pageshow does. If either handler is
+    // removed, maybeRunCheck() can be skipped in one of those cases, so A never
+    // posts result and the parent times out waiting for it.
+    window.addEventListener("pageshow", () => { void maybeRunCheck(); });
+    window.addEventListener("load", () => { void maybeRunCheck(); });
+  </script>
+</body>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/media-elements/resources/no-autoplay-audio-history-back-does-not-play-a.html"
+}
+```

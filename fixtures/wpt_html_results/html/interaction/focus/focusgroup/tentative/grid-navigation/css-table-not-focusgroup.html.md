@@ -1,0 +1,66 @@
+# html/interaction/focus/focusgroup/tentative/grid-navigation/css-table-not-focusgroup.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/interaction/focus/focusgroup/tentative/grid-navigation/css-table-not-focusgroup.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML Test: focusgroup - Validate that Focusgroup doesn't work on CSS table when the focusgroup attribute is not present.</title>
+<link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+<link rel="help" href="https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/Focusgroup/explainer.md">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="../resources/focusgroup-utils.js"></script>
+
+<div style="display:table">
+  <div style="display:table-row">
+    <div id=r1c1 style="display:table-cell" tabindex=0>r1c1</div>
+    <div id=r1c2 style="display:table-cell" tabindex=0>r1c2</div>
+  </div>
+  <div style="display:table-row">
+    <div id=r2c1 style="display:table-cell" tabindex=0>r2c1</div>
+    <div id=r2c2 style="display:table-cell" tabindex=0>r2c2</div>
+  </div>
+</div>
+
+<script>
+  promise_test(async t => {
+    var r1c1 = document.getElementById("r1c1");
+
+    await focusAndKeyPress(r1c1, kArrowRight);
+    assert_equals(document.activeElement, r1c1);
+  }, "Validates that a CSS table that doesn't have the focusgroup=grid attribute set doesn't allow arrow-keys navigation");
+
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/interaction/focus/focusgroup/tentative/grid-navigation/css-table-not-focusgroup.html"
+}
+```

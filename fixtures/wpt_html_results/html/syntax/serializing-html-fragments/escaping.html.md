@@ -1,0 +1,123 @@
+# html/syntax/serializing-html-fragments/escaping.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/syntax/serializing-html-fragments/escaping.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Serialization of script-disabled documents should follow escaping rules</title>
+<link rel="author" href="mailto:masonf@chromium.org">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/parsing.html#serialising-html-fragments">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<body>
+
+<script>
+const html_escaped = '&amp;&nbsp;&lt;&gt;';
+const html_unescaped = '& <>';
+function getHtml(deEscapeParse) {
+  return `<noscript>${deEscapeParse ? html_escaped : html_unescaped}</noscript>`;
+}
+function testDoc(escapeSerialize, parsedNode) {
+  const node = parsedNode.firstChild;
+  const innerText = node.textContent;
+  assert_equals(innerText, html_unescaped, 'Content should be unescaped');
+  const serialized = node.innerHTML;
+  const expectation = escapeSerialize ? html_escaped : html_unescaped;
+  assert_equals(serialized, expectation, `Serialization ${escapeSerialize ? 'should' : 'should NOT'} re-escape <noscript> contents`);
+}
+
+test(() => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  div.innerHTML = getHtml(false);
+  testDoc(false, div);
+}, 'div.innerHTML');
+
+test(() => {
+  const div = document.createElement('div');
+  div.insertAdjacentHTML('afterbegin',getHtml(false));
+  testDoc(false, div);
+}, 'div.insertAdjacentHTML');
+
+test(() => {
+  const id = 'doc-write-1';
+  document.write(`<div id=${id} style="display:none">${getHtml(false)}</div>`);
+  testDoc(false, document.getElementById(id));
+}, 'document.write on main document');
+
+test(() => {
+  const doc = (new DOMParser()).parseFromString(`<body>${getHtml(true)}</body>`, 'text/html');
+  testDoc(true, doc.body);
+}, 'DOMParser.parseFromString');
+
+test(() => {
+  const template = document.createElement('template');
+  document.body.appendChild(template);
+  template.innerHTML = getHtml(true);
+  testDoc(true, template.content);
+}, 'template.innerHTML');
+
+test(() => {
+  const doc = document.implementation.createHTMLDocument('');
+  doc.body.innerHTML=`<pre>${getHtml(true)}</pre>`;
+  testDoc(true, doc.body.firstChild);
+}, 'document.implementation.createHTMLDocument and innerHTML');
+
+test(() => {
+  const doc = document.implementation.createHTMLDocument('');
+  let range = doc.createRange();
+  range.selectNode(doc.body);
+  const frag = range.createContextualFragment(getHtml(true));
+  testDoc(true, frag);
+}, 'document.implementation.createHTMLDocument and createContextualFragment');
+
+test(() => {
+  const id = 'doc-write-2';
+  const doc = document.implementation.createHTMLDocument('');
+  doc.write(`<div id=${id} style="display:none">${getHtml(false)}</div>`);
+  testDoc(true, doc.getElementById(id));
+}, 'document.implementation.createHTMLDocument and document.write');
+
+async_test((t) => {
+  let client = new XMLHttpRequest();
+  client.addEventListener('load', t.step_func_done(() => {
+    assert_true(client.status == 200 && client.responseXML != null);
+    testDoc(true, client.responseXML.body.firstChild);
+    t.done();
+  }));
+  client.open("GET", `data:text/html,<pre>${getHtml(true)}</pre>`);
+  client.responseType = 'document';
+  client.send();
+}, 'XMLHttpRequest');
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/syntax/serializing-html-fragments/escaping.html"
+}
+```

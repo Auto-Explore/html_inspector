@@ -1,0 +1,86 @@
+# html/browsers/origin/origin-keyed-agent-clusters/document-domain.sub.https.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/origin/origin-keyed-agent-clusters/document-domain.sub.https.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Setting document.domain does not change same-originness when origin-keyed</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!--
+  Other tests check that using document.domain doesn't allow cross-origin
+  access. This test ensures a different, more subtle property: that
+  origin-keying makes document.domain into a no-op in other ways.
+-->
+
+<iframe src="resources/frame.html"></iframe>
+<iframe src="//{{domains[www1]}}:{{location[port]}}/html/browsers/origin/origin-keyed-agent-clusters/resources/frame.html"></iframe>
+
+<script type="module">
+setup({ explicit_done: true });
+
+window.onload = () => {
+  test(() => {
+    // Normally, setting document.domain to itself would change the domain
+    // component of the origin. Since the iframe does *not* set document.domain,
+    // the two would then be considered cross-origin.
+    document.domain = document.domain;
+
+    // However, because we're origin-keyed, this shouldn't have any impact. The
+    // test fails if this throws, and passes if it succeeds.
+    frames[0].document;
+  }, "Setting document.domain must not change same-originness");
+
+  test(() => {
+    assert_throws_dom("SecurityError", () => {
+      document.domain = "{{hosts[][nonexistent]}}";
+    });
+  }, "The registrable domain suffix check must happen before the bail-out");
+
+  async_test(t => {
+    frames[1].postMessage({
+      type: "set document.domain",
+      newValue: "{{host}}"
+    }, "*");
+
+    window.onmessage = t.step_func_done(e => {
+      assert_equals(e.data.type, "new document.domain");
+      assert_equals(e.data.result, "{{domains[www1]}}");
+    });
+  }, "Having an origin-keyed subdomain child try to set document.domain " +
+     "must not change the document.domain value it sees");
+
+  done();
+};
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/origin/origin-keyed-agent-clusters/document-domain.sub.https.html"
+}
+```

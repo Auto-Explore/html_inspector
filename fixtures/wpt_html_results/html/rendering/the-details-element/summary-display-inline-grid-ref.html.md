@@ -1,0 +1,113 @@
+# html/rendering/the-details-element/summary-display-inline-grid-ref.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/rendering/the-details-element/summary-display-inline-grid-ref.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<link rel="author" title="Xing Xu" href="mailto:xing.xu@intel.com">
+<style>
+.grid-container {
+  display: inline-grid;
+  grid-template-columns: 200px 10px 0.3fr 10px 0.7fr;
+  grid-template-rows: auto 20px auto;
+}
+
+.grid-element {
+  background-color: #444;
+  color: #fff;
+  padding: 20px;
+  font-size: 2em;
+}
+
+.element-a {
+  grid-column-start: 1;
+  grid-column-end: ;
+  grid-row-start: 1;
+  grid-row-end: 2;
+  background: #6F9;
+}
+
+.element-b {
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 1;
+  grid-row-end: 2;
+  background: #69F;
+}
+
+.element-c {
+  grid-column-start: 5;
+  grid-column-end: 6;
+  grid-row-start: 1;
+  grid-row-end: 2;
+  background: #F69;
+}
+
+.element-d {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  background: #9F6;
+}
+
+.element-e {
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  background: #96F;
+}
+
+.element-f {
+  grid-column-start: 5;
+  grid-column-end: 6;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  background: #F96;
+}
+</style>
+<div class="grid-container">
+  <div class="grid-element element-a">A</div>
+  <div class="grid-element element-b">B</div>
+  <div class="grid-element element-c">C</div>
+  <div class="grid-element element-d">D</div>
+  <div class="grid-element element-e">E</div>
+  <div class="grid-element element-f">F</div>
+</div>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/rendering/the-details-element/summary-display-inline-grid-ref.html"
+}
+```

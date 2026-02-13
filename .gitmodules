@@ -1,0 +1,3 @@
+[submodule "wpt"]
+    path = fixtures/fixtures/wpt
+    url = https://github.com/web-platform-tests/wpt.git

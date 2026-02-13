@@ -1,0 +1,104 @@
+# html/dom/elements/global-attributes/dir_auto-R-ref.html
+
+Counts:
+- errors: 1
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/dom/elements/global-attributes/dir_auto-R-ref.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>HTML Test: dir=auto, start with R</title>
+    <link rel="author" title="Matitiahu Allouche" href="mailto:matitiahu.allouche@google.com" />
+    <link rel="author" title="Oren Roth" href="mailto:oren.roth@gmail.com" />
+    <link rel="author" title="HTML5 bidi test WG" href="mailto:html5bidi@googlegroups.com" />
+    <link rel="help" href="https://html.spec.whatwg.org/multipage/#the-dir-attribute" />
+    <meta name="assert" content="
+      When dir='auto', the direction is set according to the first strong character
+      of the text.
+      In this test, it is the Hebrew letter Alef, thus the direction must be
+      resolved as RTL." />
+    <style>
+      input, textarea {
+        font-size:1em;
+      }
+      body {
+        font-size:2em;
+      }
+      .test, .ref {
+        border: medium solid gray;
+        width: 400px;
+        margin: 20px;
+      }
+      .comments {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="instructions"><p>Test passes if the two boxes below look exactly the same.</p></div>
+    <div class="comments">
+      Key to entities used below:
+      &#x05D0; - The Hebrew letter Alef (strongly RTL).
+      &#x05D1; - The Hebrew letter Bet (strongly RTL).
+      &#x05D2; - The Hebrew letter Gimel (strongly RTL).
+    </div>
+    </div>
+    <div class="test">
+      <div dir="ltr">
+        <p dir="rtl">&#x05D0;&#x05D1;&#x05D2;ABC.</p>
+      </div>
+      <div dir="rtl">
+        <p dir="rtl">&#x05D0;&#x05D1;&#x05D2;ABC.</p>
+      </div>
+    </div>
+    <div class="ref">
+      <div dir="ltr">
+        <p dir="rtl">&#x05D0;&#x05D1;&#x05D2;ABC.</p>
+      </div>
+      <div dir="rtl">
+        <p dir="rtl">&#x05D0;&#x05D1;&#x05D2;ABC.</p>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.parser.stray_end_tag",
+      "message": "Stray end tag “div”.",
+      "severity": "Error",
+      "span": {
+        "byte_end": 1363,
+        "byte_start": 1357,
+        "col": 5,
+        "line": 40
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/dom/elements/global-attributes/dir_auto-R-ref.html"
+}
+```

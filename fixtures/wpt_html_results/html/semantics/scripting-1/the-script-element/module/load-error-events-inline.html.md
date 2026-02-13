@@ -1,0 +1,95 @@
+# html/semantics/scripting-1/the-script-element/module/load-error-events-inline.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/scripting-1/the-script-element/module/load-error-events-inline.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<title>load/error events for inline module scripts</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../resources/load-error-events-helpers.js"></script>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#execute-the-script-block">
+</head>
+<script>
+"use strict";
+
+var test1_load = event_test('src, 200, parser-inserted, defer, no async', false, false);
+var test4_load = event_test('src, 200, parser-inserted, no defer, async', false, false);
+
+var test3_dynamic_load = event_test('src, 200, not parser-inserted, no defer, no async, no non-blocking', false, false);
+var test4_dynamic_load = event_test('src, 200, not parser-inserted, no defer, async', false, false);
+
+var test1_error = event_test('src, 404, parser-inserted, defer, no async', false, true);
+var test4_error = event_test('src, 404, parser-inserted, no defer, async', false, true);
+
+var test3_dynamic_error = event_test('src, 404, not parser-inserted, no defer, no async, no non-blocking', false, true);
+var test4_dynamic_error = event_test('src, 404, not parser-inserted, no defer, async', false, true);
+
+var script3_dynamic_load = document.createElement('script');
+script3_dynamic_load.setAttribute('type', 'module');
+script3_dynamic_load.onload = () => onLoad(test3_dynamic_load);
+script3_dynamic_load.onerror = () => onError(test3_dynamic_load);
+script3_dynamic_load.async = false;
+script3_dynamic_load.appendChild(document.createTextNode('onExecute(test3_dynamic_load);'));
+document.head.appendChild(script3_dynamic_load);
+
+var script3_dynamic_error = document.createElement('script');
+script3_dynamic_error.setAttribute('type', 'module');
+script3_dynamic_error.onload = () => onLoad(test3_dynamic_error);
+script3_dynamic_error.onerror = () => onError(test3_dynamic_error);
+script3_dynamic_error.async = false;
+script3_dynamic_error.appendChild(document.createTextNode('import "./not_found.js";'));
+document.head.appendChild(script3_dynamic_error);
+
+var script4_dynamic_load = document.createElement('script');
+script4_dynamic_load.setAttribute('type', 'module');
+script4_dynamic_load.onload = () => onLoad(test4_dynamic_load);
+script4_dynamic_load.onerror = () => onError(test4_dynamic_load);
+script4_dynamic_load.async = true;
+script4_dynamic_load.appendChild(document.createTextNode('onExecute(test4_dynamic_load);'));
+document.head.appendChild(script4_dynamic_load);
+
+var script4_dynamic_error = document.createElement('script');
+script4_dynamic_error.setAttribute('type', 'module');
+script4_dynamic_error.onload = () => onLoad(test4_dynamic_error);
+script4_dynamic_error.onerror = () => onError(test4_dynamic_error);
+script4_dynamic_error.async = true;
+script4_dynamic_error.appendChild(document.createTextNode('import "./not_found.js";'));
+document.head.appendChild(script4_dynamic_error);
+</script>
+
+<script onload="onLoad(test1_load);" onerror="onError(test1_load);" type="module">"use strict";onExecute(test1_load);</script>
+<script onload="onLoad(test4_load);" onerror="onError(test4_load);" type="module" async>"use strict";onExecute(test4_load);</script>
+<script onload="onLoad(test1_error);" onerror="onError(test1_error);" type="module">"use strict";import "./not_found.js";</script>
+<script onload="onLoad(test4_error);" onerror="onError(test4_error);" type="module" async>"use strict";import "./not_found.js";</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/scripting-1/the-script-element/module/load-error-events-inline.html"
+}
+```

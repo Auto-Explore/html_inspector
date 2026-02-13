@@ -1,0 +1,95 @@
+# html/cross-origin-embedder-policy/worker-inheritance.sub.https.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/cross-origin-embedder-policy/worker-inheritance.sub.https.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>Test that local scheme workers inherit COEP: require-corp from the creating document</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+  promise_test(async t => {
+    let sameOrigin = "{{location[server]}}";
+    let crossOrigin = "https://{{hosts[][www]}}:{{ports[https][1]}}";
+
+    let testHarness = await fetch(`${sameOrigin}/resources/testharness.js`)
+        .then(r => r.text());
+
+    // Test that fetching same-origin is allowed by COEP.
+    let same_origin_allowed_test = testName => `
+        promise_test(async t => {
+          return fetch("${sameOrigin}/common/blank.html", { mode: "no-cors" });
+        }, "${testName}: Same origin should be allowed.");
+    `;
+
+    // For data URLs, since everything is cross-origin in that case.
+    let same_origin_blocked_test = testName => `
+        promise_test(t => {
+          return promise_rejects_js(
+              t, TypeError,
+              fetch("${sameOrigin}/common/blank.html", { mode: "no-cors" }));
+        }, "${testName}: Same origin should be blocked.");
+    `;
+
+    // Test that fetching cross-origin is blocked by COEP.
+    let cross_origin_blocked_test = testName => `
+        promise_test(t => {
+          return promise_rejects_js(
+              t, TypeError,
+              fetch("${crossOrigin}/common/blank.html", { mode: "no-cors" }));
+        }, "${testName}: Cross origin should be blocked.");
+    `;
+
+    let blob_string = testName => testHarness +
+        same_origin_allowed_test(testName) +
+        cross_origin_blocked_test(testName) + "done();";
+
+    let data_string = testName => testHarness +
+        same_origin_blocked_test(testName) +
+        cross_origin_blocked_test(testName) + "done();";
+
+    let blob_url = context => {
+      let blob = new Blob([blob_string(`blob URL ${context}`)],
+                          { type: 'application/javascript' });
+      return URL.createObjectURL(blob);
+    };
+
+    await fetch_tests_from_worker(new Worker(blob_url("dedicated worker")));
+    await fetch_tests_from_worker(new SharedWorker(blob_url("shared worker")));
+
+    let data_url = context => `data:application/javascript,` +
+        `${encodeURIComponent(data_string("data URL " + context))}`;
+
+    await fetch_tests_from_worker(new Worker(data_url("dedicated worker")));
+    await fetch_tests_from_worker(new Worker(data_url("shared worker")));
+  });
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/cross-origin-embedder-policy/worker-inheritance.sub.https.html"
+}
+```

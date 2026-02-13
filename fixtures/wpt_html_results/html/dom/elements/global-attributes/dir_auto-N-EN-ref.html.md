@@ -1,0 +1,84 @@
+# html/dom/elements/global-attributes/dir_auto-N-EN-ref.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/dom/elements/global-attributes/dir_auto-N-EN-ref.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>HTML Test: dir=auto, start with N, then EN, then L</title>
+    <link rel="author" title="Matitiahu Allouche" href="mailto:matitiahu.allouche@google.com" />
+    <link rel="author" title="Oren Roth" href="mailto:oren.roth@gmail.com" />
+    <link rel="author" title="HTML5 bidi test WG" href="mailto:html5bidi@googlegroups.com" />
+    <link rel="help" href="https://html.spec.whatwg.org/multipage/#the-dir-attribute" />
+    <meta name="assert" content="
+      When dir='auto', the direction is set according to the first strong character
+      of the text, ignoring neutrals and numbers.
+      If there is no strong character, as in this test, the direction defaults to LTR." />
+    <style>
+      input, textarea {
+        font-size:1em;
+      }
+      body {
+        font-size:2em;
+      }
+      .test, .ref {
+        border: medium solid gray;
+        width: 400px;
+        margin: 20px;
+      }
+      .comments {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="instructions"><p>Test passes if the two boxes below look exactly the same.</p></div>
+    <div class="test">
+      <div dir="ltr">
+        <p dir="ltr">@123!</p>
+      </div>
+      <div dir="rtl">
+        <p dir="ltr">@123!</p>
+      </div>
+    </div>
+    <div class="ref">
+      <div dir="ltr">
+        <p dir="ltr">@123!</p>
+      </div>
+      <div dir="rtl">
+        <p dir="ltr">@123!</p>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/dom/elements/global-attributes/dir_auto-N-EN-ref.html"
+}
+```

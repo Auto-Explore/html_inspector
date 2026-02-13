@@ -1,0 +1,85 @@
+# html/rendering/non-replaced-elements/flow-content-0/slot-element-focusable.tentative.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/rendering/non-replaced-elements/flow-content-0/slot-element-focusable.tentative.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>CSS Test (Display): <slot> elements should be focusable</title>
+<link rel="author" title="L. David Baron" href="https://dbaron.org/">
+<link rel="author" title="Google" href="http://www.google.com/">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#flow-content-3">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/2632">
+<link rel="help" href="https://github.com/whatwg/html/issues/1837">
+<link rel="help" href="https://github.com/whatwg/html/pull/9425">
+<link rel="help" href="https://bugs.chromium.org/p/chromium/issues/detail?id=1366037">
+<!--
+
+  This requirement is not particularly clear from current specs,
+  so this test is tentative.  See issues above.
+
+-->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<body>
+
+<script>
+
+  function do_test(slot_style, description) {
+    test(
+      function() {
+        let host = document.createElement("div");
+        document.body.appendChild(host);
+        var root = host.attachShadow({mode:"open"});
+        root.innerHTML = `
+          <style>
+            slot       { --test-value: slot-not-focused; }
+            slot:focus { --test-value: slot-is-focused; }
+          </style>
+          <slot tabindex="1" style="${slot_style}"></slot>
+        `;
+        let slot = root.querySelector("slot");
+        let cs = getComputedStyle(slot);
+        assert_not_equals(root.activeElement, slot, "precondition");
+        assert_equals(cs.getPropertyValue("--test-value"), "slot-not-focused", "precondition (style)");
+        slot.focus();
+        assert_equals(root.activeElement, slot, "slot is now focused");
+        assert_equals(cs.getPropertyValue("--test-value"), "slot-is-focused", "slot is now focused (style)");
+        document.body.removeChild(host);
+      }, `slot element with ${description} should be focusable`);
+  }
+
+  do_test("display: block", "display: block");
+  do_test("", "default style");
+
+</script>
+
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/rendering/non-replaced-elements/flow-content-0/slot-element-focusable.tentative.html"
+}
+```

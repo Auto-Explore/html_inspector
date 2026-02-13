@@ -1,0 +1,74 @@
+# html/browsers/browsing-the-web/history-traversal/pagereveal/order-in-prerender-activation.https.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/browsing-the-web/history-traversal/pagereveal/order-in-prerender-activation.https.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>pagereveal event fires and in correct order on prerender activation</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering">
+<link rel="author" href="mailto:bokan@chromium.org">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="/speculation-rules/resources/utils.js"></script>
+<script src="/speculation-rules/prerender/resources/utils.js"></script>
+<script>
+setup(() => assertSpeculationRulesIsSupported());
+
+const uid = token();
+const initiator_url = `resources/order-in-prerender-activation-popup.html?uid=${uid}`;
+
+// This test opens a popup to an initiator page. That page then prerenders a
+// "prerendering" version of itself (by adding a `prerendering` query param)
+// and navigates itself to activate the prerender. The results are recorded and
+// sent back to this test harness.
+promise_test(async () => {
+  const channel = new PrerenderChannel('result', uid);
+  const test_done = new Promise(resolve => {
+     channel.addEventListener('message', e => resolve(e.data), { once: true });
+  });
+
+  window.open(initiator_url, '_blank', 'noopener');
+
+  const result = await test_done;
+
+  if (result.hasOwnProperty('fail')) {
+    assert_unreached(result.fail);
+  }
+
+  // The test records relevant event occurrences up to the second animation
+  // frame. Ensure their order and apparance is as expected.
+  const events_in_order = result.events.join(',');
+  assert_equals(events_in_order,
+      'pageshow,prerenderingchange,pagereveal,raf');
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/browsing-the-web/history-traversal/pagereveal/order-in-prerender-activation.https.html"
+}
+```

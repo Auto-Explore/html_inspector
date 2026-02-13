@@ -1,0 +1,89 @@
+# html/semantics/forms/the-input-element/pattern_attribute.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/forms/the-input-element/pattern_attribute.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>pattern attribute</title>
+<meta name=viewport content="width=device-width">
+<link rel="author" title="Fabrice Clari" href="mailto:f.clari@inno-group.com">
+<link rel="author" title="Dimitri Bocquet" href="mailto:Dimitri.Bocquet@mosquito-fp7.eu">
+<link rel="author" title="Mathias Bynens" href="https://mathiasbynens.be/">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#attr-input-pattern">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<h1><code>pattern</code> attribute</h1>
+<div style="display: none">
+  <input pattern="[a-z]{3}" value="abcd" id="basic">
+
+  <input pattern="a.b" value="a&#x1D306;b" id="unicode-code-points">
+  <input pattern="\p{ASCII_Hex_Digit}+" value="c0ff33" id="unicode-property">
+
+  <input pattern="\p{RGI_Emoji}+" value="&#x1F618;&#x1F48B;" id="unicode-property-of-strings">
+</div>
+<div id="log"></div>
+<script>
+  test(() => {
+    const input = document.querySelector("#basic");
+
+    assert_idl_attribute(input, "pattern");
+    assert_equals(input.pattern, "[a-z]{3}");
+
+    assert_inherits(input, "validity");
+    assert_false(input.validity.valid);
+    assert_true(input.validity.patternMismatch);
+
+    assert_true(input.matches(":invalid"));
+  }, "basic <input pattern> support");
+
+  test(() => {
+    const input = document.querySelector("#unicode-code-points");
+    assert_true(input.validity.valid);
+    assert_true(input.matches(":valid"));
+    assert_false(input.validity.patternMismatch);
+  }, "<input pattern> is Unicode code point-aware");
+
+  test(() => {
+    const input = document.querySelector("#unicode-property");
+    assert_true(input.validity.valid);
+    assert_true(input.matches(":valid"));
+    assert_false(input.validity.patternMismatch);
+  }, "<input pattern> supports Unicode property escape syntax");
+
+  test(() => {
+    const input = document.querySelector("#unicode-property-of-strings");
+    assert_true(input.validity.valid);
+    assert_true(input.matches(":valid"));
+    assert_false(input.validity.patternMismatch);
+  }, "<input pattern> supports Unicode property escape syntax for properties of strings");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/forms/the-input-element/pattern_attribute.html"
+}
+```

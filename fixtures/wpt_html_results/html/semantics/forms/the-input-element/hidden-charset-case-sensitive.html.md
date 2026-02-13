@@ -1,0 +1,71 @@
+# html/semantics/forms/the-input-element/hidden-charset-case-sensitive.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/forms/the-input-element/hidden-charset-case-sensitive.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="help" href="https://html.spec.whatwg.org/#hidden-state-(type=hidden):attr-fe-name-charset">
+<meta name="assert" content="special input@name value “_charset_” is case-sensitive">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<form target="child" method="GET" action="hidden-charset-case-sensitive-child.html">
+  <input type="hidden" name="_charset_">
+  <input type="hidden" name="_CHARSET_">
+  <input type="hidden" name="_ChArSeT_">
+  <input type="hidden" name="_charſet_">
+</form>
+<iframe name="child"></iframe>
+<script>
+// #attr-fe-name-charset only affects form submission, so we need to do that
+async_test(function() {
+  // we use a message rather than the iframe’s load event to avoid dealing with
+  // spurious load events that some browsers dispatch on the initial about:blank
+  addEventListener("message", this.step_func_done(event => {
+    const params = new URL(event.data).searchParams;
+
+    assert_equals(params.get("_charset_"), "UTF-8", "lowercase valid");
+    assert_equals(params.get("_CHARSET_"), "UTF-8", "uppercase valid");
+    assert_equals(params.get("_ChArSeT_"), "UTF-8", "mixed case invalid");
+    assert_equals(params.get("_charſet_"), "", "non-ASCII invalid");
+  }));
+
+  document.querySelector("form").submit();
+}, "keyword _charset_");
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/forms/the-input-element/hidden-charset-case-sensitive.html"
+}
+```

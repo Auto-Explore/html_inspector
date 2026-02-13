@@ -1,0 +1,59 @@
+# html/rendering/widgets/field-sizing-input-text-relayout.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/rendering/widgets/field-sizing-input-text-relayout.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<html class="reftest-wait">
+<link rel="help" href="https://drafts.csswg.org/css-ui-4/#field-sizing">
+<link rel=match href="field-sizing-input-text-relayout-ref.html">
+<script src="/common/reftest-wait.js"></script>
+<body>
+<input id="inputa" style="field-sizing: content" value=""><input>
+<script>
+requestAnimationFrame(() => {
+  inputa.value = '';
+  requestAnimationFrame(() => {
+    inputa.value = '12345';
+    takeScreenshot();
+  });
+});
+</script>
+</body>
+</html>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/rendering/widgets/field-sizing-input-text-relayout.html"
+}
+```

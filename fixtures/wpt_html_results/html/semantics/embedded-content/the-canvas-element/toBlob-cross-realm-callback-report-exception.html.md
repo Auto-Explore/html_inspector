@@ -1,0 +1,68 @@
+# html/semantics/embedded-content/the-canvas-element/toBlob-cross-realm-callback-report-exception.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-canvas-element/toBlob-cross-realm-callback-report-exception.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!doctype html>
+<meta charset=utf-8>
+<title>toBlob() reports the exception from its callback in the callback's global object</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<iframe srcdoc="<canvas></canvas>"></iframe>
+<iframe></iframe>
+<iframe></iframe>
+<script>
+setup({ allow_uncaught_exception: true });
+
+const onerrorCalls = [];
+window.onerror = () => { onerrorCalls.push("top"); };
+frames[0].onerror = () => { onerrorCalls.push("frame0"); };
+frames[1].onerror = () => { onerrorCalls.push("frame1"); };
+frames[2].onerror = () => { onerrorCalls.push("frame2"); };
+
+async_test(t => {
+  window.onload = t.step_func(() => {
+    const canvas = frames[0].document.querySelector("canvas");
+    canvas.toBlob(new frames[1].Function(`throw new parent.frames[2].Error("PASS");`));
+
+    // Wait until at least one `onerror` fires.
+    t.step_wait_func(() => onerrorCalls.length != 0);
+
+    // Wait for 25ms more in case one other `onerror` fires.  This is inherently
+    // flaky...
+    t.step_timeout(() => {
+      assert_array_equals(onerrorCalls, ["frame1"]);
+      t.done();
+    }, 25);
+  });
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-canvas-element/toBlob-cross-realm-callback-report-exception.html"
+}
+```

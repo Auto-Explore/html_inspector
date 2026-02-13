@@ -1,0 +1,231 @@
+# html/semantics/scripting-1/the-script-element/script-charset-01.html
+
+Counts:
+- errors: 0
+- warnings: 10
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/scripting-1/the-script-element/script-charset-01.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>Script @type: unknown parameters</title>
+  <link rel="author" title="askalski" href="github.com/askalski">
+  <link rel="help" href="https://html.spec.whatwg.org/multipage/#scriptingLanguages">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <div id="log"></div>
+
+  <!-- "Step1" tests -->
+  <!-- charset is set incorrectly via Content Type "text/javascript;charset=utf-8" in response
+      which has priority before a correct setting in "charset" attribute of script tag.
+   -->
+  <script type="text/javascript"
+    src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript%3Bcharset=utf-8" charset="windows-1250">
+  </script>
+  <script>
+  test(function() {
+    //these strings should not match, since the file charset is set incorrectly
+    assert_not_equals(window.getSomeString(), "śćążź");
+  });
+  </script>
+  <!-- charset is set correctly via Content Type "text/javascript;charset=utf-8" in response
+      which has priority before a incorrect setting in "charset" attribute of script tag.
+   -->
+
+  <script type="text/javascript"
+    src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript%3Bcharset=windows-1250" charset="utf-8">
+  </script>
+  <script>
+  //the charset is set correctly via Content Type "text/javascript;charset=windows-1250" in respones
+  test(function() {
+    assert_equals(window.getSomeString(), "śćążź");
+  });
+  </script>
+
+  <!-- end of step1 tests, now step2 tests -->
+  <!-- in this case, the response's Content Type does not bring charset information.
+  Second step takes block character encoding if available.-->
+  <script type="text/javascript"
+    src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript" charset="utf-8">
+  </script>
+  <script>
+  test(function() {
+    //these strings should not match, since the file charset is set incorrectly in "charset" tag of <script> above
+    assert_not_equals(window.getSomeString(), "śćążź");
+  });
+  </script>
+  <!-- charset is set correctly via Content Type "text/javascript;charset=utf-8" in response
+      which has priority before a incorrect setting in "charset" attribute of script tag.
+   -->
+
+  <script type="text/javascript"
+    src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript" charset="windows-1250">
+  </script>
+  <script>
+  //the charset is set correctly via content attribute in <script> above
+  test(function() {
+    assert_equals(window.getSomeString(), "śćążź");
+  });
+  </script>
+
+  <!-- end of step2 tests, now step3 tests -->
+  <!-- in this case, neither response's Content Type nor charset attribute bring correct charset information.
+  Third step takes this document's character encoding (declared correctly as UTF-8).-->
+  <script type="text/javascript"
+    src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript">
+  </script>
+  <script>
+  test(function() {
+    //these strings should not match, since the tested file is in windows-1250, and document is utf-8
+    assert_not_equals(window.getSomeString(), "śćążź");
+  });
+  </script>
+
+  <script type="text/javascript"
+    src="serve-with-content-type.py?fn=external-script-utf8.js&ct=text/javascript">
+  </script>
+  <script>
+  //these strings should match, both document and tested file are utf-8
+  test(function() {
+    assert_equals(window.getSomeString(), "śćążź");
+  });
+  </script>
+
+  <!-- the last portion of tests (step4) are in file script-charset-02.html
+
+</head>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 761,
+        "byte_start": 601,
+        "col": 3,
+        "line": 15
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.charset.utf8_only",
+      "message": "The only allowed value for the “charset” attribute for the “script” element is “utf-8”. (But the attribute is not needed and should be omitted altogether.)",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 761,
+        "byte_start": 601,
+        "col": 3,
+        "line": 15
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 1317,
+        "byte_start": 1157,
+        "col": 3,
+        "line": 28
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 1871,
+        "byte_start": 1734,
+        "col": 3,
+        "line": 41
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 2446,
+        "byte_start": 2302,
+        "col": 3,
+        "line": 54
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.charset.utf8_only",
+      "message": "The only allowed value for the “charset” attribute for the “script” element is “utf-8”. (But the attribute is not needed and should be omitted altogether.)",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 2446,
+        "byte_start": 2302,
+        "col": 3,
+        "line": 54
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 3007,
+        "byte_start": 2886,
+        "col": 3,
+        "line": 67
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.script.type.unnecessary",
+      "message": "The “type” attribute is unnecessary for JavaScript resources.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 3349,
+        "byte_start": 3235,
+        "col": 3,
+        "line": 77
+      }
+    },
+    {
+      "category": "Html",
+      "code": "html.tokenizer.eof_in_comment",
+      "message": "End of file inside comment.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 3626,
+        "byte_start": 3543,
+        "col": 3,
+        "line": 87
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/scripting-1/the-script-element/script-charset-01.html"
+}
+```

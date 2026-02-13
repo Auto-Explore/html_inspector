@@ -1,0 +1,100 @@
+# html/browsers/browsing-the-web/navigating-across-documents/javascript-url-security-check-multi-globals.sub.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/browsing-the-web/navigating-across-documents/javascript-url-security-check-multi-globals.sub.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Multi-globals: which one is the initiator for the javascript: URL security check?</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<body>
+<script>
+"use strict";
+document.domain = "{{hosts[][]}}";
+
+// These tests would fail if a different pair of origins were compared (see, e.g., the discussion in
+// https://github.com/whatwg/html/issues/6514).
+
+promise_test(async t => {
+  const iframe = await insertIframe(t);
+  const innerIframe =  iframe.contentDocument.querySelector("iframe");
+
+  // - incumbentNavigationOrigin = this page's origin, http://{{hosts[][]}}:{{ports[http][0]}}
+  // - iframe's current origin is this origin, http://{{hosts[][]}}:{{ports[http][0]}}.
+  // javascript:'s security check uses incumbentNavigationOrigin vs. the iframe's current origin
+  // so the check will pass and the result will get written.
+ innerIframe.src = "javascript:'test'";
+
+  await waitForLoad(innerIframe, "Failed to load the javascript: URL");
+
+  assert_equals(innerIframe.contentDocument.body.textContent, "test");
+}, "Using iframeEl.src");
+
+promise_test(async t => {
+  const iframe = await insertIframe(t);
+  const innerIframe =  iframe.contentDocument.querySelector("iframe");
+
+  // Here, https://html.spec.whatwg.org/#location-object-navigate sets the source browsing context to the
+  // incumbent settings object's browsing context. So incumbentNavigationOrigin = this page's origin,
+  // http://{{hosts[][]}}:{{ports[http][0]}}.
+  //
+  // So again, the check will pass.
+
+  iframe.contentWindow.frames[0].location.href = "javascript:'test'";
+
+  await waitForLoad(innerIframe, "Failed to load the javascript: URL");
+
+  assert_equals(innerIframe.contentDocument.body.textContent, "test");
+}, "Using location.href");
+
+function insertIframe(t) {
+  return new Promise((resolve, reject) => {
+    const iframe = document.createElement("iframe");
+    iframe.src = "http://{{hosts[][www]}}:{{ports[http][0]}}/html/browsers/browsing-the-web/navigating-across-documents/resources/multi-globals-subframe-1.sub.html";
+    iframe.onload = () => resolve(iframe);
+    iframe.onerror = () => reject(new Error("Failed to load the outer iframe"));
+
+    t.add_cleanup(() => iframe.remove());
+
+    document.body.append(iframe);
+  });
+}
+
+function waitForLoad(iframe, errorMessage = "Failed to load iframe") {
+  return new Promise((resolve, reject) => {
+    iframe.onload = () => resolve(iframe);
+    iframe.onerror = () => reject(new Error(errorMessage));
+  });
+}
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/browsing-the-web/navigating-across-documents/javascript-url-security-check-multi-globals.sub.html"
+}
+```

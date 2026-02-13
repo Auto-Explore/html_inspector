@@ -1,0 +1,106 @@
+# html/semantics/embedded-content/the-object-element/object-attributes.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-object-element/object-attributes.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML Test: object - attributes</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body onload="on_load()">
+<div id="log"></div>
+<form>
+  <object id="obj1" data="/common/blank.html" name="o" height="50" width="100"></object>
+  <object id="obj2" name="p" type="image/png"></object>
+  <object id="obj3" data="missing.html" name="o3" height="50" width="100"></object>
+</form>
+<script>
+  var obj1;
+  var obj2;
+  var obj3;
+  var t1 = async_test("object.contentWindow");
+  var t2 = async_test("object.contentWindow.name");
+  var t3 = async_test("object.width");
+  var t4 = async_test("object.height");
+
+  setup(function() {
+    obj1 = document.getElementById("obj1");
+    obj2 = document.getElementById("obj2");
+    obj3 = document.getElementById("obj3");
+  });
+
+  function on_load () {
+    t1.step(function() {
+      assert_not_equals(obj1.contentWindow, null, "The contentWindow of the object element should not be null.");
+      assert_equals(obj2.contentWindow, null, "The contentWindow of the object element should be null when it type attribute starts with 'image/'.");
+      assert_equals(obj3.contentWindow, null, "The contentWindow of the object element should be null as it is showing fallback content.");
+    });
+    t1.done()
+
+    t2.step(function() {
+      assert_equals(obj1.contentWindow.name, "o", "The contentWindow's name of the object element should be 'o'.");
+      obj1.setAttribute("name", "o1");
+      assert_equals(obj1.name, "o1", "The name of the object element should be 'o1'.");
+      assert_equals(obj1.contentWindow.name, "o", "The contentWindow's name of the object element should still be 'o'.");
+      obj1.removeAttribute("name");
+      assert_equals(obj1.name, "", "The name of the object element should be empty string.");
+      assert_equals(obj1.contentWindow.name, "o", "The contentWindow's name of the object element should still be 'o'.");
+    });
+    t2.done()
+
+    t3.step(function() {
+      assert_equals(getComputedStyle(obj1, null)["width"], "100px", "The width should be 100px.");
+    });
+    t3.done();
+
+    t4.step(function() {
+      assert_equals(getComputedStyle(obj1, null)["height"], "50px", "The height should be 50px.");
+    });
+    t4.done();
+  }
+</script>
+
+</body>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.object.data.missing",
+      "message": "Element “object” is missing required attribute “data”.",
+      "severity": "Warning",
+      "span": {
+        "byte_end": 442,
+        "byte_start": 398,
+        "col": 3,
+        "line": 11
+      }
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-object-element/object-attributes.html"
+}
+```

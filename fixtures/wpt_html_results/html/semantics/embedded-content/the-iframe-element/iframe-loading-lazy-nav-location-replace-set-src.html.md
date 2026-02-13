@@ -1,0 +1,60 @@
+# html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-nav-location-replace-set-src.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-nav-location-replace-set-src.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<title>Navigating iframe loading='lazy' and then setting src: location.replace</title>
+<iframe data-src="support/blank.htm?nav" loading="lazy" hidden></iframe>
+<script>
+const iframe = document.querySelector('iframe');
+const iframeLoaded = new Promise(resolve => {
+  iframe.onload = resolve;
+});
+iframe.contentWindow.location.replace(iframe.dataset.src);
+// Setting src invokes https://html.spec.whatwg.org/C#process-the-iframe-attributes
+iframe.src = 'support/blank.htm?src';
+iframe.hidden = false;
+</script>
+<!-- Loading testharness.js here is intentional to reproduce a bug in WebKit. -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+setup({single_test: true});
+iframeLoaded.then(() => {
+  // Need a timeout to detect failure when there are two navigations.
+  step_timeout(() => {
+    assert_equals(iframe.contentWindow.location.href, new URL("support/blank.htm?src", location.href).href);
+    done();
+  }, 1000);
+});
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-nav-location-replace-set-src.html"
+}
+```

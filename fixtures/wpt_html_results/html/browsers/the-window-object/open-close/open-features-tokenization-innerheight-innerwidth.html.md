@@ -1,0 +1,89 @@
+# html/browsers/the-window-object/open-close/open-features-tokenization-innerheight-innerwidth.html
+
+Counts:
+- errors: 0
+- warnings: 1
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/browsers/the-window-object/open-close/open-features-tokenization-innerheight-innerwidth.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML: window.open `features`: tokenization -- legacy size features `innerheight`, `innerwidth`</title>
+<meta name=timeout content=long>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/#apis-for-creating-and-navigating-browsing-contexts-by-name">
+
+<!-- user agents are not required to support open features other than `noopener`
+     and on some platforms position and size features don't make sense -->
+<meta name="flags" content="may" />
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/PrefixedPostMessage.js"></script>
+<script>
+var windowURL = 'resources/message-opener.html';
+var width = 'width=401,';
+var height = 'height=402,';
+
+[ 'innerwidth=401',
+  ' innerwidth = 401',
+  'innerwidth==401',
+  '\ninnerwidth= 401',
+  ',innerwidth=401,,',
+  'INNERWIDTH=401',
+  'innerWidth=401'
+].forEach((features, idx, arr) => {
+  async_test(t => {
+    var prefixedMessage = new PrefixedMessageTest();
+    prefixedMessage.onMessage(t.step_func_done((data, e) => {
+      e.source.close();
+      assert_equals(data.width, 401);
+    }));
+    var win = window.open(prefixedMessage.url(windowURL) + '&expected_innerWidth=401', '', height + features);
+  }, `${format_value(features)} should set width of opened window`);
+});
+
+[ 'innerheight=402',
+  ' innerheight = 402',
+  'innerheight==402',
+  '\ninnerheight= 402',
+  ',innerheight=402,,',
+  'INNERHEIGHT=402',
+  'innerHeight=402'
+].forEach((features, idx, arr) => {
+  async_test(t => {
+    var prefixedMessage = new PrefixedMessageTest();
+    prefixedMessage.onMessage(t.step_func_done((data, e) => {
+      e.source.close();
+      assert_equals(data.height, 402);
+    }));
+    var win = window.open(prefixedMessage.url(windowURL) + '&expected_innerHeight=402', '', width + features);
+  }, `${format_value(features)} should set height of opened window`);
+});
+
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/browsers/the-window-object/open-close/open-features-tokenization-innerheight-innerwidth.html"
+}
+```

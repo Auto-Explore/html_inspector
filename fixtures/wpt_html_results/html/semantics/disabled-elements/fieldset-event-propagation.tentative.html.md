@@ -1,0 +1,96 @@
+# html/semantics/disabled-elements/fieldset-event-propagation.tentative.html
+
+Counts:
+- errors: 0
+- warnings: 2
+- infos: 0
+
+```json
+{
+  "format_version": 1,
+  "file": "html/semantics/disabled-elements/fieldset-event-propagation.tentative.html",
+  "validated_html_truncated": false,
+  "validated_html_max_bytes": 16384
+}
+```
+
+Validated HTML:
+```html
+<!DOCTYPE html>
+<link rel=author href="mailto:jarhar@chromium.org">
+<link rel=help href="https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#concept-fe-disabled">
+<link rel=help href="https://github.com/whatwg/html/issues/5886#issuecomment-1460425364">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+
+<div id=target1parent>
+  <fieldset disabled id=target1fieldset>
+    <div id=target1child>hello world</div>
+  </fieldset>
+</div>
+
+<div id=target2parent>
+  <fieldset disabled id=target2fieldset>hello world</fieldset>
+</div>
+
+<script>
+  const clickers = {
+    "native click": target => test_driver.click(target),
+    "click()": target => target.click(),
+  };
+
+  for (const [clickerName, clicker] of Object.entries(clickers)) {
+    promise_test(async () => {
+      let target1parentClicked = false;
+      let target1childClicked = false;
+      let target1fieldsetClicked = false;
+      target1parent.onclick = () => target1parentClicked = true;
+      target1child.onclick = () => target1childClicked = true;
+      target1fieldset.onclick = () => target1fieldsetClicked = true;
+
+      await clicker(target1child);
+
+      assert_true(target1parentClicked, 'The parent of the fieldset should receive a click event.');
+      assert_true(target1childClicked, 'The child of the fieldset should receive a click event.');
+      assert_true(target1fieldsetClicked, 'The fieldset element should receive a click event.');
+    }, `Disabled fieldset elements should not prevent click event propagation from ${clickerName}`);
+
+    promise_test(async () => {
+      let target2parentClicked = false;
+      let target2fieldsetClicked = false;
+      target2parent.onclick = () => target2parentClicked = true;
+      target2fieldset.onclick = () => target2fieldsetClicked = true;
+
+      await clicker(target2fieldset);
+
+      assert_true(target2parentClicked, 'The parent of the fieldset should receive a click event.');
+      assert_true(target2fieldsetClicked, 'The fieldset element should receive a click event.');
+    }, `Disabled fieldset elements should not block click events from ${clickerName}.`);
+  }
+</script>
+```
+
+```json
+{
+  "messages": [
+    {
+      "category": "Html",
+      "code": "html.head.title.missing",
+      "message": "Element “head” is missing a required instance of child element “title”.",
+      "severity": "Warning",
+      "span": null
+    },
+    {
+      "category": "I18n",
+      "code": "i18n.lang.missing",
+      "message": "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+      "severity": "Warning",
+      "span": null
+    }
+  ],
+  "source_name": "html/semantics/disabled-elements/fieldset-event-propagation.tentative.html"
+}
+```
