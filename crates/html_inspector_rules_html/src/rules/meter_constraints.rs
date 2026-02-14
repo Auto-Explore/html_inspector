@@ -112,16 +112,17 @@ impl Rule for MeterConstraints {
         }
 
         if let Some(high) = high_attr
-            && high < min {
-                out.push(Message::new(
+            && high < min
+        {
+            out.push(Message::new(
                     "html.meter.min_le_high",
                     Severity::Error,
                     Category::Html,
                     "The value of the “min” attribute must be less than or equal to the value of the “high” attribute.",
                     *span,
                 ));
-                return;
-            }
+            return;
+        }
 
         if let Some(low) = low_attr {
             if low < min {
@@ -147,16 +148,17 @@ impl Rule for MeterConstraints {
         }
 
         if let Some(high) = high_attr
-            && high > max {
-                out.push(Message::new(
+            && high > max
+        {
+            out.push(Message::new(
                     "html.meter.high_le_max",
                     Severity::Error,
                     Category::Html,
                     "The value of the “high” attribute must be less than or equal to the value of the “max” attribute.",
                     *span,
                 ));
-                return;
-            }
+            return;
+        }
 
         if let Some(opt) = optimum_attr {
             if opt > max {
@@ -182,15 +184,16 @@ impl Rule for MeterConstraints {
         }
 
         if let Some((low, high)) = low_attr.zip(high_attr)
-            && low > high {
-                out.push(Message::new(
+            && low > high
+        {
+            out.push(Message::new(
                     "html.meter.low_le_high",
                     Severity::Error,
                     Category::Html,
                     "The value of the “low” attribute must be less than or equal to the value of the “high” attribute.",
                     *span,
                 ));
-            }
+        }
     }
 }
 

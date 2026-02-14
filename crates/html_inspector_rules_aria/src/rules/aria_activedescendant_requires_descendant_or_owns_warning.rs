@@ -169,10 +169,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "aria.activedescendant.descendant_or_owns"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "aria.activedescendant.descendant_or_owns")
+        );
     }
 
     #[test]
@@ -211,10 +212,11 @@ mod tests {
             &mut sink,
         );
         rule.on_finish(&mut ctx, &mut sink);
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "aria.activedescendant.descendant_or_owns"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "aria.activedescendant.descendant_or_owns")
+        );
     }
 
     #[test]
@@ -271,10 +273,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "aria.activedescendant.descendant_or_owns"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "aria.activedescendant.descendant_or_owns")
+        );
     }
 
     #[test]
@@ -403,10 +406,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "aria.activedescendant.descendant_or_owns"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "aria.activedescendant.descendant_or_owns")
+        );
     }
 
     #[test]

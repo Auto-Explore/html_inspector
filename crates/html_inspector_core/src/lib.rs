@@ -633,9 +633,10 @@ pub fn validate_events(
         // subsequent events that are positioned after it. This prevents later events (e.g. a
         // duplicate-ID) from triggering additional messages that point back to earlier spans.
         if let Some(fatal_pos) = fatal_parse_error_pos.filter(|&p| p != usize::MAX)
-            && parse_event_span_start(&event).is_some_and(|pos| pos > fatal_pos) {
-                continue;
-            }
+            && parse_event_span_start(&event).is_some_and(|pos| pos > fatal_pos)
+        {
+            continue;
+        }
 
         let kind = match &event {
             ParseEvent::ParseError { code, span, .. } => {
@@ -792,15 +793,17 @@ fn is_spec_purism_html_code(code: &str) -> bool {
 fn is_framework_noise_html_message(m: &Message) -> bool {
     if m.code.starts_with("html.unknown_element.")
         && let Some(name) = first_curly_quoted_token(&m.message)
-            && name.contains('-') {
-                return true;
-            }
+        && name.contains('-')
+    {
+        return true;
+    }
 
     // Attribute diagnostics include the attribute name as the first quoted token.
     if m.message.starts_with("Attribute “")
-        && let Some(attr) = first_curly_quoted_token(&m.message) {
-            return is_framework_attribute_name(attr);
-        }
+        && let Some(attr) = first_curly_quoted_token(&m.message)
+    {
+        return is_framework_attribute_name(attr);
+    }
 
     false
 }
@@ -2280,11 +2283,12 @@ mod tests {
         );
 
         ctx.on_start_tag("foreignobject", false);
-        assert!(ctx
-            .open_elements()
-            .iter()
-            .map(String::as_str)
-            .eq(["svg", "foreignobject"]));
+        assert!(
+            ctx.open_elements()
+                .iter()
+                .map(String::as_str)
+                .eq(["svg", "foreignobject"])
+        );
         assert_eq!(
             ctx.foreign_insertion_namespace(),
             ForeignContentNamespace::Html
@@ -2374,11 +2378,12 @@ mod tests {
         // Minimal behavior: we only switch namespaces from HTML->SVG/Math, and SVG integration
         // points switch back to HTML. While in Math, other tags keep the Math namespace.
         ctx.on_start_tag("svg", false);
-        assert!(ctx
-            .open_elements()
-            .iter()
-            .map(String::as_str)
-            .eq(["math", "svg"]));
+        assert!(
+            ctx.open_elements()
+                .iter()
+                .map(String::as_str)
+                .eq(["math", "svg"])
+        );
         assert_eq!(
             ctx.foreign_insertion_namespace(),
             ForeignContentNamespace::Math

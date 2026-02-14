@@ -6,7 +6,7 @@ mod state;
 mod util;
 mod validate;
 
-use state::{current_group_index, start_row_group, CellState, ColgroupFrame, RowState, TableState};
+use state::{CellState, ColgroupFrame, RowState, TableState, current_group_index, start_row_group};
 use util::{attr_u32, attr_value, is, is_row_group};
 use validate::validate_table;
 
@@ -102,18 +102,19 @@ impl Rule for TableConstraints {
                     // If this col is a child of a colgroup that has a pending span, warn that
                     // the colgroup span is ignored (matches Java TableChecker behavior).
                     if ctx.current_parent().is_some_and(|p| is(ctx, p, "colgroup"))
-                        && let Some(frame) = state.colgroup_stack.last_mut() {
-                            if frame.span_attr_present {
-                                out.push(Message::new(
-                                    "html.table.col.not_allowed_in_colgroup_with_span",
-                                    Severity::Error,
-                                    Category::Html,
-                                    "Element “col” not allowed as child of “colgroup” in this context.",
-                                    *span,
-                                ));
-                            }
-                            if frame.pending_span > 0 {
-                                out.push(Message::new(
+                        && let Some(frame) = state.colgroup_stack.last_mut()
+                    {
+                        if frame.span_attr_present {
+                            out.push(Message::new(
+                                "html.table.col.not_allowed_in_colgroup_with_span",
+                                Severity::Error,
+                                Category::Html,
+                                "Element “col” not allowed as child of “colgroup” in this context.",
+                                *span,
+                            ));
+                        }
+                        if frame.pending_span > 0 {
+                            out.push(Message::new(
                                     "html.table.colgroup.span.ignored",
                                     Severity::Warning,
                                     Category::Html,
@@ -123,9 +124,9 @@ impl Rule for TableConstraints {
                                     ),
                                     frame.span.or(*span),
                                 ));
-                                frame.pending_span = 0;
-                            }
+                            frame.pending_span = 0;
                         }
+                    }
                     state.has_col_markup = true;
                     state.col_markup_count =
                         state.col_markup_count.saturating_add(span_value.min(1000));
@@ -143,18 +144,17 @@ impl Rule for TableConstraints {
                     };
 
                     if let Some(colspan_raw) = attr_value(ctx, attrs, "colspan")
-                        && colspan_raw.trim().parse::<u32>().ok() == Some(0) {
-                            let elem = if is(ctx, name, "td") { "td" } else { "th" };
-                            out.push(Message::new(
-                                "html.table.cell.colspan.zero",
-                                Severity::Error,
-                                Category::Html,
-                                format!(
-                                    "Bad value “0” for attribute “colspan” on element “{elem}”."
-                                ),
-                                *span,
-                            ));
-                        }
+                        && colspan_raw.trim().parse::<u32>().ok() == Some(0)
+                    {
+                        let elem = if is(ctx, name, "td") { "td" } else { "th" };
+                        out.push(Message::new(
+                            "html.table.cell.colspan.zero",
+                            Severity::Error,
+                            Category::Html,
+                            format!("Bad value “0” for attribute “colspan” on element “{elem}”."),
+                            *span,
+                        ));
+                    }
 
                     let colspan = attr_u32(ctx, attrs, "colspan").unwrap_or(1).max(1);
                     if colspan > 1000 {
@@ -180,9 +180,10 @@ impl Rule for TableConstraints {
 
                     if is(ctx, name, "th")
                         && let Some(id) = attr_value(ctx, attrs, "id")
-                            && !id.is_empty() {
-                                state.th_ids.insert(id.to_string());
-                            }
+                        && !id.is_empty()
+                    {
+                        state.th_ids.insert(id.to_string());
+                    }
 
                     if let Some(headers_raw) = attr_value(ctx, attrs, "headers") {
                         let ids: Vec<String> = headers_raw
@@ -227,12 +228,13 @@ impl Rule for TableConstraints {
                         return;
                     };
                     if let Some(frame) = state.colgroup_stack.pop()
-                        && frame.pending_span > 0 {
-                            state.has_col_markup = true;
-                            state.col_markup_count = state
-                                .col_markup_count
-                                .saturating_add(frame.pending_span.min(1000));
-                        }
+                        && frame.pending_span > 0
+                    {
+                        state.has_col_markup = true;
+                        state.col_markup_count = state
+                            .col_markup_count
+                            .saturating_add(frame.pending_span.min(1000));
+                    }
                     return;
                 }
 
@@ -309,10 +311,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.col.parent_table"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.col.parent_table")
+        );
     }
 
     #[test]
@@ -329,10 +333,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.headers.missing_th"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.headers.missing_th")
+        );
     }
 
     #[test]
@@ -349,14 +355,18 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.row.no_cells"));
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.cell.spans_past_row_group"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.row.no_cells")
+        );
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.cell.spans_past_row_group")
+        );
     }
 
     #[test]
@@ -373,14 +383,18 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.row.no_cells"));
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.cell.spans_past_row_group"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.row.no_cells")
+        );
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.cell.spans_past_row_group")
+        );
     }
 
     #[test]
@@ -397,10 +411,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.column.no_starting_cell"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.column.no_starting_cell")
+        );
     }
 
     #[test]
@@ -433,10 +449,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.cell.colspan.zero"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.cell.colspan.zero")
+        );
     }
 
     #[test]
@@ -470,10 +488,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.headers.missing_th"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.headers.missing_th")
+        );
     }
 
     #[test]
@@ -490,14 +510,18 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.row.width.exceeds_first_row"));
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.row.width.less_than_first_row"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.row.width.exceeds_first_row")
+        );
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.row.width.less_than_first_row")
+        );
     }
 
     #[test]
@@ -514,10 +538,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.row.width.less_than_col_markup"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.row.width.less_than_col_markup")
+        );
     }
 
     #[test]
@@ -534,10 +560,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.row.width.less_than_col_markup"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.row.width.less_than_col_markup")
+        );
     }
 
     #[test]
@@ -554,14 +582,18 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.colgroup.span.ignored"));
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.row.width.less_than_col_markup"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.colgroup.span.ignored")
+        );
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.row.width.less_than_col_markup")
+        );
     }
 
     #[test]
@@ -629,10 +661,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.headers.missing_th"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.headers.missing_th")
+        );
 
         let src = HtmlEventSource::from_str(
             "t",
@@ -646,10 +680,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.table.headers.missing_th"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.table.headers.missing_th")
+        );
     }
 
     #[test]

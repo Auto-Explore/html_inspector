@@ -114,10 +114,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.parse.self_closing.non_void"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.parse.self_closing.non_void")
+        );
 
         let mut sink = Sink(Vec::new());
         rule.on_event(
@@ -130,9 +131,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.parse.self_closing.non_void"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.parse.self_closing.non_void")
+        );
     }
 }

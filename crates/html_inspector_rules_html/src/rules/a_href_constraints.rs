@@ -116,9 +116,10 @@ pub(crate) fn href_issue_severity(href: &str) -> Option<Severity> {
 
     // Fragments: spaces and hashes must be percent-encoded; also reject backslash (vnu suite).
     if let Some((_, frag)) = href.split_once('#')
-        && (frag.contains('#') || frag.contains(' ') || frag.contains('\\')) {
-            return Some(Severity::Error);
-        }
+        && (frag.contains('#') || frag.contains(' ') || frag.contains('\\'))
+    {
+        return Some(Severity::Error);
+    }
     // Fragment-only already covered by backslash check above.
 
     // Host-empty and authority edge cases for http(s).
@@ -497,10 +498,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.url.forbidden_code_point"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.url.forbidden_code_point")
+        );
         assert!(!sink.0.iter().any(|m| m.code == "html.a.href.invalid"));
     }
 

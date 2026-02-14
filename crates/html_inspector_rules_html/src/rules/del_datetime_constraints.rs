@@ -307,28 +307,33 @@ mod tests {
     #[test]
     fn datetime_with_ascii_whitespace_is_invalid() {
         let report = validate(r#"<del datetime=" 2020-01-01"></del>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.del.datetime.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.del.datetime.invalid")
+        );
     }
 
     #[test]
     fn out_of_range_year_and_tz_minutes_emit_warning() {
         let report = validate(r#"<ins datetime="0999-01-01T00:00:00+12:17"></ins>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.del.datetime.warn" && m.severity == Severity::Warning));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.del.datetime.warn" && m.severity == Severity::Warning)
+        );
     }
 
     #[test]
     fn invalid_datetime_with_replacement_character_is_silently_ignored() {
         let report = validate("<del datetime=\"\u{FFFD}\"></del>");
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.del.datetime.invalid" || m.code == "html.del.datetime.warn"));
+        assert!(
+            !report.messages.iter().any(
+                |m| m.code == "html.del.datetime.invalid" || m.code == "html.del.datetime.warn"
+            )
+        );
     }
 
     #[test]
@@ -342,10 +347,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.del.datetime.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.del.datetime.invalid")
+        );
     }
 
     #[test]

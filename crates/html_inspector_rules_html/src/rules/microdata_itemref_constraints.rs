@@ -5,7 +5,7 @@ use html_inspector_core::{
 };
 use rustc_hash::{FxHashMap, FxHashSet};
 
-use super::foreign_content::{namespace_for_next_start_tag, Namespace};
+use super::foreign_content::{Namespace, namespace_for_next_start_tag};
 
 #[derive(Default)]
 pub struct MicrodataItemrefConstraints {
@@ -247,8 +247,8 @@ fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
 mod tests {
     use super::*;
     use html_inspector_core::{
-        validate_events, Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span,
-        ValidatorError,
+        Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span, ValidatorError,
+        validate_events,
     };
 
     struct VecSource {
@@ -420,10 +420,12 @@ mod tests {
         )
         .unwrap();
 
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.microdata.itemref.redundant"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.microdata.itemref.redundant")
+        );
     }
 
     #[test]
@@ -518,10 +520,12 @@ mod tests {
         )
         .unwrap();
 
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.microdata.itemref.circular"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.microdata.itemref.circular")
+        );
     }
 
     #[test]
@@ -554,9 +558,11 @@ mod tests {
         )
         .unwrap();
 
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.microdata.itemprop.not_in_item"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.microdata.itemprop.not_in_item")
+        );
     }
 }

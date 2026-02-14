@@ -542,16 +542,17 @@ impl SimpleHtmlEventSource {
         let comment_end = end;
         let text = bytes_to_string_lossy(&self.bytes[comment_start..comment_end]);
         if self.format == InputFormat::Html
-            && let Some(off) = text.find("<!--") {
-                let err_start = comment_start + off;
-                self.pending.push_back(ParseEvent::ParseError {
-                    code: "html.tokenizer.nested_comment".to_string(),
-                    message:
-                        "Saw “<!--” within a comment. Probable cause: Nested comment (not allowed)."
-                            .to_string(),
-                    span: Some(self.current_span(err_start, err_start + 4, start_line, start_col)),
-                });
-            }
+            && let Some(off) = text.find("<!--")
+        {
+            let err_start = comment_start + off;
+            self.pending.push_back(ParseEvent::ParseError {
+                code: "html.tokenizer.nested_comment".to_string(),
+                message:
+                    "Saw “<!--” within a comment. Probable cause: Nested comment (not allowed)."
+                        .to_string(),
+                span: Some(self.current_span(err_start, err_start + 4, start_line, start_col)),
+            });
+        }
         let close_end = end + 3;
         self.bump_to(close_end);
         self.pending.push_back(ParseEvent::Comment {
@@ -1031,26 +1032,28 @@ impl SimpleHtmlEventSource {
         }
 
         // Doctype conformance classification (VNU-style).
-        if !saw_syntax_error && !saw_bogus_doctype
-            && let Some(n) = name.as_deref() {
-                let is_html = n.eq_ignore_ascii_case("html");
-                if !is_html || public_id.is_some() || system_id.is_some() {
-                    let transitional_public =
-                        public_id.as_deref() == Some("-//W3C//DTD HTML 4.01 Transitional//EN");
-                    let transitional_system =
-                        system_id.as_deref() == Some("http://www.w3.org/TR/html4/loose.dtd");
-                    let msg = if is_html && transitional_public && transitional_system {
-                        "Almost standards mode doctype. Expected “<!DOCTYPE html>”."
-                    } else {
-                        "Obsolete doctype. Expected “<!DOCTYPE html>”."
-                    };
-                    self.pending.push_back(ParseEvent::ParseError {
-                        code: "html.parser.doctype.not_html5".to_string(),
-                        message: msg.to_string(),
-                        span: Some(mk_span(start, start + 2)),
-                    });
-                }
+        if !saw_syntax_error
+            && !saw_bogus_doctype
+            && let Some(n) = name.as_deref()
+        {
+            let is_html = n.eq_ignore_ascii_case("html");
+            if !is_html || public_id.is_some() || system_id.is_some() {
+                let transitional_public =
+                    public_id.as_deref() == Some("-//W3C//DTD HTML 4.01 Transitional//EN");
+                let transitional_system =
+                    system_id.as_deref() == Some("http://www.w3.org/TR/html4/loose.dtd");
+                let msg = if is_html && transitional_public && transitional_system {
+                    "Almost standards mode doctype. Expected “<!DOCTYPE html>”."
+                } else {
+                    "Obsolete doctype. Expected “<!DOCTYPE html>”."
+                };
+                self.pending.push_back(ParseEvent::ParseError {
+                    code: "html.parser.doctype.not_html5".to_string(),
+                    message: msg.to_string(),
+                    span: Some(mk_span(start, start + 2)),
+                });
             }
+        }
 
         self.bump_to(end);
         if end == self.bytes.len() {
@@ -1852,7 +1855,7 @@ fn resolve_named_ref(format: InputFormat, name: &str) -> Option<&'static str> {
 
 #[cfg(test)]
 mod resolve_named_ref_tests {
-    use super::{resolve_named_ref, InputFormat};
+    use super::{InputFormat, resolve_named_ref};
 
     #[test]
     fn xhtml_supports_only_predefined_named_entities() {
@@ -2483,11 +2486,13 @@ mod tests {
 
     #[test]
     fn start_tag_helper_returns_none_for_non_start_tag() {
-        assert!(as_start_tag(&ParseEvent::Text {
-            text: "x".to_string(),
-            span: None,
-        })
-        .is_none());
+        assert!(
+            as_start_tag(&ParseEvent::Text {
+                text: "x".to_string(),
+                span: None,
+            })
+            .is_none()
+        );
     }
 
     #[test]
@@ -2704,9 +2709,10 @@ mod tests {
             e,
             ParseEvent::ParseError { code, .. } if code == "html.tokenizer.nested_comment"
         )));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::Comment { text, .. } if text.contains("a"))));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::Comment { text, .. } if text.contains("a")))
+        );
     }
 
     #[test]
@@ -2761,9 +2767,10 @@ mod tests {
         while let Some(ev) = src.next_event().unwrap() {
             evs.push(ev);
         }
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "root")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "root"))
+        );
     }
 
     #[test]
@@ -2775,9 +2782,10 @@ mod tests {
         );
         let evs = collect(src);
         assert!(evs.iter().any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name.eq_ignore_ascii_case("foreignobject"))));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "p")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "p"))
+        );
     }
 
     #[test]
@@ -2798,9 +2806,10 @@ mod tests {
             e,
             ParseEvent::ParseError { code, .. } if code == "html.tokenizer.processing_instruction"
         )));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::Comment { text, .. } if text.contains("xml"))));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::Comment { text, .. } if text.contains("xml")))
+        );
     }
 
     #[test]
@@ -2848,9 +2857,10 @@ mod tests {
             .expect("expected doctype event");
         assert_eq!(system_id, "a> b");
 
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "html")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "html"))
+        );
     }
 
     #[test]
@@ -2909,9 +2919,10 @@ mod tests {
         let src =
             SimpleHtmlEventSource::from_str("t", InputFormat::Html, "<svg><![CDATA[<tag>]]></svg>");
         let evs = collect(src);
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "<tag>")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "<tag>"))
+        );
     }
 
     #[test]
@@ -2922,9 +2933,10 @@ mod tests {
             e,
             ParseEvent::ParseError { code, .. } if code == "html.tokenizer.garbage_after_lt_slash"
         )));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::Text { text, .. } if text.contains("</1>"))));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::Text { text, .. } if text.contains("</1>")))
+        );
     }
 
     #[test]
@@ -3143,9 +3155,10 @@ mod tests {
     fn rcdata_without_closing_tag_decodes_entities_and_finishes() {
         let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, "<textarea>1 &lt; 2");
         let evs = collect(src);
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "1 < 2")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "1 < 2"))
+        );
     }
 
     #[test]
@@ -3240,15 +3253,18 @@ mod tests {
         let src =
             SimpleHtmlEventSource::from_str("t", InputFormat::Html, "<math><mi>x</mi></math>");
         let evs = collect(src);
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "math")));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "mi")));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::EndTag { name, .. } if name == "math")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "math"))
+        );
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "mi"))
+        );
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::EndTag { name, .. } if name == "math"))
+        );
     }
 
     #[test]
@@ -3262,16 +3278,18 @@ mod tests {
             e,
             ParseEvent::ParseError { code, .. } if code == "html.tokenizer.lt_gt"
         )));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "<>")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "<>"))
+        );
         assert!(evs.iter().any(|e| matches!(
             e,
             ParseEvent::ParseError { code, .. } if code == "html.tokenizer.lt_slash_gt"
         )));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "</>")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::Text { text, .. } if text == "</>"))
+        );
     }
 
     #[test]
@@ -3558,12 +3576,14 @@ mod tests {
     fn xhtml_end_tag_matching_is_case_sensitive() {
         let src = SimpleHtmlEventSource::from_str("t", InputFormat::Xhtml, "<A></A>");
         let evs = collect(src);
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "A")));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::EndTag { name, .. } if name == "A")));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::StartTag { name, .. } if name == "A"))
+        );
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::EndTag { name, .. } if name == "A"))
+        );
     }
 
     #[test]
@@ -3704,9 +3724,10 @@ mod tests {
             InputFormat::Html,
             "<a href='x'",
         ));
-        assert!(evs
-            .iter()
-            .any(|e| matches!(e, ParseEvent::ParseError { .. })));
+        assert!(
+            evs.iter()
+                .any(|e| matches!(e, ParseEvent::ParseError { .. }))
+        );
     }
 
     #[test]

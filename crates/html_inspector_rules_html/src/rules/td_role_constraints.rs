@@ -91,10 +91,12 @@ mod tests {
             InputFormat::Html,
             "<table><tr><td role=\"presentation\"></td></tr></table>",
         );
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.td.role.disallowed_in_role_table"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.td.role.disallowed_in_role_table")
+        );
     }
 
     #[test]
@@ -103,10 +105,12 @@ mod tests {
             InputFormat::Html,
             "<table role=\"presentation\"><tr><td role=\"presentation\"></td></tr></table>",
         );
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.td.role.disallowed_in_role_table"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.td.role.disallowed_in_role_table")
+        );
     }
 
     #[test]
@@ -115,9 +119,11 @@ mod tests {
             InputFormat::Html,
             "<table role=\"GRID\"><tr><td role=\"presentation\"></td></tr></table>",
         );
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.td.role.disallowed_in_role_table"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.td.role.disallowed_in_role_table")
+        );
     }
 }

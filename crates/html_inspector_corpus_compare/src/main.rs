@@ -220,9 +220,10 @@ fn collect_html_files(root: &Path, limit: Option<usize>) -> Result<Vec<PathBuf>,
             if matches!(ext.as_str(), "html" | "htm" | "xhtml" | "xht") {
                 out.push(std::fs::canonicalize(&p).unwrap_or(p));
                 if let Some(l) = limit
-                    && out.len() >= l {
-                        return Ok(out);
-                    }
+                    && out.len() >= l
+                {
+                    return Ok(out);
+                }
             }
         }
     }

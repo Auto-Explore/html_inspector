@@ -39,22 +39,24 @@ impl Rule for ArticleHeadingWarning {
                 }
 
                 if let Some(top) = self.stack.last_mut()
-                    && is_heading_element(ctx, name) {
-                        top.has_heading = true;
-                    }
+                    && is_heading_element(ctx, name)
+                {
+                    top.has_heading = true;
+                }
             }
             ParseEvent::EndTag { name, span } => {
                 if is(ctx, name, "article")
                     && let Some(state) = self.stack.pop()
-                        && !state.has_heading {
-                            out.push(Message::new(
+                    && !state.has_heading
+                {
+                    out.push(Message::new(
                                 "html.article.lacks_heading",
                                 Severity::Warning,
                                 Category::Html,
                                 "Article lacks heading. Consider using “h2”-“h6” elements to add identifying headings to all articles.",
                                 *span,
                             ));
-                        }
+                }
             }
             _ => {}
         }

@@ -108,11 +108,9 @@ impl CspPolicy {
 }
 
 pub(crate) fn parse_csp_policies(content: &str) -> Vec<CspPolicy> {
-    let mut out =
-        Vec::with_capacity(1 + content.as_bytes().iter().filter(|&&b| b == b',').count());
+    let mut out = Vec::with_capacity(1 + content.as_bytes().iter().filter(|&&b| b == b',').count());
     for policy in content.split(',').map(str::trim).filter(|p| !p.is_empty()) {
-        let directive_capacity =
-            1 + policy.as_bytes().iter().filter(|&&b| b == b';').count();
+        let directive_capacity = 1 + policy.as_bytes().iter().filter(|&&b| b == b';').count();
         let mut directives: FxHashMap<String, Vec<String>> =
             FxHashMap::with_capacity_and_hasher(directive_capacity, Default::default());
         for directive in policy.split(';').map(str::trim).filter(|d| !d.is_empty()) {
@@ -218,9 +216,10 @@ pub(crate) fn external_url_allowed_by_sources(
                 return true;
             }
             if let (Some(base), Some(actual)) = (base.as_ref(), resolved.as_ref())
-                && origin_key(base) == origin_key(actual) {
-                    return true;
-                }
+                && origin_key(base) == origin_key(actual)
+            {
+                return true;
+            }
             continue;
         }
 

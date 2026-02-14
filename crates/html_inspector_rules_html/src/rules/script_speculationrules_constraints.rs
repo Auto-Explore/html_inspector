@@ -118,26 +118,28 @@ impl ScriptSpeculationrulesConstraints {
         }
 
         if let Some(v) = obj.get("prefetch")
-            && let Some(msg) = validate_rules_array("prefetch", v) {
-                out.push(Message::new(
-                    "html.script.speculationrules.prefetch.invalid",
-                    Severity::Error,
-                    Category::Html,
-                    msg,
-                    self.span,
-                ));
-                return;
-            }
+            && let Some(msg) = validate_rules_array("prefetch", v)
+        {
+            out.push(Message::new(
+                "html.script.speculationrules.prefetch.invalid",
+                Severity::Error,
+                Category::Html,
+                msg,
+                self.span,
+            ));
+            return;
+        }
         if let Some(v) = obj.get("prerender")
-            && let Some(msg) = validate_rules_array("prerender", v) {
-                out.push(Message::new(
-                    "html.script.speculationrules.prerender.invalid",
-                    Severity::Error,
-                    Category::Html,
-                    msg,
-                    self.span,
-                ));
-            }
+            && let Some(msg) = validate_rules_array("prerender", v)
+        {
+            out.push(Message::new(
+                "html.script.speculationrules.prerender.invalid",
+                Severity::Error,
+                Category::Html,
+                msg,
+                self.span,
+            ));
+        }
     }
 
     fn err_json(&self, out: &mut dyn MessageSink) {
@@ -469,36 +471,43 @@ mod tests {
     #[test]
     fn empty_or_invalid_json_is_reported() {
         let msgs = validate("<script type=\"speculationrules\"></script>");
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.script.speculationrules.json.invalid"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.script.speculationrules.json.invalid")
+        );
 
         let msgs2 = validate("<script type=\"speculationrules\">{</script>");
-        assert!(msgs2
-            .iter()
-            .any(|m| m.code == "html.script.speculationrules.json.invalid"));
+        assert!(
+            msgs2
+                .iter()
+                .any(|m| m.code == "html.script.speculationrules.json.invalid")
+        );
     }
 
     #[test]
     fn top_level_object_rules_are_enforced() {
         let msgs = validate("<script type=\"speculationrules\">{}</script>");
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.script.speculationrules.top_level.missing"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.script.speculationrules.top_level.missing")
+        );
 
         let msgs2 =
             validate("<script type=\"speculationrules\">{\"prefetch\":[],\"x\":1}</script>");
-        assert!(msgs2
-            .iter()
-            .any(|m| m.code == "html.script.speculationrules.top_level.properties"));
+        assert!(
+            msgs2
+                .iter()
+                .any(|m| m.code == "html.script.speculationrules.top_level.properties")
+        );
     }
 
     #[test]
     fn lists_must_be_arrays() {
         let msgs = validate("<script type=\"speculationrules\">{\"prefetch\":{}}</script>");
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.script.speculationrules.prefetch.invalid"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.script.speculationrules.prefetch.invalid")
+        );
     }
 
     #[test]
@@ -605,9 +614,11 @@ mod tests {
         assert!(msgs.is_empty());
 
         let msgs2 = validate_xhtml("<script type=\"speculationrules\">{}</script>");
-        assert!(msgs2
-            .iter()
-            .any(|m| m.code == "html.script.speculationrules.top_level.missing"));
+        assert!(
+            msgs2
+                .iter()
+                .any(|m| m.code == "html.script.speculationrules.top_level.missing")
+        );
     }
 
     #[test]

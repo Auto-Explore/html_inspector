@@ -44,9 +44,10 @@ impl Rule for ContentSecurityPolicyWarnings {
         self.inline_style_span = None;
         self.inline_style_nonce = None;
         if let Some(v) = ctx.config.csp_header.as_deref()
-            && !v.trim().is_empty() {
-                self.http_policies = csp::parse_csp_policies(v);
-            }
+            && !v.trim().is_empty()
+        {
+            self.http_policies = csp::parse_csp_policies(v);
+        }
     }
 
     fn on_event(
@@ -139,10 +140,10 @@ impl Rule for ContentSecurityPolicyWarnings {
 
         if let Some(style_value) = ctx.attr_value(attrs, "style")
             && !style_value.is_empty()
-                && let Some((source, violating_directive)) =
-                    self.first_blocking(CspKind::StyleAttribute, None, Some(style_value))
-                {
-                    out.push(Message::new(
+            && let Some((source, violating_directive)) =
+                self.first_blocking(CspKind::StyleAttribute, None, Some(style_value))
+        {
+            out.push(Message::new(
                         "html.csp.style_attribute.blocked",
                         Severity::Warning,
                         Category::Html,
@@ -152,19 +153,21 @@ impl Rule for ContentSecurityPolicyWarnings {
                         ),
                         *span,
                     ));
-                }
+        }
 
-        if ctx.name_is(name, "script") && ctx.has_attr(attrs, "src")
+        if ctx.name_is(name, "script")
+            && ctx.has_attr(attrs, "src")
             && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-                && let Some((source, violating_directive)) = self.first_blocking_external(
-                    CspExternalKind::Script,
-                    src,
-                    ctx.config.base_uri.as_deref(),
-                ) {
-                    out.push(Message::new(
+            && let Some((source, violating_directive)) = self.first_blocking_external(
+                CspExternalKind::Script,
+                src,
+                ctx.config.base_uri.as_deref(),
+            )
+        {
+            out.push(Message::new(
                         "html.csp.external_script.blocked",
                         Severity::Warning,
                         Category::Html,
@@ -175,7 +178,7 @@ impl Rule for ContentSecurityPolicyWarnings {
                         ),
                         *span,
                     ));
-                }
+        }
 
         if ctx.name_is(name, "link") {
             let rel = ctx.attr_value(attrs, "rel").unwrap_or("");
@@ -186,12 +189,13 @@ impl Rule for ContentSecurityPolicyWarnings {
                     .attr_value(attrs, "href")
                     .map(str::trim)
                     .filter(|s| !s.is_empty())
-                    && let Some((source, violating_directive)) = self.first_blocking_external(
-                        CspExternalKind::Style,
-                        href,
-                        ctx.config.base_uri.as_deref(),
-                    ) {
-                        out.push(Message::new(
+                && let Some((source, violating_directive)) = self.first_blocking_external(
+                    CspExternalKind::Style,
+                    href,
+                    ctx.config.base_uri.as_deref(),
+                )
+            {
+                out.push(Message::new(
                             "html.csp.external_style.blocked",
                             Severity::Warning,
                             Category::Html,
@@ -202,7 +206,7 @@ impl Rule for ContentSecurityPolicyWarnings {
                             ),
                             *span,
                         ));
-                    }
+            }
         }
 
         if ctx.name_is(name, "img")
@@ -210,12 +214,13 @@ impl Rule for ContentSecurityPolicyWarnings {
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-                && let Some((source, violating_directive)) = self.first_blocking_external(
-                    CspExternalKind::Image,
-                    src,
-                    ctx.config.base_uri.as_deref(),
-                ) {
-                    out.push(Message::new(
+            && let Some((source, violating_directive)) = self.first_blocking_external(
+                CspExternalKind::Image,
+                src,
+                ctx.config.base_uri.as_deref(),
+            )
+        {
+            out.push(Message::new(
                         "html.csp.image.blocked",
                         Severity::Warning,
                         Category::Html,
@@ -226,19 +231,20 @@ impl Rule for ContentSecurityPolicyWarnings {
                         ),
                         *span,
                     ));
-                }
+        }
 
         if ctx.name_is(name, "iframe")
             && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-                && let Some((source, violating_directive)) = self.first_blocking_external(
-                    CspExternalKind::Frame,
-                    src,
-                    ctx.config.base_uri.as_deref(),
-                ) {
-                    out.push(Message::new(
+            && let Some((source, violating_directive)) = self.first_blocking_external(
+                CspExternalKind::Frame,
+                src,
+                ctx.config.base_uri.as_deref(),
+            )
+        {
+            out.push(Message::new(
                         "html.csp.frame.blocked",
                         Severity::Warning,
                         Category::Html,
@@ -249,19 +255,20 @@ impl Rule for ContentSecurityPolicyWarnings {
                         ),
                         *span,
                     ));
-                }
+        }
 
         if ctx.name_is(name, "object")
             && let Some(data) = ctx
                 .attr_value(attrs, "data")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-                && let Some((source, violating_directive)) = self.first_blocking_external(
-                    CspExternalKind::Object,
-                    data,
-                    ctx.config.base_uri.as_deref(),
-                ) {
-                    out.push(Message::new(
+            && let Some((source, violating_directive)) = self.first_blocking_external(
+                CspExternalKind::Object,
+                data,
+                ctx.config.base_uri.as_deref(),
+            )
+        {
+            out.push(Message::new(
                         "html.csp.object.blocked",
                         Severity::Warning,
                         Category::Html,
@@ -272,19 +279,20 @@ impl Rule for ContentSecurityPolicyWarnings {
                         ),
                         *span,
                     ));
-                }
+        }
 
         if ctx.name_is(name, "embed")
             && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-                && let Some((source, violating_directive)) = self.first_blocking_external(
-                    CspExternalKind::Object,
-                    src,
-                    ctx.config.base_uri.as_deref(),
-                ) {
-                    out.push(Message::new(
+            && let Some((source, violating_directive)) = self.first_blocking_external(
+                CspExternalKind::Object,
+                src,
+                ctx.config.base_uri.as_deref(),
+            )
+        {
+            out.push(Message::new(
                         "html.csp.object.blocked",
                         Severity::Warning,
                         Category::Html,
@@ -295,19 +303,20 @@ impl Rule for ContentSecurityPolicyWarnings {
                         ),
                         *span,
                     ));
-                }
+        }
 
         if (ctx.name_is(name, "audio") || ctx.name_is(name, "video"))
             && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-                && let Some((source, violating_directive)) = self.first_blocking_external(
-                    CspExternalKind::Media,
-                    src,
-                    ctx.config.base_uri.as_deref(),
-                ) {
-                    out.push(Message::new(
+            && let Some((source, violating_directive)) = self.first_blocking_external(
+                CspExternalKind::Media,
+                src,
+                ctx.config.base_uri.as_deref(),
+            )
+        {
+            out.push(Message::new(
                         "html.csp.media.blocked",
                         Severity::Warning,
                         Category::Html,
@@ -318,7 +327,7 @@ impl Rule for ContentSecurityPolicyWarnings {
                         ),
                         *span,
                     ));
-                }
+        }
     }
 
     fn on_finish(&mut self, _ctx: &mut ValidationContext, out: &mut dyn MessageSink) {
@@ -560,14 +569,16 @@ mod tests {
         rule.on_event(&text("alert(1)"), &mut ctx, &mut sink);
         rule.on_event(&end_tag("script"), &mut ctx, &mut sink);
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.event_handler.blocked"));
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.inline_script.blocked"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.event_handler.blocked")
+        );
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.inline_script.blocked")
+        );
     }
 
     #[test]
@@ -595,20 +606,23 @@ mod tests {
         );
         rule.on_event(&text("alert(1)"), &mut ctx, &mut sink);
         rule.on_event(&end_tag("script"), &mut ctx, &mut sink);
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.inline_script.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.inline_script.blocked")
+        );
 
         rule.on_event(
             &start_tag("div", vec![attr("onclick", Some("x"))]),
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.event_handler.blocked"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.event_handler.blocked")
+        );
     }
 
     #[test]
@@ -642,10 +656,12 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.event_handler.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.event_handler.blocked")
+        );
     }
 
     #[test]
@@ -674,10 +690,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.event_handler.blocked"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.event_handler.blocked")
+        );
     }
 
     #[test]
@@ -709,10 +726,12 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.style_attribute.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.style_attribute.blocked")
+        );
     }
 
     #[test]
@@ -740,10 +759,12 @@ mod tests {
         rule.on_event(&text(content), &mut ctx, &mut sink);
         rule.on_event(&end_tag("script"), &mut ctx, &mut sink);
 
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.inline_script.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.inline_script.blocked")
+        );
     }
 
     #[test]
@@ -771,10 +792,12 @@ mod tests {
         rule.on_event(&text(content), &mut ctx, &mut sink);
         rule.on_event(&end_tag("style"), &mut ctx, &mut sink);
 
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.inline_style.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.inline_style.blocked")
+        );
     }
 
     #[test]
@@ -799,10 +822,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.style_attribute.blocked"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.style_attribute.blocked")
+        );
     }
 
     #[test]
@@ -827,10 +851,12 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.event_handler.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.event_handler.blocked")
+        );
     }
 
     #[test]
@@ -953,10 +979,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.external_script.blocked"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.external_script.blocked")
+        );
     }
 
     #[test]
@@ -990,10 +1017,12 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.external_script.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.external_script.blocked")
+        );
     }
 
     #[test]
@@ -1067,10 +1096,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.external_script.blocked"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.external_script.blocked")
+        );
     }
 
     #[test]
@@ -1098,10 +1128,12 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.event_handler.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.event_handler.blocked")
+        );
     }
 
     #[test]
@@ -1129,10 +1161,12 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.style_attribute.blocked"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.csp.style_attribute.blocked")
+        );
     }
 
     #[test]
@@ -1189,9 +1223,10 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.csp.external_script.blocked"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.csp.external_script.blocked")
+        );
     }
 }

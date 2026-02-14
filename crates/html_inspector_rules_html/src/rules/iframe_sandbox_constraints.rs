@@ -115,10 +115,12 @@ mod tests {
         .unwrap();
         let rules = RuleSet::new().push(IFrameSandboxConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.iframe.sandbox.scripts_and_same_origin"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.iframe.sandbox.scripts_and_same_origin")
+        );
     }
 
     #[test]
@@ -131,10 +133,12 @@ mod tests {
         .unwrap();
         let rules = RuleSet::new().push(IFrameSandboxConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.iframe.sandbox.duplicate_token"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.iframe.sandbox.duplicate_token")
+        );
     }
 
     #[test]

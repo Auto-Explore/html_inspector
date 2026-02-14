@@ -80,10 +80,12 @@ mod tests {
             r#"<ol start="001"></ol>"#,
         ] {
             let report = validate(InputFormat::Html, html);
-            assert!(!report
-                .messages
-                .iter()
-                .any(|m| m.code == "html.ol.start.invalid"));
+            assert!(
+                !report
+                    .messages
+                    .iter()
+                    .any(|m| m.code == "html.ol.start.invalid")
+            );
         }
     }
 
@@ -99,32 +101,40 @@ mod tests {
             r#"<ol start="١"></ol>"#,
         ] {
             let report = validate(InputFormat::Html, html);
-            assert!(report
-                .messages
-                .iter()
-                .any(|m| m.code == "html.ol.start.invalid"));
+            assert!(
+                report
+                    .messages
+                    .iter()
+                    .any(|m| m.code == "html.ol.start.invalid")
+            );
         }
     }
 
     #[test]
     fn xhtml_matching_is_case_sensitive_for_tag_and_attribute_names() {
         let report = validate(InputFormat::Xhtml, r#"<ol start="+1"></ol>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.ol.start.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.ol.start.invalid")
+        );
 
         let report = validate(InputFormat::Xhtml, r#"<OL start="+1"></OL>"#);
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.ol.start.invalid"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.ol.start.invalid")
+        );
 
         let report = validate(InputFormat::Xhtml, r#"<ol Start="+1"></ol>"#);
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.ol.start.invalid"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.ol.start.invalid")
+        );
     }
 }
 

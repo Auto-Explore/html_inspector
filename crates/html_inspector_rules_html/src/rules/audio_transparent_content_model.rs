@@ -92,11 +92,15 @@ mod tests {
 
     #[test]
     fn audio_transparent_model_only_restricts_children_in_phrasing_context() {
-        assert!(codes(r#"<span><audio><div></div></audio></span>"#)
-            .iter()
-            .any(|c| c == "html.audio.transparent.disallowed_child_in_phrasing"));
-        assert!(!codes(r#"<div><audio><div></div></audio></div>"#)
-            .iter()
-            .any(|c| c == "html.audio.transparent.disallowed_child_in_phrasing"));
+        assert!(
+            codes(r#"<span><audio><div></div></audio></span>"#)
+                .iter()
+                .any(|c| c == "html.audio.transparent.disallowed_child_in_phrasing")
+        );
+        assert!(
+            !codes(r#"<div><audio><div></div></audio></div>"#)
+                .iter()
+                .any(|c| c == "html.audio.transparent.disallowed_child_in_phrasing")
+        );
     }
 }

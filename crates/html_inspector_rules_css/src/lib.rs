@@ -45,11 +45,7 @@ fn line_col_at_byte(s: &str, byte: usize) -> (u32, u32) {
     (line, col)
 }
 
-fn emit_css_errors(
-    report: &css_inspector::Report,
-    span: Option<Span>,
-    out: &mut dyn MessageSink,
-) {
+fn emit_css_errors(report: &css_inspector::Report, span: Option<Span>, out: &mut dyn MessageSink) {
     for m in &report.messages {
         if m.severity != css_inspector::Severity::Error {
             continue;
@@ -287,8 +283,8 @@ impl Rule for StyleElementCssRule {
 #[cfg(test)]
 mod tests {
     use html_inspector_core::{
-        validate_events, Attribute, Category, Config, EventSource, InputFormat, Message,
-        MessageOrder, MessageSink, ParseEvent, RuleSet, Span,
+        Attribute, Category, Config, EventSource, InputFormat, Message, MessageOrder, MessageSink,
+        ParseEvent, RuleSet, Span, validate_events,
     };
 
     use super::{attr_value_ci, pack_css_checks};
@@ -403,12 +399,8 @@ mod tests {
 
     #[test]
     fn starts_with_ascii_ci_is_case_insensitive_and_safe_on_short_inputs() {
-        assert!(css_inspector::starts_with_ascii_ci(
-            "FILE://x", "file://"
-        ));
-        assert!(css_inspector::starts_with_ascii_ci(
-            "file://x", "FILE://"
-        ));
+        assert!(css_inspector::starts_with_ascii_ci("FILE://x", "file://"));
+        assert!(css_inspector::starts_with_ascii_ci("file://x", "FILE://"));
         assert!(!css_inspector::starts_with_ascii_ci("fi", "file://"));
         assert!(css_inspector::starts_with_ascii_ci("", ""));
         assert!(css_inspector::starts_with_ascii_ci("❤H", "❤h"));

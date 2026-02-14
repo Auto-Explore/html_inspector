@@ -2,7 +2,7 @@ use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
-use super::foreign_content::{namespace_for_next_start_tag, Namespace};
+use super::foreign_content::{Namespace, namespace_for_next_start_tag};
 
 const H1_WARNING_MESSAGE: &str = "Consider using the “h1” element as a top-level heading only — or else use the “headingoffset” attribute (otherwise, all “h1” elements are treated as top-level headings by many screen readers and other tools).";
 
@@ -127,18 +127,21 @@ mod tests {
     fn warns_for_second_level_h1_when_top_level_h1_exists() {
         let html = "<h1>Top</h1><section><h1>Nested</h1></section>";
         let msgs = validate_html(html);
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.h1.top_level_heading_warning"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.h1.top_level_heading_warning")
+        );
     }
 
     #[test]
     fn does_not_warn_when_only_second_level_h1_exists() {
         let html = "<section><h1>Nested</h1></section>";
         let msgs = validate_html(html);
-        assert!(!msgs
-            .iter()
-            .any(|m| m.code == "html.h1.top_level_heading_warning"));
+        assert!(
+            !msgs
+                .iter()
+                .any(|m| m.code == "html.h1.top_level_heading_warning")
+        );
     }
 
     #[test]
@@ -157,17 +160,21 @@ mod tests {
     fn headingoffset_suppresses_h1_top_level_warnings_even_if_seen_later() {
         let html = "<h1>Top</h1><section><h1>Nested</h1></section><div headingoffset=\"1\"></div>";
         let msgs = validate_html(html);
-        assert!(!msgs
-            .iter()
-            .any(|m| m.code == "html.h1.top_level_heading_warning"));
+        assert!(
+            !msgs
+                .iter()
+                .any(|m| m.code == "html.h1.top_level_heading_warning")
+        );
     }
 
     #[test]
     fn h1_warnings_are_skipped_inside_template_contents() {
         let html = "<h1>Top</h1><template><section><h1>Nested</h1></section></template>";
         let msgs = validate_html(html);
-        assert!(!msgs
-            .iter()
-            .any(|m| m.code == "html.h1.top_level_heading_warning"));
+        assert!(
+            !msgs
+                .iter()
+                .any(|m| m.code == "html.h1.top_level_heading_warning")
+        );
     }
 }

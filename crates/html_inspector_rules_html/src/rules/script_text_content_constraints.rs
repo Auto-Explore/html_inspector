@@ -109,10 +109,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.script.text_content.non_empty"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.script.text_content.non_empty")
+        );
     }
 
     #[test]

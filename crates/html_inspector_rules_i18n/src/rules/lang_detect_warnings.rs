@@ -1,6 +1,6 @@
 use html_inspector_core::{
-    starts_with_ascii_ci, Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity,
-    Span, ValidationContext,
+    Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
+    starts_with_ascii_ci,
 };
 
 #[derive(Default)]
@@ -82,8 +82,9 @@ impl Rule for LangDetectWarnings {
 
         if detected == "zh-hant"
             && let Some(lang) = self.html_lang.as_deref()
-                && !starts_with_ascii_ci(lang, "zh-hant") {
-                    out.push(Message::new(
+            && !starts_with_ascii_ci(lang, "zh-hant")
+        {
+            out.push(Message::new(
                         "i18n.lang.detect.zh_hant.mismatch",
                         Severity::Warning,
                         Category::I18n,
@@ -92,14 +93,15 @@ impl Rule for LangDetectWarnings {
                         ),
                         span,
                     ));
-                    self.reset();
-                    return;
-                }
+            self.reset();
+            return;
+        }
 
         if detected == "he" {
             if let Some(lang) = self.html_lang.as_deref()
-                && !starts_with_ascii_ci(lang, "he") {
-                    out.push(Message::new(
+                && !starts_with_ascii_ci(lang, "he")
+            {
+                out.push(Message::new(
                         "i18n.lang.detect.he.mismatch",
                         Severity::Warning,
                         Category::I18n,
@@ -108,13 +110,14 @@ impl Rule for LangDetectWarnings {
                         ),
                         span,
                     ));
-                    self.reset();
-                    return;
-                }
+                self.reset();
+                return;
+            }
 
             if let Some(dir) = self.html_dir.as_deref()
-                && dir.eq_ignore_ascii_case("ltr") {
-                    out.push(Message::new(
+                && dir.eq_ignore_ascii_case("ltr")
+            {
+                out.push(Message::new(
                         "i18n.lang.detect.he.dir_ltr",
                         Severity::Warning,
                         Category::I18n,
@@ -123,15 +126,16 @@ impl Rule for LangDetectWarnings {
                         ),
                         span,
                     ));
-                    self.reset();
-                    return;
-                }
+                self.reset();
+                return;
+            }
         }
 
         if detected == "ar" {
             if let Some(lang) = self.html_lang.as_deref()
-                && !starts_with_ascii_ci(lang, "ar") {
-                    out.push(Message::new(
+                && !starts_with_ascii_ci(lang, "ar")
+            {
+                out.push(Message::new(
                         "i18n.lang.detect.ar.mismatch",
                         Severity::Warning,
                         Category::I18n,
@@ -140,13 +144,14 @@ impl Rule for LangDetectWarnings {
                         ),
                         span,
                     ));
-                    self.reset();
-                    return;
-                }
+                self.reset();
+                return;
+            }
 
             if let Some(dir) = self.html_dir.as_deref()
-                && dir.eq_ignore_ascii_case("ltr") {
-                    out.push(Message::new(
+                && dir.eq_ignore_ascii_case("ltr")
+            {
+                out.push(Message::new(
                         "i18n.lang.detect.ar.dir_ltr",
                         Severity::Warning,
                         Category::I18n,
@@ -155,9 +160,9 @@ impl Rule for LangDetectWarnings {
                         ),
                         span,
                     ));
-                    self.reset();
-                    return;
-                }
+                self.reset();
+                return;
+            }
         }
 
         self.reset();

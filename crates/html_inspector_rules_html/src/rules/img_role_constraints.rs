@@ -64,16 +64,17 @@ impl Rule for ImgRoleConstraints {
 
         // If a role attribute is present, alt must not be the empty string.
         if let Some(alt) = attr_value(ctx, attrs, "alt")
-            && alt.is_empty() {
-                out.push(Message::new(
+            && alt.is_empty()
+        {
+            out.push(Message::new(
                     "html.img.role.alt_empty",
                     Severity::Error,
                     Category::Html,
                     "An “img” element with a “role” attribute must not have an “alt” attribute whose value is the empty string.",
                     *span,
                 ));
-                return;
-            }
+            return;
+        }
 
         // A role attribute implies the image participates in accessibility tree and needs a name.
         // For VNU parity, accept aria-label/labelledby as naming mechanisms too.
@@ -247,10 +248,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.img.role.invalid_for_non_decorative"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.img.role.invalid_for_non_decorative")
+        );
     }
 
     #[test]
@@ -272,10 +274,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.img.role.invalid_for_non_decorative"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.img.role.invalid_for_non_decorative")
+        );
     }
 
     #[test]
@@ -320,10 +323,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.img.role.accessible_name.missing"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.img.role.accessible_name.missing")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -336,10 +340,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.img.role.invalid_for_non_empty_alt"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.img.role.invalid_for_non_empty_alt")
+        );
     }
 
     #[test]

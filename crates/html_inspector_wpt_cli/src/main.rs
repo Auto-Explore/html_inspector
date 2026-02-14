@@ -286,9 +286,10 @@ fn resolve_wpt_repo_root(wpt_root: &Path) -> Result<PathBuf, SuiteError> {
         && wpt_root
             .file_name()
             .is_some_and(|s| s == std::ffi::OsStr::new("html"))
-        && let Some(parent) = wpt_root.parent() {
-            return Ok(parent.to_path_buf());
-        }
+        && let Some(parent) = wpt_root.parent()
+    {
+        return Ok(parent.to_path_buf());
+    }
 
     if !wpt_root.is_dir() {
         return Err(SuiteError::InvalidManifest(format!(
@@ -1333,10 +1334,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 #[cfg(test)]
 mod tests {
     use super::{
-        collect_wpt_html_files, parse_file_results_markdown, parse_results_meta_markdown,
-        render_file_results_markdown, render_results_meta_markdown, safe_rel_path_from_slash,
-        WptHtmlFileResults, WptHtmlResultsConfig, WptHtmlResultsMeta, WptHtmlResultsTotals,
-        WPT_HTML_RESULTS_FORMAT_VERSION,
+        WPT_HTML_RESULTS_FORMAT_VERSION, WptHtmlFileResults, WptHtmlResultsConfig,
+        WptHtmlResultsMeta, WptHtmlResultsTotals, collect_wpt_html_files,
+        parse_file_results_markdown, parse_results_meta_markdown, render_file_results_markdown,
+        render_results_meta_markdown, safe_rel_path_from_slash,
     };
     use serde_json::json;
     use std::time::{SystemTime, UNIX_EPOCH};

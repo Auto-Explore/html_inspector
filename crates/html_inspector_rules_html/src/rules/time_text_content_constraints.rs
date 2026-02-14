@@ -286,10 +286,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.time.text_content.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.time.text_content.invalid")
+        );
     }
 
     #[test]

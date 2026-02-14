@@ -330,37 +330,45 @@ mod tests {
     #[test]
     fn charset_and_content_disallowed_together() {
         let report = validate(r#"<meta charset="utf-8" content="x">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.charset.content.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.charset.content.disallowed")
+        );
     }
 
     #[test]
     fn itemprop_disallowed_with_name() {
         let report = validate(r#"<meta itemprop="x" name="y">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.itemprop.disallowed_with_name"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.itemprop.disallowed_with_name")
+        );
     }
 
     #[test]
     fn charset_and_content_type_are_mutually_exclusive() {
         let report = validate(r#"<meta charset="utf-8"><meta http-equiv="content-type">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.charset_and_content_type.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.charset_and_content_type.disallowed")
+        );
     }
 
     #[test]
     fn content_type_then_charset_is_also_disallowed() {
         let report = validate(r#"<meta http-equiv="content-type"><meta charset="utf-8">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.charset_and_content_type.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.charset_and_content_type.disallowed")
+        );
     }
 
     #[test]
@@ -368,39 +376,47 @@ mod tests {
         let report = validate(
             r#"<meta name="description" content="a"><meta name="description" content="b">"#,
         );
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.description.multiple.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.description.multiple.disallowed")
+        );
     }
 
     #[test]
     fn viewport_user_scalable_no_emits_warning() {
         let report = validate(r#"<meta name="viewport" content="user-scalable=no">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.viewport.user_scalable_no"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.viewport.user_scalable_no")
+        );
     }
 
     #[test]
     fn x_ua_compatible_requires_ie_edge() {
         let report = validate(r#"<meta http-equiv="x-ua-compatible" content="foo">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.x_ua_compatible.requires_ie_edge"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.x_ua_compatible.requires_ie_edge")
+        );
     }
 
     #[test]
     fn csp_unknown_directive_is_warning() {
         let report =
             validate(r#"<meta http-equiv="content-security-policy" content=";;bogus-src 'none'">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.csp.invalid"
-                && m.severity == html_inspector_core::Severity::Warning));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.csp.invalid"
+                    && m.severity == html_inspector_core::Severity::Warning)
+        );
     }
 
     #[test]
@@ -408,10 +424,12 @@ mod tests {
         let report = validate(
             r#"<meta http-equiv="content-security-policy" content="script-src 'unsafe-hashes'">"#,
         );
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.csp.invalid"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.meta.csp.invalid")
+        );
     }
 }
 

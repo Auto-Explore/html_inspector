@@ -137,10 +137,12 @@ mod tests {
             "x".to_string(),
             None,
         ));
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.picture.parent.dl.disallowed"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.picture.parent.dl.disallowed")
+        );
     }
 
     #[test]
@@ -149,10 +151,12 @@ mod tests {
             .unwrap();
         let rules = RuleSet::new().push(PictureParentConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.picture.parent.dl.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.picture.parent.dl.disallowed")
+        );
 
         let src = VecSource::new(
             InputFormat::Html,
@@ -173,9 +177,11 @@ mod tests {
         );
         let rules = RuleSet::new().push(PictureParentConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.picture.in_noscript_in_head.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.picture.in_noscript_in_head.disallowed")
+        );
     }
 }

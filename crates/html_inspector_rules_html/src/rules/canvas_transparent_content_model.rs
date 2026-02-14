@@ -92,11 +92,15 @@ mod tests {
 
     #[test]
     fn canvas_transparent_model_only_restricts_children_in_phrasing_context() {
-        assert!(codes(r#"<span><canvas><div></div></canvas></span>"#)
-            .iter()
-            .any(|c| c == "html.canvas.transparent.disallowed_child_in_phrasing"));
-        assert!(!codes(r#"<div><canvas><div></div></canvas></div>"#)
-            .iter()
-            .any(|c| c == "html.canvas.transparent.disallowed_child_in_phrasing"));
+        assert!(
+            codes(r#"<span><canvas><div></div></canvas></span>"#)
+                .iter()
+                .any(|c| c == "html.canvas.transparent.disallowed_child_in_phrasing")
+        );
+        assert!(
+            !codes(r#"<div><canvas><div></div></canvas></div>"#)
+                .iter()
+                .any(|c| c == "html.canvas.transparent.disallowed_child_in_phrasing")
+        );
     }
 }

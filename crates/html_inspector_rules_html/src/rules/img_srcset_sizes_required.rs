@@ -69,9 +69,11 @@ fn srcset_has_width_descriptor(srcset: &str) -> bool {
         for token in candidate.split_ascii_whitespace().skip(1) {
             let token = token.trim();
             if let Some(num) = token.strip_suffix('w')
-                && !num.is_empty() && num.chars().all(|c| c.is_ascii_digit()) {
-                    return true;
-                }
+                && !num.is_empty()
+                && num.chars().all(|c| c.is_ascii_digit())
+            {
+                return true;
+            }
         }
     }
     false

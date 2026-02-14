@@ -126,7 +126,7 @@ fn url_has_disallowed_chars(url: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{is_invalid_srcset, srcset_mode, SrcsetMode};
+    use super::{SrcsetMode, is_invalid_srcset, srcset_mode};
 
     #[test]
     fn srcset_rejects_multiple_descriptors() {

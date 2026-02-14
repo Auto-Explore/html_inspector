@@ -92,15 +92,15 @@ impl Rule for SelectConstraints {
                     if let Some(v) = autocomplete
                         && v.split_ascii_whitespace()
                             .any(|t| t.eq_ignore_ascii_case("webauthn"))
-                        {
-                            out.push(Message::new(
+                    {
+                        out.push(Message::new(
                                 "html.select.autocomplete.webauthn.disallowed",
                                 Severity::Error,
                                 Category::Html,
                                 "The value of the “autocomplete” attribute for the “select” element must not contain “webauthn”.",
                                 *span,
                             ));
-                        }
+                    }
 
                     self.stack.push(SelectState {
                         multiple,
@@ -167,35 +167,40 @@ impl Rule for SelectConstraints {
             ParseEvent::EndTag { name, span } => {
                 if is(ctx, name, "option") {
                     if let Some(state) = self.stack.last_mut()
-                        && state.in_first_option {
-                            state.first_option_placeholder_ok =
-                                state.first_option_value_empty || !state.first_option_has_text;
-                            state.in_first_option = false;
-                        }
+                        && state.in_first_option
+                    {
+                        state.first_option_placeholder_ok =
+                            state.first_option_value_empty || !state.first_option_has_text;
+                        state.in_first_option = false;
+                    }
                     return;
                 }
 
-                if is(ctx, name, "select") && !self.stack.is_empty()
+                if is(ctx, name, "select")
+                    && !self.stack.is_empty()
                     && let Some(state) = self.stack.pop()
-                        && state.required && !state.multiple && !state.size_gt_one {
-                            if state.option_count == 0 {
-                                out.push(Message::new(
+                    && state.required
+                    && !state.multiple
+                    && !state.size_gt_one
+                {
+                    if state.option_count == 0 {
+                        out.push(Message::new(
                                     "html.select.required.must_have_option",
                                     Severity::Error,
                                     Category::Html,
                                     "A “select” element with a “required” attribute, and without a “multiple” attribute, and without a “size” attribute whose value is greater than “1”, must have a child “option” element.",
                                     *span,
                                 ));
-                            } else if !state.first_option_placeholder_ok {
-                                out.push(Message::new(
+                    } else if !state.first_option_placeholder_ok {
+                        out.push(Message::new(
                                     "html.select.required.first_option.placeholder",
                                     Severity::Error,
                                     Category::Html,
                                     "The first child “option” element of a “select” element with a “required” attribute, and without a “multiple” attribute, and without a “size” attribute whose value is greater than “1”, must have either an empty “value” attribute, or must have no text content. Consider either adding a placeholder option label, or adding a “size” attribute with a value equal to the number of “option” elements.",
                                     *span,
                                 ));
-                            }
-                        }
+                    }
+                }
             }
             _ => {}
         }
@@ -229,47 +234,57 @@ mod tests {
     #[test]
     fn size_zero_emits_error() {
         let report = validate(r#"<select size="0"></select>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.select.size.nonzero"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.select.size.nonzero")
+        );
     }
 
     #[test]
     fn autocomplete_webauthn_emits_error() {
         let report = validate(r#"<select autocomplete="section-x webauthn"></select>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.select.autocomplete.webauthn.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.select.autocomplete.webauthn.disallowed")
+        );
     }
 
     #[test]
     fn multiple_selected_without_multiple_emits_error() {
         let report =
             validate("<select><option selected>1</option><option selected>2</option></select>");
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.select.selected.multiple_without_multiple"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.select.selected.multiple_without_multiple")
+        );
     }
 
     #[test]
     fn required_select_without_options_emits_error() {
         let report = validate("<select required></select>");
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.select.required.must_have_option"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.select.required.must_have_option")
+        );
     }
 
     #[test]
     fn required_select_first_option_placeholder_rules_apply() {
         let report = validate(r#"<select required><option value="x">x</option></select>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.select.required.first_option.placeholder"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.select.required.first_option.placeholder")
+        );
     }
 
     #[test]
@@ -286,10 +301,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.select.selected.multiple_without_multiple"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.select.selected.multiple_without_multiple")
+        );
     }
 
     #[test]

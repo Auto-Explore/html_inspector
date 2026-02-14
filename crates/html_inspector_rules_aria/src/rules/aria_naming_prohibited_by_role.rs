@@ -71,8 +71,7 @@ impl Rule for AriaNamingProhibitedByRole {
     }
 }
 
-const NAME_PROHIBITED_ROLE_LIST: &str =
-    "“caption”, “code”, “deletion”, “emphasis”, “generic”, “insertion”, “paragraph”, “presentation”, “strong”, “subscript”, or “superscript”.";
+const NAME_PROHIBITED_ROLE_LIST: &str = "“caption”, “code”, “deletion”, “emphasis”, “generic”, “insertion”, “paragraph”, “presentation”, “strong”, “subscript”, or “superscript”.";
 
 fn is_name_prohibited_role(role_lc: &str) -> bool {
     matches!(
@@ -97,9 +96,10 @@ fn computed_role(
     attrs: &[html_inspector_core::Attribute],
 ) -> String {
     if let Some(role) = ctx.attr_value(attrs, "role")
-        && let Some(t) = role.split_ascii_whitespace().next() {
-            return t.to_ascii_lowercase();
-        }
+        && let Some(t) = role.split_ascii_whitespace().next()
+    {
+        return t.to_ascii_lowercase();
+    }
 
     match el_lc {
         "a" | "area" => {

@@ -44,42 +44,44 @@ impl Rule for DetailsSummaryConstraints {
                 }
 
                 if let Some(state) = self.stack.last_mut()
-                    && is(ctx, ctx.current_parent().unwrap_or(""), "details") {
-                        if !state.saw_element_child {
-                            state.saw_element_child = true;
-                            if is(ctx, name, "summary") {
-                                state.saw_summary = true;
-                                state.first_child_was_summary = true;
-                            } else {
-                                state.first_child_was_summary = false;
-                            }
-                        } else if is(ctx, name, "summary") {
-                            if state.saw_summary {
-                                out.push(Message::new(
+                    && is(ctx, ctx.current_parent().unwrap_or(""), "details")
+                {
+                    if !state.saw_element_child {
+                        state.saw_element_child = true;
+                        if is(ctx, name, "summary") {
+                            state.saw_summary = true;
+                            state.first_child_was_summary = true;
+                        } else {
+                            state.first_child_was_summary = false;
+                        }
+                    } else if is(ctx, name, "summary") {
+                        if state.saw_summary {
+                            out.push(Message::new(
                                     "html.details.multiple_summary",
                                     Severity::Error,
                                     Category::Html,
                                     "Element “summary” not allowed as child of “details” in this context.",
                                     *span,
                                 ));
-                            } else {
-                                state.saw_summary = true;
-                            }
+                        } else {
+                            state.saw_summary = true;
                         }
                     }
+                }
             }
             ParseEvent::EndTag { name, span } => {
                 if is(ctx, name, "details")
                     && let Some(state) = self.stack.pop()
-                        && (!state.saw_summary || !state.first_child_was_summary) {
-                            out.push(Message::new(
+                    && (!state.saw_summary || !state.first_child_was_summary)
+                {
+                    out.push(Message::new(
                                 "html.details.missing_summary",
                                 Severity::Error,
                                 Category::Html,
                                 "Element “details” is missing a required instance of child element “summary”.",
                                 *span,
                             ));
-                        }
+                }
             }
             _ => {}
         }

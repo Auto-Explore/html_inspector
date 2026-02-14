@@ -49,11 +49,11 @@ use std::rc::{Rc, Weak};
 
 use tendril::StrTendril;
 
-use markup5ever::interface::tree_builder::{ElementFlags, NodeOrText, QuirksMode, TreeSink};
-use markup5ever::ns;
 use markup5ever::Attribute;
 use markup5ever::ExpandedName;
 use markup5ever::QualName;
+use markup5ever::interface::tree_builder::{ElementFlags, NodeOrText, QuirksMode, TreeSink};
+use markup5ever::ns;
 use rustc_hash::FxHashSet;
 
 /// The different kinds of nodes in the DOM.
@@ -134,9 +134,10 @@ impl Drop for Node {
                 ref template_contents,
                 ..
             } = node.data
-                && let Some(template_contents) = template_contents.borrow_mut().take() {
-                    nodes.push(template_contents);
-                }
+                && let Some(template_contents) = template_contents.borrow_mut().take()
+            {
+                nodes.push(template_contents);
+            }
         }
     }
 }
@@ -292,9 +293,10 @@ impl TreeSink for RcDom {
             NodeOrText::AppendNode(node) => append(parent, node),
             NodeOrText::AppendText(text) => {
                 if let Some(prev) = parent.children.borrow().last()
-                    && append_to_existing_text(prev, &text) {
-                        return;
-                    }
+                    && append_to_existing_text(prev, &text)
+                {
+                    return;
+                }
                 append(
                     parent,
                     Node::new(NodeData::Text {
@@ -408,13 +410,14 @@ impl TreeSink for RcDom {
             ref name,
             ..
         } = node.data
-            && name.local.as_ref() == "script" {
-                let mut attrs = attrs.borrow_mut();
-                attrs.push(Attribute {
-                    name: QualName::new(None, ns!(html), "already-started".into()),
-                    value: "".into(),
-                })
-            }
+            && name.local.as_ref() == "script"
+        {
+            let mut attrs = attrs.borrow_mut();
+            attrs.push(Attribute {
+                name: QualName::new(None, ns!(html), "already-started".into()),
+                value: "".into(),
+            })
+        }
     }
 
     fn is_mathml_annotation_xml_integration_point(&self, handle: &Handle) -> bool {

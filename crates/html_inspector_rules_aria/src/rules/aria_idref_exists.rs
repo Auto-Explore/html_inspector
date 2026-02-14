@@ -35,9 +35,10 @@ impl Rule for AriaIdrefExists {
         };
 
         if let Some(id) = ctx.attr_value(attrs, "id")
-            && !id.is_empty() {
-                self.ids.insert(id.to_string());
-            }
+            && !id.is_empty()
+        {
+            self.ids.insert(id.to_string());
+        }
 
         for attr in [
             "aria-controls",
@@ -77,8 +78,8 @@ impl Rule for AriaIdrefExists {
 mod tests {
     use super::AriaIdrefExists;
     use html_inspector_core::{
-        validate_events, Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span,
-        ValidatorError,
+        Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span, ValidatorError,
+        validate_events,
     };
 
     struct VecSource {

@@ -86,19 +86,19 @@ impl Rule for FigureTableCaptionWarning {
 
                 if is(ctx, name, "figure")
                     && let Some(state) = self.stack.pop()
-                        && state.seen_table
-                            && state.seen_figcaption
-                            && state.table_has_caption
-                            && !state.seen_other_content
-                        {
-                            out.push(Message::new(
+                    && state.seen_table
+                    && state.seen_figcaption
+                    && state.table_has_caption
+                    && !state.seen_other_content
+                {
+                    out.push(Message::new(
                                 "html.figure.table_caption.prefers_figcaption",
                                 Severity::Warning,
                                 Category::Html,
                                 "When a “table” element is the only content in a “figure” element other than the “figcaption”, the “caption” element should be omitted in favor of the “figcaption”.",
                                 *span,
                             ));
-                        }
+                }
             }
             _ => {}
         }

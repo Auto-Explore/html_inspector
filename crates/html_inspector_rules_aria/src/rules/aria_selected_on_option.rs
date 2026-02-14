@@ -98,9 +98,10 @@ mod tests {
             &mut sink,
         );
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "aria.aria_selected.option.discouraged"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "aria.aria_selected.option.discouraged")
+        );
     }
 }

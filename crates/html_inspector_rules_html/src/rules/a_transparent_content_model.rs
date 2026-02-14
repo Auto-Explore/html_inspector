@@ -92,11 +92,15 @@ mod tests {
 
     #[test]
     fn a_transparent_model_only_restricts_children_in_phrasing_context() {
-        assert!(codes(r#"<span><a><div></div></a></span>"#)
-            .iter()
-            .any(|c| c == "html.a.transparent.disallowed_child_in_phrasing"));
-        assert!(!codes(r#"<div><a><div></div></a></div>"#)
-            .iter()
-            .any(|c| c == "html.a.transparent.disallowed_child_in_phrasing"));
+        assert!(
+            codes(r#"<span><a><div></div></a></span>"#)
+                .iter()
+                .any(|c| c == "html.a.transparent.disallowed_child_in_phrasing")
+        );
+        assert!(
+            !codes(r#"<div><a><div></div></a></div>"#)
+                .iter()
+                .any(|c| c == "html.a.transparent.disallowed_child_in_phrasing")
+        );
     }
 }

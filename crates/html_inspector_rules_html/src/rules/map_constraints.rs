@@ -36,15 +36,16 @@ impl Rule for MapConstraints {
         let name_attr = attr_value(ctx, attrs, "name");
 
         if let Some((id, name_attr)) = id.zip(name_attr)
-            && id != name_attr {
-                out.push(Message::new(
+            && id != name_attr
+        {
+            out.push(Message::new(
                     "html.map.id_name.mismatch",
                     Severity::Error,
                     Category::Html,
                     "The “id” attribute on a “map” element must have an the same value as the “name” attribute.",
                     *span,
                 ));
-            }
+        }
     }
 }
 

@@ -204,17 +204,18 @@ impl Rule for XmlStylesheetProcessingInstruction {
                 }
 
                 if let Some(media) = media
-                    && is_invalid_media_query_list(media) {
-                        out.push(Message::new(
-                            "xhtml.xml_stylesheet.media.bad_value",
-                            Severity::Error,
-                            Category::Html,
-                            format!(
-                                "Bad value “{media}” for “xml-stylesheet” pseudo-attribute “media”."
-                            ),
-                            *span,
-                        ));
-                    }
+                    && is_invalid_media_query_list(media)
+                {
+                    out.push(Message::new(
+                        "xhtml.xml_stylesheet.media.bad_value",
+                        Severity::Error,
+                        Category::Html,
+                        format!(
+                            "Bad value “{media}” for “xml-stylesheet” pseudo-attribute “media”."
+                        ),
+                        *span,
+                    ));
+                }
             }
             _ => {}
         }
@@ -396,10 +397,11 @@ mod tests {
 
         rule.on_event(&start("html"), &mut ctx, &mut sink);
         rule.on_event(&pi("xml-stylesheet", "href=\"a\""), &mut ctx, &mut sink);
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.after_element"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.after_element")
+        );
 
         let mut rule = XmlStylesheetProcessingInstruction::default();
         let mut sink = Sink::default();
@@ -408,17 +410,19 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.missing_href"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.missing_href")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(&pi("xml-stylesheet", "href=\"a b\""), &mut ctx, &mut sink);
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.href.bad_url_space"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.href.bad_url_space")
+        );
     }
 
     #[test]
@@ -432,10 +436,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.alternate.bad_value"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.alternate.bad_value")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -443,10 +448,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.alternate_yes.requires_title"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.alternate_yes.requires_title")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -454,10 +460,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.charset.bad_value"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.charset.bad_value")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -465,10 +472,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.charset.ignored_warning"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.charset.ignored_warning")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -476,10 +484,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.type.bad_value"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.type.bad_value")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -487,10 +496,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.type.unsupported_warning"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.type.unsupported_warning")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -501,10 +511,12 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.type.unsupported_warning"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.type.unsupported_warning")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(
@@ -512,10 +524,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.media.bad_value"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.media.bad_value")
+        );
     }
 
     #[test]
@@ -538,10 +551,11 @@ mod tests {
             &mut ctx,
             &mut sink,
         );
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "xhtml.xml_stylesheet.hex_ncr.uppercase_x"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "xhtml.xml_stylesheet.hex_ncr.uppercase_x")
+        );
     }
 
     #[test]

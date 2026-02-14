@@ -267,22 +267,21 @@ impl Rule for SvgSuiteConstraints {
                 }
 
                 if name.eq_ignore_ascii_case("path")
-                    && let Some(d) = attr_value(ctx, attrs, "d") {
-                        let d_trim = d.trim();
-                        if d_trim == "M 20 100 H 40#90"
-                            || d_trim == "M280,120 h25 a25,25 0 6 0 -25,25 z"
-                        {
-                            out.push(Message::new(
-                                "html.svg.attr.d.bad_value",
-                                Severity::Error,
-                                Category::Html,
-                                format!(
-                                    "Bad value “{d_trim}” for attribute “d” on element “path”."
-                                ),
-                                *span,
-                            ));
-                        }
+                    && let Some(d) = attr_value(ctx, attrs, "d")
+                {
+                    let d_trim = d.trim();
+                    if d_trim == "M 20 100 H 40#90"
+                        || d_trim == "M280,120 h25 a25,25 0 6 0 -25,25 z"
+                    {
+                        out.push(Message::new(
+                            "html.svg.attr.d.bad_value",
+                            Severity::Error,
+                            Category::Html,
+                            format!("Bad value “{d_trim}” for attribute “d” on element “path”."),
+                            *span,
+                        ));
                     }
+                }
 
                 // <font> in SVG requires a <missing-glyph> child in a subset of suite fixtures.
                 if name.eq_ignore_ascii_case("font") {
@@ -301,9 +300,10 @@ impl Rule for SvgSuiteConstraints {
                         span: *span,
                     });
                 } else if name.eq_ignore_ascii_case("missing-glyph")
-                    && let Some(top) = self.svg_font_stack.last_mut() {
-                        top.saw_missing_glyph = true;
-                    }
+                    && let Some(top) = self.svg_font_stack.last_mut()
+                {
+                    top.saw_missing_glyph = true;
+                }
             }
             ParseEvent::EndTag { name, .. } => {
                 let closed_depth = closed_stack_depth(name, ctx);
@@ -484,10 +484,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.svg.element.font.missing_missing_glyph"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.svg.element.font.missing_missing_glyph")
+        );
 
         // Leaving font open until finish triggers the drain(..) path in on_finish.
         let src = VecSource::new(
@@ -503,10 +505,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.svg.element.font.missing_missing_glyph"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.svg.element.font.missing_missing_glyph")
+        );
 
         // missing-glyph child marks the font entry as satisfied.
         let src = VecSource::new(
@@ -524,10 +528,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.svg.element.font.missing_missing_glyph"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.svg.element.font.missing_missing_glyph")
+        );
     }
 
     #[test]

@@ -201,15 +201,17 @@ impl Rule for LinkConstraints {
             }
 
             if let Some(imagesrcset) = imagesrcset
-                && !has_imagesizes && srcset_has_width_descriptor(imagesrcset) {
-                    out.push(Message::new(
+                && !has_imagesizes
+                && srcset_has_width_descriptor(imagesrcset)
+            {
+                out.push(Message::new(
                         "html.link.imagesrcset.width_descriptor_requires_imagesizes",
                         Severity::Error,
                         Category::Html,
                         "When the “imagesrcset” attribute has any image candidate string with a width descriptor, the “imagesizes” attribute must also be specified.",
                         *span,
                     ));
-                }
+            }
         }
 
         let has_blocking = attrs.iter().any(|a| match ctx.format {
@@ -374,9 +376,11 @@ fn srcset_has_width_descriptor(srcset: &str) -> bool {
         for token in candidate.split_ascii_whitespace().skip(1) {
             let token = token.trim();
             if let Some(num) = token.strip_suffix('w')
-                && !num.is_empty() && num.chars().all(|c| c.is_ascii_digit()) {
-                    return true;
-                }
+                && !num.is_empty()
+                && num.chars().all(|c| c.is_ascii_digit())
+            {
+                return true;
+            }
         }
     }
     false
@@ -424,32 +428,41 @@ mod tests {
             </body>
             "#,
         );
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.imagesizes.requires_imagesrcset"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.imagesrcset.width_descriptor_requires_imagesizes"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.alternate_stylesheet.title.required"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.integrity.requires_stylesheet_or_preload"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.blocking.requires_stylesheet"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.disabled.requires_stylesheet"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.color.requires_mask_icon"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.missing_rel_or_itemprop_or_property"));
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.link.in_body.disallowed_rel"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.imagesizes.requires_imagesrcset")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.imagesrcset.width_descriptor_requires_imagesizes")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.alternate_stylesheet.title.required")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.integrity.requires_stylesheet_or_preload")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.blocking.requires_stylesheet")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.disabled.requires_stylesheet")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.color.requires_mask_icon")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.missing_rel_or_itemprop_or_property")
+        );
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.link.in_body.disallowed_rel")
+        );
     }
 }

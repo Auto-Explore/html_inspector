@@ -43,15 +43,16 @@ impl Rule for OptionConstraints {
                 }
 
                 if let Some(label) = attr_value(ctx, attrs, "label")
-                    && label.is_empty() {
-                        out.push(Message::new(
-                            "html.option.label.empty",
-                            Severity::Error,
-                            Category::Html,
-                            "Bad value “” for attribute “label” on element “option”.",
-                            *span,
-                        ));
-                    }
+                    && label.is_empty()
+                {
+                    out.push(Message::new(
+                        "html.option.label.empty",
+                        Severity::Error,
+                        Category::Html,
+                        "Bad value “” for attribute “label” on element “option”.",
+                        *span,
+                    ));
+                }
 
                 let has_label_attr = has_attr(ctx, attrs, "label");
                 let has_value_attr = has_attr(ctx, attrs, "value");
@@ -79,9 +80,10 @@ impl Rule for OptionConstraints {
             }
             ParseEvent::Text { text, .. } => {
                 if let Some(state) = self.stack.last_mut()
-                    && text.chars().any(|c| !c.is_whitespace()) {
-                        state.saw_non_whitespace_text = true;
-                    }
+                    && text.chars().any(|c| !c.is_whitespace())
+                {
+                    state.saw_non_whitespace_text = true;
+                }
             }
             ParseEvent::EndTag { name, span } => {
                 if !is(ctx, name, "option") {
@@ -152,10 +154,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.option.label.empty"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.option.label.empty")
+        );
     }
 
     #[test]
@@ -169,10 +173,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.option.empty_without_label"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.option.empty_without_label")
+        );
     }
 
     #[test]
@@ -189,10 +195,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.option.empty_without_label"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.option.empty_without_label")
+        );
     }
 
     #[test]
@@ -209,10 +217,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.option.empty_without_label"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.option.empty_without_label")
+        );
     }
 
     #[test]
@@ -225,10 +235,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.option.empty_without_label"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.option.empty_without_label")
+        );
     }
 
     #[test]
@@ -245,10 +257,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.option.empty_without_label"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.option.empty_without_label")
+        );
     }
 
     #[test]
@@ -264,10 +278,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.option.label.empty"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.option.label.empty")
+        );
     }
 
     #[test]

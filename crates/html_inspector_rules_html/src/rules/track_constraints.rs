@@ -49,33 +49,33 @@ impl Rule for TrackConstraints {
                     .and_then(|a| a.value.as_deref());
 
                 if let Some(label) = label
-                    && label.trim().is_empty() {
-                        out.push(Message::new(
-                            "html.track.label.non_empty",
-                            Severity::Error,
-                            Category::Html,
-                            "Attribute “label” for element “track” must have non-empty value.",
-                            *span,
-                        ));
-                    }
+                    && label.trim().is_empty()
+                {
+                    out.push(Message::new(
+                        "html.track.label.non_empty",
+                        Severity::Error,
+                        Category::Html,
+                        "Attribute “label” for element “track” must have non-empty value.",
+                        *span,
+                    ));
+                }
 
                 let has_default = attrs
                     .iter()
                     .any(|a| attr_name_matches(ctx.format, &a.name, "default"));
-                if has_default
-                    && let Some(state) = self.media_stack.last_mut() {
-                        if state.saw_default_track {
-                            out.push(Message::new(
+                if has_default && let Some(state) = self.media_stack.last_mut() {
+                    if state.saw_default_track {
+                        out.push(Message::new(
                                 "html.track.default.multiple",
                                 Severity::Error,
                                 Category::Html,
                                 "The “default” attribute must not occur on more than one “track” element within the same “audio” or “video” element.",
                                 *span,
                             ));
-                        } else {
-                            state.saw_default_track = true;
-                        }
+                    } else {
+                        state.saw_default_track = true;
                     }
+                }
             }
             ParseEvent::EndTag { name, .. } => {
                 if is_media_element(ctx, name) {
@@ -167,10 +167,11 @@ mod tests {
             &mut sink,
         );
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.track.label.non_empty"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.track.label.non_empty")
+        );
 
         rule.on_event(
             &ParseEvent::Text {
@@ -236,13 +237,15 @@ mod tests {
             &mut sink,
         );
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.track.label.non_empty"));
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.track.default.multiple"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.track.label.non_empty")
+        );
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.track.default.multiple")
+        );
     }
 }

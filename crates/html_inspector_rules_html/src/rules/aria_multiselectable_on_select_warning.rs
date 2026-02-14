@@ -117,9 +117,10 @@ mod tests {
             &mut sink,
         );
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.aria.multiselectable_on_select"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.aria.multiselectable_on_select")
+        );
     }
 }

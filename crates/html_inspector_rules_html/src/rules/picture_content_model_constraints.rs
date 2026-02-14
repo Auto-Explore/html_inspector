@@ -31,15 +31,16 @@ impl Rule for PictureContentModelConstraints {
             ParseEvent::StartTag { name, span, .. } => {
                 if is(ctx, name, "picture") {
                     if let Some(parent) = ctx.current_parent()
-                        && is(ctx, parent, "picture") {
-                            out.push(Message::new(
-                                "html.picture.child.picture.disallowed",
-                                Severity::Error,
-                                Category::Html,
-                                "Element “picture” not allowed as child of “picture” in this context.",
-                                *span,
-                            ));
-                        }
+                        && is(ctx, parent, "picture")
+                    {
+                        out.push(Message::new(
+                            "html.picture.child.picture.disallowed",
+                            Severity::Error,
+                            Category::Html,
+                            "Element “picture” not allowed as child of “picture” in this context.",
+                            *span,
+                        ));
+                    }
                     self.stack.push(PictureState::default());
                     return;
                 }

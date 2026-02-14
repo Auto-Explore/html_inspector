@@ -75,20 +75,21 @@ impl Rule for FigureFigcaption {
                         }
 
                         if !state.role_error_emitted
-                            && let Some(role) = state.role_token.as_deref() {
-                                let role_allows_figcaption = role.eq_ignore_ascii_case("figure")
-                                    || html_inspector_core::starts_with_ascii_ci(role, "doc-");
-                                if !role_allows_figcaption {
-                                    state.role_error_emitted = true;
-                                    out.push(Message::new(
+                            && let Some(role) = state.role_token.as_deref()
+                        {
+                            let role_allows_figcaption = role.eq_ignore_ascii_case("figure")
+                                || html_inspector_core::starts_with_ascii_ci(role, "doc-");
+                            if !role_allows_figcaption {
+                                state.role_error_emitted = true;
+                                out.push(Message::new(
                                         "html.figure.role.with_figcaption",
                                         Severity::Error,
                                         Category::Html,
                                         "A “figure” element with a “figcaption” descendant must not have a “role” attribute.",
                                         *span,
                                     ));
-                                }
                             }
+                        }
                     }
                     return;
                 }
@@ -110,7 +111,9 @@ impl Rule for FigureFigcaption {
                             "html.figure.figcaption.order",
                             Severity::Error,
                             Category::Html,
-                            format!("Element “{name}” not allowed as child of “figure” in this context."),
+                            format!(
+                                "Element “{name}” not allowed as child of “figure” in this context."
+                            ),
                             *span,
                         ));
                         return;

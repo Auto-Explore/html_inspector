@@ -32,15 +32,16 @@ impl Rule for ImpliedPEndTag {
 
         if ctx.has_ancestor("p")
             && let Some(parent) = ctx.current_parent()
-                && !is(ctx, parent, "p") {
-                    out.push(Message::new(
-                        "html.parse.p.end_tag_implied_open_elements",
-                        Severity::Error,
-                        Category::Html,
-                        "End tag “p” implied, but there were open elements.",
-                        *span,
-                    ));
-                }
+            && !is(ctx, parent, "p")
+        {
+            out.push(Message::new(
+                "html.parse.p.end_tag_implied_open_elements",
+                Severity::Error,
+                Category::Html,
+                "End tag “p” implied, but there were open elements.",
+                *span,
+            ));
+        }
     }
 }
 

@@ -66,21 +66,24 @@ impl Rule for LabelForConstraints {
                 if is(ctx, name, "label") {
                     let for_value = attr_value(ctx, attrs, "for").map(|s| s.to_string());
                     if let Some(v) = for_value.as_ref()
-                        && !v.is_empty() {
-                            self.label_for_refs.push((v.clone(), *span));
-                        }
+                        && !v.is_empty()
+                    {
+                        self.label_for_refs.push((v.clone(), *span));
+                    }
                     let has_aria_hidden = has_attr(ctx, attrs, "aria-hidden");
                     let has_role = has_attr(ctx, attrs, "role");
                     let has_aria_label = has_attr(ctx, attrs, "aria-label");
                     if let Some(v) = for_value.as_ref()
-                        && !v.is_empty() && (has_role || has_aria_label) {
-                            self.label_assoc_checks.push(LabelAssocCheck {
-                                for_value: v.clone(),
-                                has_role,
-                                has_aria_label,
-                                span: *span,
-                            });
-                        }
+                        && !v.is_empty()
+                        && (has_role || has_aria_label)
+                    {
+                        self.label_assoc_checks.push(LabelAssocCheck {
+                            for_value: v.clone(),
+                            has_role,
+                            has_aria_label,
+                            span: *span,
+                        });
+                    }
                     self.label_stack.push(LabelState {
                         for_value,
                         has_aria_hidden,
@@ -94,9 +97,10 @@ impl Rule for LabelForConstraints {
                 // Collect IDs of non-hidden form controls for later "for" checks.
                 if is_non_hidden_form_control(ctx, name, attrs)
                     && let Some(id) = attr_value(ctx, attrs, "id")
-                        && !id.is_empty() {
-                            self.labelable_ids.insert(id.to_string());
-                        }
+                    && !id.is_empty()
+                {
+                    self.labelable_ids.insert(id.to_string());
+                }
 
                 // role=button ancestors must not have input descendants (suite coverage).
                 if !self.role_button_stack.is_empty() && is(ctx, name, "input") {
@@ -113,19 +117,20 @@ impl Rule for LabelForConstraints {
                 if !self.label_stack.is_empty() {
                     if is(ctx, name, "input")
                         && let Some(state) = self.label_stack.last()
-                            && let Some(for_value) = state.for_value.as_deref() {
-                                let id = attr_value(ctx, attrs, "id");
-                                let matches = id.is_some_and(|v| v == for_value);
-                                if !matches {
-                                    out.push(Message::new(
+                        && let Some(for_value) = state.for_value.as_deref()
+                    {
+                        let id = attr_value(ctx, attrs, "id");
+                        let matches = id.is_some_and(|v| v == for_value);
+                        if !matches {
+                            out.push(Message::new(
                                         "html.label.for.descendant_input_id_mismatch",
                                         Severity::Error,
                                         Category::Html,
                                         "Any “input” descendant of a “label” element with a “for” attribute must have an ID value that matches that “for” attribute.",
                                         *span,
                                     ));
-                                }
-                            }
+                        }
+                    }
 
                     if is_labelable_descendant(ctx, name, attrs) {
                         // aria-hidden must not be used on a label that is an ancestor of a labelable element.
@@ -160,9 +165,10 @@ impl Rule for LabelForConstraints {
                 }
 
                 if let Some(top) = self.role_button_stack.last()
-                    && names_match(ctx, top, name) {
-                        self.role_button_stack.pop();
-                    }
+                    && names_match(ctx, top, name)
+                {
+                    self.role_button_stack.pop();
+                }
             }
             _ => {}
         }
@@ -304,55 +310,69 @@ mod tests {
     #[test]
     fn label_for_must_reference_existing_non_hidden_control() {
         let report = validate(r#"<label for="x"></label>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.label.for.must_reference_non_hidden_control"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.label.for.must_reference_non_hidden_control")
+        );
     }
 
     #[test]
     fn role_button_must_not_have_input_descendant() {
         let report = validate(r#"<div role="button"><input></div>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.role_button.descendant_input"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.role_button.descendant_input")
+        );
     }
 
     #[test]
     fn label_for_descendant_input_id_mismatch_emits_error() {
         let report = validate(r#"<label for="x"><input id="y"></label>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.label.for.descendant_input_id_mismatch"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.label.for.descendant_input_id_mismatch")
+        );
     }
 
     #[test]
     fn aria_hidden_and_role_on_label_with_labelable_descendant_emit_errors() {
         let report = validate(r#"<label aria-hidden="true" role="button"><input id="x"></label>"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.label.aria_hidden.with_labelable_descendant"));
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.label.role.with_labelable_descendant"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.label.aria_hidden.with_labelable_descendant")
+        );
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.label.role.with_labelable_descendant")
+        );
     }
 
     #[test]
     fn label_association_disallows_aria_label_and_role() {
         let report =
             validate(r#"<label for="x" aria-label="a" role="button"></label><input id="x">"#);
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.label.aria_label.associated_with_labelable"));
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.label.role.associated_with_labelable"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.label.aria_label.associated_with_labelable")
+        );
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.label.role.associated_with_labelable")
+        );
     }
 
     #[test]

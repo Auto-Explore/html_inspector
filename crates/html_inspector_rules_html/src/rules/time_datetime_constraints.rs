@@ -360,10 +360,11 @@ mod tests {
         assert!(sink.0.is_empty());
 
         rule.on_event(&time_start_tag("bad"), &mut ctx, &mut sink);
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.time.datetime.invalid"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.time.datetime.invalid")
+        );
 
         let mut sink = Sink::default();
         rule.on_event(&time_start_tag("2020-01-01"), &mut ctx, &mut sink);

@@ -88,13 +88,17 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.attr.aria_dropeffect.deprecated"));
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.attr.aria_grabbed.deprecated"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.attr.aria_dropeffect.deprecated")
+        );
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.attr.aria_grabbed.deprecated")
+        );
     }
 }

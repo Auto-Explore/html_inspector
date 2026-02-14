@@ -1,7 +1,7 @@
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
-use unicode_normalization::{is_nfc, UnicodeNormalization};
+use unicode_normalization::{UnicodeNormalization, is_nfc};
 
 #[derive(Default)]
 pub struct UnicodeNormalizationNfcWarning {

@@ -39,8 +39,9 @@ impl Rule for SvgXmlnsConstraints {
             .iter()
             .find(|a| normalize_name(ctx, &a.name) == "xmlns")
             .and_then(|a| a.value.as_deref())
-            && xmlns != "http://www.w3.org/2000/svg" {
-                out.push(Message::new(
+            && xmlns != "http://www.w3.org/2000/svg"
+        {
+            out.push(Message::new(
                     "html.svg.xmlns.default.bad_value",
                     Severity::Error,
                     Category::Html,
@@ -49,7 +50,7 @@ impl Rule for SvgXmlnsConstraints {
                     ),
                     *span,
                 ));
-            }
+        }
 
         for a in attrs {
             let name_norm = normalize_name(ctx, &a.name);
@@ -120,14 +121,16 @@ mod tests {
             &mut ctx,
             &mut out,
         );
-        assert!(out
-            .0
-            .iter()
-            .any(|m| m.code == "html.svg.xmlns.default.bad_value"));
-        assert!(out
-            .0
-            .iter()
-            .any(|m| m.code == "html.svg.xmlns.xlink.bad_value"));
+        assert!(
+            out.0
+                .iter()
+                .any(|m| m.code == "html.svg.xmlns.default.bad_value")
+        );
+        assert!(
+            out.0
+                .iter()
+                .any(|m| m.code == "html.svg.xmlns.xlink.bad_value")
+        );
     }
 
     #[test]

@@ -56,9 +56,11 @@ impl Rule for DelInsTransparentContentModel {
                 }
 
                 if let Some(top) = self.stack.last().copied()
-                    && top.phrasing_context && !is_phrasing_element(ctx, name) {
-                        let child = normalize_name(ctx, name);
-                        out.push(Message::new(
+                    && top.phrasing_context
+                    && !is_phrasing_element(ctx, name)
+                {
+                    let child = normalize_name(ctx, name);
+                    out.push(Message::new(
                             "html.del_ins.transparent.disallowed_child_in_phrasing",
                             Severity::Error,
                             Category::Html,
@@ -68,7 +70,7 @@ impl Rule for DelInsTransparentContentModel {
                             ),
                             *span,
                         ));
-                    }
+                }
             }
             ParseEvent::EndTag { name, .. } => {
                 if ctx.name_is(name, "del") || ctx.name_is(name, "ins") {
@@ -104,11 +106,15 @@ mod tests {
 
     #[test]
     fn del_ins_transparent_model_only_restricts_children_in_phrasing_context() {
-        assert!(codes(r#"<span><del><div></div></del></span>"#)
-            .iter()
-            .any(|c| c == "html.del_ins.transparent.disallowed_child_in_phrasing"));
-        assert!(!codes(r#"<div><del><div></div></del></div>"#)
-            .iter()
-            .any(|c| c == "html.del_ins.transparent.disallowed_child_in_phrasing"));
+        assert!(
+            codes(r#"<span><del><div></div></del></span>"#)
+                .iter()
+                .any(|c| c == "html.del_ins.transparent.disallowed_child_in_phrasing")
+        );
+        assert!(
+            !codes(r#"<div><del><div></div></del></div>"#)
+                .iter()
+                .any(|c| c == "html.del_ins.transparent.disallowed_child_in_phrasing")
+        );
     }
 }

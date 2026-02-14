@@ -77,8 +77,8 @@ mod tests {
     use std::sync::{Arc, Mutex};
 
     use html_inspector_core::{
-        validate_events, Config, EventSource, InputFormat, Interest, ParseEvent, Rule, RuleSet,
-        ValidatorError,
+        Config, EventSource, InputFormat, Interest, ParseEvent, Rule, RuleSet, ValidatorError,
+        validate_events,
     };
 
     struct VecSource {
@@ -166,8 +166,8 @@ mod tests {
     }
 
     #[test]
-    fn namespace_for_next_start_tag_tracks_svg_integration_points_in_html(
-    ) -> Result<(), ValidatorError> {
+    fn namespace_for_next_start_tag_tracks_svg_integration_points_in_html()
+    -> Result<(), ValidatorError> {
         let out: Arc<Mutex<Vec<(String, Namespace)>>> = Arc::new(Mutex::new(Vec::new()));
         let rule = NsRecorder { out: out.clone() };
 
@@ -261,8 +261,8 @@ mod tests {
     }
 
     #[test]
-    fn namespace_for_next_start_tag_does_not_switch_outside_html_insertion(
-    ) -> Result<(), ValidatorError> {
+    fn namespace_for_next_start_tag_does_not_switch_outside_html_insertion()
+    -> Result<(), ValidatorError> {
         let out: Arc<Mutex<Vec<(String, Namespace)>>> = Arc::new(Mutex::new(Vec::new()));
         let rule = NsRecorder { out: out.clone() };
 
@@ -334,8 +334,8 @@ mod tests {
     }
 
     #[test]
-    fn last_open_svg_integration_point_recognizes_foreignobject_all_caps_in_html(
-    ) -> Result<(), ValidatorError> {
+    fn last_open_svg_integration_point_recognizes_foreignobject_all_caps_in_html()
+    -> Result<(), ValidatorError> {
         let out: Arc<Mutex<Vec<(String, Option<&'static str>)>>> = Arc::new(Mutex::new(Vec::new()));
         let rule = SvgIntegrationPointRecorder { out: out.clone() };
 

@@ -70,10 +70,12 @@ mod tests {
             HtmlEventSource::from_str("t", InputFormat::Html, "<video src=\"\"></video>").unwrap();
         let rules = RuleSet::new().push(VideoSrcConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.video.src.empty"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.video.src.empty")
+        );
     }
 
     #[test]
@@ -151,10 +153,12 @@ mod tests {
         .unwrap();
         let rules = RuleSet::new().push(VideoSrcConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.url.forbidden_code_point"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.url.forbidden_code_point")
+        );
     }
 
     #[test]

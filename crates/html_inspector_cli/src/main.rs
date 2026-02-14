@@ -169,7 +169,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         csp_header = Some(args.next().ok_or("missing value for --csp-header")?)
                     }
                     other if other.starts_with("--") => {
-                        return Err(format!("unknown arg: {other}").into())
+                        return Err(format!("unknown arg: {other}").into());
                     }
                     other => return Err(format!("unknown format: {other}").into()),
                 }
@@ -271,7 +271,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
             eprintln!("  html_inspector_cli check <path-or-uri> [html|xhtml]");
             eprintln!("  html_inspector_cli file <path> [html|xhtml] [--also-check-css]");
-            eprintln!("  html_inspector_cli css <path-or-uri> [--profile P] [--medium M] [--warning N] [--allow-network]");
+            eprintln!(
+                "  html_inspector_cli css <path-or-uri> [--profile P] [--medium M] [--warning N] [--allow-network]"
+            );
             eprintln!("  html_inspector_cli serve [port] [--bind IP] [--max-bytes N]");
             Ok(())
         }

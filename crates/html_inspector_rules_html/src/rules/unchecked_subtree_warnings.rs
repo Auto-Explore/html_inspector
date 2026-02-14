@@ -75,18 +75,20 @@ impl Rule for UncheckedSubtreeWarnings {
             ));
         }
 
-        if !self.warned_svg_version && is_svg_element(ctx, name)
+        if !self.warned_svg_version
+            && is_svg_element(ctx, name)
             && let Some(version) = attr_value(ctx, attrs, "version")
-                && (version == "1.0" || version == "1.2") {
-                    self.warned_svg_version = true;
-                    out.push(Message::new(
+            && (version == "1.0" || version == "1.2")
+        {
+            self.warned_svg_version = true;
+            out.push(Message::new(
                         "html.unchecked_subtree.svg_version",
                         Severity::Warning,
                         Category::Html,
                         "Unsupported SVG version specified. This validator only supports SVG 1.1. The recommended way to suppress this warning is to remove the “version” attribute altogether.",
                         *span,
                     ));
-                }
+        }
     }
 
     fn on_finish(&mut self, _ctx: &mut ValidationContext, _out: &mut dyn MessageSink) {
@@ -163,24 +165,30 @@ mod tests {
     #[test]
     fn openmath_prefix_warns() {
         let html = "<om:OMOBJ></om:OMOBJ>";
-        assert!(codes(html)
-            .iter()
-            .any(|c| c == "html.unchecked_subtree.openmath"));
+        assert!(
+            codes(html)
+                .iter()
+                .any(|c| c == "html.unchecked_subtree.openmath")
+        );
     }
 
     #[test]
     fn inkscape_attribute_warns() {
         let html = "<svg inkscape:foo=\"bar\"></svg>";
-        assert!(codes(html)
-            .iter()
-            .any(|c| c == "html.unchecked_subtree.inkscape"));
+        assert!(
+            codes(html)
+                .iter()
+                .any(|c| c == "html.unchecked_subtree.inkscape")
+        );
     }
 
     #[test]
     fn svg_version_1_2_warns() {
         let html = "<svg version=\"1.2\"></svg>";
-        assert!(codes(html)
-            .iter()
-            .any(|c| c == "html.unchecked_subtree.svg_version"));
+        assert!(
+            codes(html)
+                .iter()
+                .any(|c| c == "html.unchecked_subtree.svg_version")
+        );
     }
 }

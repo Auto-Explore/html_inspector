@@ -53,14 +53,15 @@ impl Rule for AriaRoleHierarchyConstraints {
                 // Record aria-owns relationships for later containment checks.
                 if let (Some(owner_role), Some(owns)) =
                     (role_lc.as_deref(), ctx.attr_value(attrs, "aria-owns"))
-                    && is_owner_role(owner_role) {
-                        for token in owns.split_ascii_whitespace() {
-                            self.owned_by_roles
-                                .entry(token.to_string())
-                                .or_default()
-                                .push(owner_role.to_string());
-                        }
+                    && is_owner_role(owner_role)
+                {
+                    for token in owns.split_ascii_whitespace() {
+                        self.owned_by_roles
+                            .entry(token.to_string())
+                            .or_default()
+                            .push(owner_role.to_string());
                     }
+                }
 
                 // Enforce specific role + attribute warnings.
                 if role_lc.as_deref() == Some("listitem") && ctx.has_attr(attrs, "aria-level") {
@@ -117,69 +118,70 @@ impl Rule for AriaRoleHierarchyConstraints {
 
                 // Enforce constraints for <li> descendants of particular role containers.
                 if ctx.name_is(name, "li")
-                    && let Some(li_role) = role_lc.as_deref() {
-                        if self.has_ancestor_role("listbox")
-                            && !(li_role == "group" || li_role == "option")
-                        {
-                            out.push(Message::new(
+                    && let Some(li_role) = role_lc.as_deref()
+                {
+                    if self.has_ancestor_role("listbox")
+                        && !(li_role == "group" || li_role == "option")
+                    {
+                        out.push(Message::new(
                                 "aria.li.role.descendant_of_listbox_or_list",
                                 Severity::Error,
                                 Category::Aria,
                                 "An “li” element that is a descendant of a “role=listbox” element or “role=list” element must not have any “role” value other than “group” or “option”.",
                                 *span,
                             ));
-                        }
-                        if (self.has_ancestor_role("menu") || self.has_ancestor_role("menubar"))
-                            && !matches!(
-                                li_role,
-                                "group"
-                                    | "menuitem"
-                                    | "menuitemcheckbox"
-                                    | "menuitemradio"
-                                    | "none"
-                                    | "presentation"
-                                    | "separator"
-                            )
-                        {
-                            out.push(Message::new(
+                    }
+                    if (self.has_ancestor_role("menu") || self.has_ancestor_role("menubar"))
+                        && !matches!(
+                            li_role,
+                            "group"
+                                | "menuitem"
+                                | "menuitemcheckbox"
+                                | "menuitemradio"
+                                | "none"
+                                | "presentation"
+                                | "separator"
+                        )
+                    {
+                        out.push(Message::new(
                                 "aria.li.role.descendant_of_menu_or_menubar",
                                 Severity::Error,
                                 Category::Aria,
                                 "An “li” element that is a descendant of a “role=menu” element or “role=menubar” element must not have any “role” value other than “group”, “menuitem”, “menuitemcheckbox”, “menuitemradio”, or “separator”.",
                                 *span,
                             ));
-                        }
-                        if self.has_ancestor_role("tablist") && li_role != "tab" {
-                            out.push(Message::new(
+                    }
+                    if self.has_ancestor_role("tablist") && li_role != "tab" {
+                        out.push(Message::new(
                                 "aria.li.role.descendant_of_tablist",
                                 Severity::Error,
                                 Category::Aria,
                                 "An “li” element that is a descendant of a “role=tablist” element must not have any “role” value other than “tab”.",
                                 *span,
                             ));
-                        }
-                        if self.has_ancestor_role("tree") && li_role != "treeitem" {
-                            out.push(Message::new(
+                    }
+                    if self.has_ancestor_role("tree") && li_role != "treeitem" {
+                        out.push(Message::new(
                                 "aria.li.role.descendant_of_tree",
                                 Severity::Error,
                                 Category::Aria,
                                 "An “li” element that is a descendant of a “role=tree” element must not have any “role” value other than “treeitem”.",
                                 *span,
                             ));
-                        }
+                    }
 
-                        if (self.has_ancestor_role("list") || !self.implicit_list_stack.is_empty())
-                            && has_role_attr
-                        {
-                            out.push(Message::new(
+                    if (self.has_ancestor_role("list") || !self.implicit_list_stack.is_empty())
+                        && has_role_attr
+                    {
+                        out.push(Message::new(
                                 "aria.li.role.descendant_of_implicit_or_role_list",
                                 Severity::Error,
                                 Category::Aria,
                                 "An “li” element that is a descendant of a “ul”, “ol”, or “menu” element with no explicit “role” value, or a descendant of a “role=list” element, must not have any “role” value other than “listitem”.",
                                 *span,
                             ));
-                        }
                     }
+                }
 
                 // Track ancestor roles we care about for descendant/containment checks.
                 let pushes = match ctx.format {
@@ -197,12 +199,13 @@ impl Rule for AriaRoleHierarchyConstraints {
                         self.implicit_list_stack.push(name.clone());
                     }
                     if let Some(role) = role_lc
-                        && is_tracked_container_role(&role) {
-                            self.role_stack.push(RoleEntry {
-                                role_lc: role,
-                                depth: ctx.open_elements().len() + 1,
-                            });
-                        }
+                        && is_tracked_container_role(&role)
+                    {
+                        self.role_stack.push(RoleEntry {
+                            role_lc: role,
+                            depth: ctx.open_elements().len() + 1,
+                        });
+                    }
                 }
             }
             ParseEvent::EndTag { name, .. } => self.on_end_tag(name, ctx),
@@ -292,8 +295,8 @@ fn is_tracked_container_role(role_lc: &str) -> bool {
 mod tests {
     use super::AriaRoleHierarchyConstraints;
     use html_inspector_core::{
-        validate_events, Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span,
-        ValidatorError,
+        Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span, ValidatorError,
+        validate_events,
     };
 
     struct VecSource {

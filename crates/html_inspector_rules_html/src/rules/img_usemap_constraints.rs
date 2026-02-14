@@ -34,9 +34,10 @@ impl Rule for ImgUsemapConstraints {
 
         if is(ctx, name, "map") {
             if let Some(name) = attr_value(ctx, attrs, "name")
-                && !name.is_empty() {
-                    self.map_names.insert(name.to_string());
-                }
+                && !name.is_empty()
+            {
+                self.map_names.insert(name.to_string());
+            }
             return;
         }
 
@@ -147,16 +148,20 @@ mod tests {
     #[test]
     fn object_usemap_missing_map_name_is_reported() {
         let html = "<object usemap=\"#nope\"></object>";
-        assert!(codes(html)
-            .iter()
-            .any(|c| c == "html.object.usemap.missing_map_name"));
+        assert!(
+            codes(html)
+                .iter()
+                .any(|c| c == "html.object.usemap.missing_map_name")
+        );
     }
 
     #[test]
     fn object_usemap_bad_value_is_reported() {
         let html = "<object usemap=\"nohash\"></object>";
-        assert!(codes(html)
-            .iter()
-            .any(|c| c == "html.object.usemap.bad_value"));
+        assert!(
+            codes(html)
+                .iter()
+                .any(|c| c == "html.object.usemap.bad_value")
+        );
     }
 }

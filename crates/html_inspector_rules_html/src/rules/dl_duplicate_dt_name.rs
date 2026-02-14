@@ -228,10 +228,12 @@ mod tests {
         );
         let rules = RuleSet::new().push(DlDuplicateDtName::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.duplicate_dt_name"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.duplicate_dt_name")
+        );
     }
 
     #[test]
@@ -253,10 +255,12 @@ mod tests {
         );
         let rules = RuleSet::new().push(DlDuplicateDtName::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.duplicate_dt_name"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.duplicate_dt_name")
+        );
     }
 
     #[test]
@@ -322,10 +326,12 @@ mod tests {
         )
         .unwrap();
 
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.duplicate_dt_name"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.duplicate_dt_name")
+        );
         let info = report
             .messages
             .iter()

@@ -94,11 +94,15 @@ mod tests {
 
     #[test]
     fn video_transparent_model_only_restricts_children_in_phrasing_context() {
-        assert!(codes(r#"<span><video><div></div></video></span>"#)
-            .iter()
-            .any(|c| c == "html.video.transparent.disallowed_child_in_phrasing"));
-        assert!(!codes(r#"<div><video><div></div></video></div>"#)
-            .iter()
-            .any(|c| c == "html.video.transparent.disallowed_child_in_phrasing"));
+        assert!(
+            codes(r#"<span><video><div></div></video></span>"#)
+                .iter()
+                .any(|c| c == "html.video.transparent.disallowed_child_in_phrasing")
+        );
+        assert!(
+            !codes(r#"<div><video><div></div></video></div>"#)
+                .iter()
+                .any(|c| c == "html.video.transparent.disallowed_child_in_phrasing")
+        );
     }
 }

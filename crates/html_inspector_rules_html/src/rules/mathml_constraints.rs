@@ -2,7 +2,7 @@ use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
-use super::foreign_content::{namespace_for_next_start_tag, Namespace};
+use super::foreign_content::{Namespace, namespace_for_next_start_tag};
 use super::shared::attr_value;
 
 #[derive(Default)]
@@ -49,9 +49,9 @@ impl Rule for MathmlConstraints {
                     && ctx
                         .current_parent()
                         .is_some_and(|p| p.eq_ignore_ascii_case(&top.name_lc))
-                    {
-                        top.seen = top.seen.saturating_add(1);
-                    }
+                {
+                    top.seen = top.seen.saturating_add(1);
+                }
 
                 let ns = namespace_for_next_start_tag(ctx, name);
 
@@ -209,15 +209,17 @@ impl Rule for MathmlConstraints {
                         .math_start_stack
                         .pop()
                         .zip(span.as_ref().map(|s| s.byte_start))
-                        && start < end {
-                            self.closed_math_ranges.push((start, end));
-                        }
+                        && start < end
+                    {
+                        self.closed_math_ranges.push((start, end));
+                    }
                 }
                 if let Some(top) = self.missing_children_stack.last()
-                    && top.name_lc.eq_ignore_ascii_case(&name_lc) {
-                        let top = self.missing_children_stack.pop().expect("just checked");
-                        if top.seen < top.required {
-                            out.push(Message::new(
+                    && top.name_lc.eq_ignore_ascii_case(&name_lc)
+                {
+                    let top = self.missing_children_stack.pop().expect("just checked");
+                    if top.seen < top.required {
+                        out.push(Message::new(
                                 "html.mathml.missing_children",
                                 Severity::Error,
                                 Category::Html,
@@ -227,8 +229,8 @@ impl Rule for MathmlConstraints {
                                 ),
                                 top.span,
                             ));
-                        }
                     }
+                }
             }
             _ => {}
         }

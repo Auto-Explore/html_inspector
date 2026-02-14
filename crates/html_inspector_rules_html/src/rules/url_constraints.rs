@@ -37,15 +37,16 @@ impl Rule for UrlConstraints {
                 })
                 .and_then(|a| a.value.as_deref());
             if let Some(href) = href
-                && href.is_empty() {
-                    out.push(Message::new(
-                        "html.url.empty",
-                        Severity::Error,
-                        Category::Html,
-                        "Bad value “” for attribute “href” on element “link”.",
-                        *span,
-                    ));
-                }
+                && href.is_empty()
+            {
+                out.push(Message::new(
+                    "html.url.empty",
+                    Severity::Error,
+                    Category::Html,
+                    "Bad value “” for attribute “href” on element “link”.",
+                    *span,
+                ));
+            }
         }
     }
 }

@@ -36,15 +36,16 @@ impl Rule for InputRangeConstraints {
         }
 
         if let Some(min) = attr_value(ctx, attrs, "min")
-            && (min.is_empty() || min.parse::<f64>().is_err()) {
-                out.push(Message::new(
-                    "html.input.range.min.invalid",
-                    Severity::Error,
-                    Category::Html,
-                    format!("Bad value “{min}” for attribute “min” on element “input”."),
-                    *span,
-                ));
-            }
+            && (min.is_empty() || min.parse::<f64>().is_err())
+        {
+            out.push(Message::new(
+                "html.input.range.min.invalid",
+                Severity::Error,
+                Category::Html,
+                format!("Bad value “{min}” for attribute “min” on element “input”."),
+                *span,
+            ));
+        }
     }
 }
 

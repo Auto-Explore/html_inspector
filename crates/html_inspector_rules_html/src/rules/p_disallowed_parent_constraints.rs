@@ -2,7 +2,7 @@ use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
-use super::foreign_content::{namespace_for_next_start_tag, Namespace};
+use super::foreign_content::{Namespace, namespace_for_next_start_tag};
 
 #[derive(Default)]
 pub struct PDisallowedParentConstraints;

@@ -178,9 +178,10 @@ mod tests {
     #[test]
     fn directory_role_is_warned() {
         let msgs = validate_fmt(InputFormat::Html, "<div role=\"directory\"></div>");
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.role.directory.bad_value"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.role.directory.bad_value")
+        );
     }
 
     #[test]

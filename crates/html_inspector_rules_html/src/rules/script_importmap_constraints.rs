@@ -299,17 +299,19 @@ mod tests {
     #[test]
     fn empty_importmap_content_is_invalid_json() {
         let msgs = validate("<script type=\"importmap\"></script>");
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.script.importmap.json.invalid"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.script.importmap.json.invalid")
+        );
     }
 
     #[test]
     fn empty_importmap_content_is_invalid_json_with_uppercase_tag_and_type() {
         let msgs = validate("<SCRIPT TYPE=\"importmap\"></SCRIPT>");
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.script.importmap.json.invalid"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.script.importmap.json.invalid")
+        );
     }
 
     #[test]
@@ -322,17 +324,19 @@ mod tests {
         let msgs = validate(
             "<script type=\"importmap\">{\"imports\":{\"a/\":\"https://example.com/a\"}}</script>",
         );
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.script.importmap.imports.slash_match"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.script.importmap.imports.slash_match")
+        );
     }
 
     #[test]
     fn scopes_values_must_be_valid_urls() {
         let msgs =
             validate("<script type=\"importmap\">{\"scopes\":{\"./\":{\"a\":\"1\"}}}</script>");
-        assert!(msgs
-            .iter()
-            .any(|m| m.code == "html.script.importmap.scopes.values.url"));
+        assert!(
+            msgs.iter()
+                .any(|m| m.code == "html.script.importmap.scopes.values.url")
+        );
     }
 }

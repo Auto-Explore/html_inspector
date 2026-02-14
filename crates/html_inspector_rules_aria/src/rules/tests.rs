@@ -133,10 +133,12 @@ fn aria_hidden_true_conflicts_with_hidden_until_found_case_insensitively() {
     );
     let rules = RuleSet::new().push(AriaHiddenConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.hidden.until_found.conflict"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.hidden.until_found.conflict")
+    );
 }
 
 #[test]
@@ -261,10 +263,12 @@ fn aria_idref_is_ok_when_target_id_appears_later() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code.starts_with("aria.idref.missing.")));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code.starts_with("aria.idref.missing."))
+    );
 }
 
 #[test]
@@ -348,10 +352,12 @@ fn aria_range_properties_on_input_number_with_native_min_max_emit_errors() {
     );
     let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_valuemin.input_number.with_min"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_valuemin.input_number.with_min")
+    );
 }
 
 #[test]
@@ -378,10 +384,12 @@ fn aria_properties_supported_by_role_progress_with_max_disallows_aria_valuemax()
     );
     let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_valuemax.progress.with_max"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_valuemax.progress.with_max")
+    );
 }
 
 #[test]
@@ -424,10 +432,12 @@ fn aria_select_role_button_is_invalid() {
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.select.role.button.invalid"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.select.role.button.invalid")
+    );
 }
 
 #[test]
@@ -447,10 +457,12 @@ fn aria_select_role_button_is_invalid_case_insensitively() {
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.select.role.button.invalid"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.select.role.button.invalid")
+    );
 }
 
 #[test]
@@ -470,10 +482,12 @@ fn aria_select_role_combobox_requires_aria_expanded() {
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.select.role.combobox.missing_aria_expanded"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.select.role.combobox.missing_aria_expanded")
+    );
 }
 
 #[test]
@@ -493,10 +507,12 @@ fn aria_select_role_combobox_requires_aria_expanded_case_insensitively() {
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.select.role.combobox.missing_aria_expanded"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.select.role.combobox.missing_aria_expanded")
+    );
 }
 
 #[test]
@@ -523,10 +539,12 @@ fn aria_tabpanel_is_required_for_active_tab_case_insensitively() {
     );
     let rules = RuleSet::new().push(AriaTabpanelRequiredForActiveTab::default());
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.tabpanel.required_for_active_tab"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.tabpanel.required_for_active_tab")
+    );
 }
 
 #[test]
@@ -565,10 +583,12 @@ fn aria_tabpanel_requirement_is_satisfied_when_tabpanel_present_case_insensitive
     );
     let rules = RuleSet::new().push(AriaTabpanelRequiredForActiveTab::default());
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.tabpanel.required_for_active_tab"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.tabpanel.required_for_active_tab")
+    );
 }
 
 #[test]
@@ -600,10 +620,12 @@ fn aria_multiple_visible_main_warns_on_second_role_main_case_insensitively() {
     );
     let rules = RuleSet::new().push(AriaMultipleMainWarning::default());
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.main.multiple_visible"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.main.multiple_visible")
+    );
 }
 
 #[test]
@@ -623,10 +645,12 @@ fn aria_select_role_listbox_requires_multiple_or_size_gt_one() {
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| { m.code == "aria.select.role.listbox.disallowed_without_multiple_or_size" }));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| { m.code == "aria.select.role.listbox.disallowed_without_multiple_or_size" })
+    );
 
     let src = VecSource::new(
         InputFormat::Html,
@@ -657,10 +681,12 @@ fn aria_select_role_listbox_requires_multiple_or_size_gt_one() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.select.role.listbox.disallowed_without_multiple_or_size"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.select.role.listbox.disallowed_without_multiple_or_size")
+    );
 }
 
 #[test]
@@ -689,10 +715,12 @@ fn aria_summary_constraints_apply_only_for_details_summary() {
     );
     let rules = RuleSet::new().push(AriaSummaryConstraints::default());
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.summary.details_summary.disallowed_attribute.role"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.summary.details_summary.disallowed_attribute.role")
+    );
 
     // summary outside details: role is allowed for this rule.
     let src = VecSource::new(
@@ -717,10 +745,12 @@ fn aria_summary_constraints_apply_only_for_details_summary() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.summary.details_summary.disallowed_attribute.role"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.summary.details_summary.disallowed_attribute.role")
+    );
 }
 
 #[test]
@@ -748,10 +778,12 @@ fn aria_summary_disallows_non_global_aria_attributes_on_details_summary() {
     );
     let rules = RuleSet::new().push(AriaSummaryConstraints::default());
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.summary.details_summary.disallowed_attribute.aria_expanded"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.summary.details_summary.disallowed_attribute.aria_expanded")
+    );
 
     let src = VecSource::new(
         InputFormat::Html,
@@ -855,10 +887,12 @@ fn aria_haspopup_on_datalist_input_does_not_warn_for_non_text_types() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.haspopup.datalist_input"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.haspopup.datalist_input")
+    );
 }
 
 #[test]
@@ -928,10 +962,12 @@ fn aria_disabled_is_unnecessary_on_disabled_elements() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_disabled.unnecessary_on_disabled"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_disabled.unnecessary_on_disabled")
+    );
 }
 
 #[test]
@@ -955,10 +991,12 @@ fn aria_checked_allowed_role_rejects_elements_without_checked_roles() {
         Config::default(),
     )
     .unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_checked.not_allowed"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_checked.not_allowed")
+    );
 }
 
 #[test]
@@ -997,10 +1035,12 @@ fn aria_checked_allowed_role_allows_role_checkbox() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_checked.not_allowed"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_checked.not_allowed")
+    );
 }
 
 #[test]
@@ -1039,10 +1079,12 @@ fn aria_checked_allowed_role_allows_role_checkbox_case_insensitive() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_checked.not_allowed"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_checked.not_allowed")
+    );
 }
 
 #[test]
@@ -1081,10 +1123,12 @@ fn aria_checked_allowed_role_skips_native_checkbox_inputs() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_checked.not_allowed"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_checked.not_allowed")
+    );
 }
 
 #[test]
@@ -1108,10 +1152,12 @@ fn aria_naming_prohibited_by_computed_role_emits_errors() {
         Config::default(),
     )
     .unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_label.prohibited_on_role.paragraph"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_label.prohibited_on_role.paragraph")
+    );
 
     // <a href> computes role=link, which is not prohibited.
     let src = VecSource::new(
@@ -1148,10 +1194,12 @@ fn aria_naming_prohibited_by_computed_role_emits_errors() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code.contains("prohibited_on_role")));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code.contains("prohibited_on_role"))
+    );
 }
 
 #[test]
@@ -1176,10 +1224,12 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
         Config::default(),
     )
     .unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_label.prohibited_on_role.generic"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_label.prohibited_on_role.generic")
+    );
 
     // aria-labelledby and aria-braillelabel behave the same way.
     let src = VecSource::new(
@@ -1412,10 +1462,12 @@ fn aria_hidden_disallowed_on_meta_and_conflicts_with_hidden_until_found() {
         Config::default(),
     )
     .unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.hidden.disallowed_on_meta"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.hidden.disallowed_on_meta")
+    );
 
     let src = VecSource::new(
         InputFormat::Html,
@@ -1443,10 +1495,12 @@ fn aria_hidden_disallowed_on_meta_and_conflicts_with_hidden_until_found() {
         Config::default(),
     )
     .unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.hidden.until_found.conflict"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.hidden.until_found.conflict")
+    );
 }
 
 #[test]
@@ -1474,10 +1528,12 @@ fn aria_role_hierarchy_requires_listbox_for_option_unless_owned() {
     );
     let rules = RuleSet::new().push(AriaRoleHierarchyConstraints::default());
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.role_option.requires_listbox"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.role_option.requires_listbox")
+    );
 
     // If a listbox owns the option via aria-owns, it's allowed even without containment.
     let src = VecSource::new(
@@ -1528,10 +1584,12 @@ fn aria_role_hierarchy_requires_listbox_for_option_unless_owned() {
         "x".to_string(),
         None,
     ));
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.role_option.requires_listbox"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.role_option.requires_listbox")
+    );
 }
 
 #[test]
@@ -1611,10 +1669,12 @@ fn aria_readonly_requires_role_or_state() {
     );
     let rules = RuleSet::new().push(AriaReadonlyRequiresContext);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_readonly.requires_role_or_state"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_readonly.requires_role_or_state")
+    );
 }
 
 #[test]
@@ -1657,10 +1717,12 @@ fn aria_pressed_on_output_without_role_emits_error() {
     );
     let rules = RuleSet::new().push(AriaPressedRequiresRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.element.output.missing_role"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.element.output.missing_role")
+    );
 }
 
 #[test]
@@ -1680,10 +1742,12 @@ fn aria_pressed_on_summary_without_role_is_allowed() {
     );
     let rules = RuleSet::new().push(AriaPressedRequiresRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.element.output.missing_role"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.element.output.missing_role")
+    );
 }
 
 #[test]
@@ -1703,10 +1767,12 @@ fn aria_dropeffect_emits_warning() {
     );
     let rules = RuleSet::new().push(AriaDeprecatedAttributes);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.severity == html_inspector_core::Severity::Warning));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.severity == html_inspector_core::Severity::Warning)
+    );
 }
 
 #[test]
@@ -1733,10 +1799,12 @@ fn aria_expanded_disallowed_with_command() {
     );
     let rules = RuleSet::new().push(AriaExpandedWithCommand);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_expanded.disallowed_with_command"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_expanded.disallowed_with_command")
+    );
 }
 
 #[test]
@@ -1763,10 +1831,12 @@ fn aria_expanded_disallowed_with_popovertarget() {
     );
     let rules = RuleSet::new().push(AriaExpandedWithPopoverTarget);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_expanded.disallowed_with_popovertarget"));
+    assert!(
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_expanded.disallowed_with_popovertarget")
+    );
 }
 
 #[test]
@@ -2349,10 +2419,12 @@ fn aria_naming_prohibited_by_role_emits_for_implicit_and_explicit_prohibited_rol
             "missing {code}"
         );
     }
-    assert!(!report
-        .messages
-        .iter()
-        .any(|m| m.code == "aria.aria_label.prohibited_on_role.link"));
+    assert!(
+        !report
+            .messages
+            .iter()
+            .any(|m| m.code == "aria.aria_label.prohibited_on_role.link")
+    );
 }
 
 #[test]

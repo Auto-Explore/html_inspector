@@ -118,14 +118,20 @@ mod tests {
 
     #[test]
     fn input_type_button_requires_non_empty_value() {
-        assert!(codes(r#"<input type="button">"#)
-            .iter()
-            .any(|c| c == "html.input.button.value.nonempty"));
-        assert!(codes(r#"<input type="button" value="">"#)
-            .iter()
-            .any(|c| c == "html.input.button.value.nonempty"));
-        assert!(!codes(r#"<input type="button" value="x">"#)
-            .iter()
-            .any(|c| c == "html.input.button.value.nonempty"));
+        assert!(
+            codes(r#"<input type="button">"#)
+                .iter()
+                .any(|c| c == "html.input.button.value.nonempty")
+        );
+        assert!(
+            codes(r#"<input type="button" value="">"#)
+                .iter()
+                .any(|c| c == "html.input.button.value.nonempty")
+        );
+        assert!(
+            !codes(r#"<input type="button" value="x">"#)
+                .iter()
+                .any(|c| c == "html.input.button.value.nonempty")
+        );
     }
 }

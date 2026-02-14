@@ -138,10 +138,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.input.datetime_local.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.input.datetime_local.invalid")
+        );
     }
 
     #[test]
@@ -158,10 +160,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.input.datetime_local.invalid"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.input.datetime_local.invalid")
+        );
     }
 
     #[test]
@@ -178,10 +182,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.input.datetime_local.invalid"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.input.datetime_local.invalid")
+        );
     }
 
     #[test]
@@ -198,10 +204,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.input.datetime_local.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.input.datetime_local.invalid")
+        );
     }
 
     #[test]

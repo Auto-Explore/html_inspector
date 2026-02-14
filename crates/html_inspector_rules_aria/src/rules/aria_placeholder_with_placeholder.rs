@@ -109,9 +109,10 @@ mod tests {
             &mut sink,
         );
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "aria.aria_placeholder.disallowed_with_placeholder"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "aria.aria_placeholder.disallowed_with_placeholder")
+        );
     }
 }

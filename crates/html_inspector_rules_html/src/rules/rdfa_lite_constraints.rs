@@ -123,10 +123,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.rdfa.lite.attr.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.rdfa.lite.attr.disallowed")
+        );
     }
 
     #[test]
@@ -139,9 +141,11 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.rdfa.lite.attr.disallowed"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.rdfa.lite.attr.disallowed")
+        );
     }
 }

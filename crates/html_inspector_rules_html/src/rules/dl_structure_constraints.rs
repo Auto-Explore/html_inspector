@@ -58,23 +58,24 @@ impl Rule for DlStructureConstraints {
             } => {
                 if is(ctx, name, "dl") {
                     if let Some(parent) = self.stack.last()
-                        && parent.mode == DlMode::Dl && !ctx.has_ancestor("template") {
-                            let current_parent = ctx.current_parent().unwrap_or("");
-                            let msg = if is(ctx, current_parent, "div") {
-                                "Element “dl” not allowed as child of “div” in this context."
-                                    .to_string()
-                            } else {
-                                "Element “dl” not allowed as child of “dl” in this context."
-                                    .to_string()
-                            };
-                            out.push(Message::new(
-                                "html.dl.child.dl.disallowed",
-                                Severity::Error,
-                                Category::Html,
-                                msg,
-                                *span,
-                            ));
-                        }
+                        && parent.mode == DlMode::Dl
+                        && !ctx.has_ancestor("template")
+                    {
+                        let current_parent = ctx.current_parent().unwrap_or("");
+                        let msg = if is(ctx, current_parent, "div") {
+                            "Element “dl” not allowed as child of “div” in this context."
+                                .to_string()
+                        } else {
+                            "Element “dl” not allowed as child of “dl” in this context.".to_string()
+                        };
+                        out.push(Message::new(
+                            "html.dl.child.dl.disallowed",
+                            Severity::Error,
+                            Category::Html,
+                            msg,
+                            *span,
+                        ));
+                    }
                     if !*self_closing {
                         self.stack.push(DlCtx {
                             mode: DlMode::Dl,
@@ -212,12 +213,13 @@ impl Rule for DlStructureConstraints {
                 }
 
                 if let Some(top) = self.stack.last_mut()
-                    && (is(ctx, name, "dt") || is(ctx, name, "dd")) {
-                        if is(ctx, name, "dt") && span.is_some() {
-                            top.saw_dt_end_tag = true;
-                        }
-                        top.mode = DlMode::Dl;
+                    && (is(ctx, name, "dt") || is(ctx, name, "dd"))
+                {
+                    if is(ctx, name, "dt") && span.is_some() {
+                        top.saw_dt_end_tag = true;
                     }
+                    top.mode = DlMode::Dl;
+                }
             }
             ParseEvent::Text { text, span } => {
                 let Some(top) = self.stack.last() else { return };
@@ -359,10 +361,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.missing_dd"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.missing_dd")
+        );
     }
 
     #[test]
@@ -377,10 +381,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.missing_dt"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.missing_dt")
+        );
     }
 
     #[test]
@@ -428,10 +434,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.mixed.div_then_dt"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.mixed.div_then_dt")
+        );
     }
 
     #[test]
@@ -452,10 +460,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.mixed.div_then_dd"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.mixed.div_then_dd")
+        );
     }
 
     #[test]
@@ -470,10 +480,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.mixed.dtdd_then_div"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.mixed.dtdd_then_div")
+        );
     }
 
     #[test]
@@ -485,10 +497,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.dd_before_dt"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.dd_before_dt")
+        );
     }
 
     #[test]
@@ -513,9 +527,10 @@ mod tests {
             .iter()
             .find(|m| m.code == "html.dl.missing_dd")
             .expect("expected missing <dd> message");
-        assert!(msg
-            .message
-            .contains("one or more of the following child elements"));
+        assert!(
+            msg.message
+                .contains("one or more of the following child elements")
+        );
     }
 
     #[test]
@@ -538,10 +553,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.dl.text.disallowed"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.dl.text.disallowed")
+        );
     }
 
     #[test]

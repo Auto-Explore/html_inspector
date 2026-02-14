@@ -44,15 +44,16 @@ impl Rule for BdoDir {
         };
 
         if let Some(value) = dir.value.as_deref()
-            && value.eq_ignore_ascii_case("auto") {
-                out.push(Message::new(
-                    "html.bdo.dir.auto",
-                    Severity::Error,
-                    Category::Html,
-                    "The value of “dir” attribute for the “bdo” element must not be “auto”.",
-                    *span,
-                ));
-            }
+            && value.eq_ignore_ascii_case("auto")
+        {
+            out.push(Message::new(
+                "html.bdo.dir.auto",
+                Severity::Error,
+                Category::Html,
+                "The value of “dir” attribute for the “bdo” element must not be “auto”.",
+                *span,
+            ));
+        }
     }
 }
 

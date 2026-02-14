@@ -57,19 +57,18 @@ impl Rule for AutofocusConstraints {
                     }
                     html_inspector_core::InputFormat::Xhtml => a.name == "autofocus",
                 });
-                if autofocus
-                    && let Some(root) = self.root_stack.last_mut() {
-                        root.autofocus_count += 1;
-                        if root.autofocus_count > 1 {
-                            out.push(Message::new(
+                if autofocus && let Some(root) = self.root_stack.last_mut() {
+                    root.autofocus_count += 1;
+                    if root.autofocus_count > 1 {
+                        out.push(Message::new(
                                 "html.autofocus.multiple_in_scoping_root",
                                 Severity::Error,
                                 Category::Html,
                                 "There must not be two elements with the same \"nearest ancestor autofocus scoping root element\" that both have the “autofocus” attribute specified.",
                                 *span,
                             ));
-                        }
                     }
+                }
 
                 if *self_closing && is_scoping_root(ctx, name, attrs) && self.root_stack.len() > 1 {
                     self.root_stack.pop();
@@ -77,9 +76,11 @@ impl Rule for AutofocusConstraints {
             }
             ParseEvent::EndTag { name, .. } => {
                 if let Some(top) = self.root_stack.last()
-                    && matches_name(ctx, &top.tag, name) && self.root_stack.len() > 1 {
-                        self.root_stack.pop();
-                    }
+                    && matches_name(ctx, &top.tag, name)
+                    && self.root_stack.len() > 1
+                {
+                    self.root_stack.pop();
+                }
             }
             _ => {}
         }
@@ -156,10 +157,11 @@ mod tests {
             );
         }
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.autofocus.multiple_in_scoping_root"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.autofocus.multiple_in_scoping_root")
+        );
     }
 
     #[test]

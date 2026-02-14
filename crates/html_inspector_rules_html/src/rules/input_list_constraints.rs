@@ -34,9 +34,10 @@ impl Rule for InputListConstraints {
 
         if is(ctx, name, "datalist") {
             if let Some(id) = attr_value(ctx, attrs, "id")
-                && !id.is_empty() {
-                    self.datalist_ids.insert(id.to_string());
-                }
+                && !id.is_empty()
+            {
+                self.datalist_ids.insert(id.to_string());
+            }
             return;
         }
 

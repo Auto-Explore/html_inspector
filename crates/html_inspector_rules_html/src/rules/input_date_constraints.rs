@@ -117,10 +117,12 @@ mod tests {
         .unwrap();
         let rules = RuleSet::new().push(InputDateConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.input.date.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.input.date.invalid")
+        );
 
         // Also cover the non-StartTag path by calling the rule directly.
         struct Sink(Vec<html_inspector_core::Message>);
@@ -195,10 +197,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.input.date.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.input.date.invalid")
+        );
     }
 
     #[test]
@@ -215,9 +219,11 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.input.date.invalid"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.input.date.invalid")
+        );
     }
 }

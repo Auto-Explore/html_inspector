@@ -265,14 +265,18 @@ mod tests {
             .push(ObjectMimetypeConstraints::default())
             .push(LinkMimetypeConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.object.type.invalid"));
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.link.type.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.object.type.invalid")
+        );
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.link.type.invalid")
+        );
     }
 
     #[test]
@@ -287,14 +291,18 @@ mod tests {
             .push(ObjectMimetypeConstraints::default())
             .push(LinkMimetypeConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.object.type.invalid"));
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.link.type.invalid"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.object.type.invalid")
+        );
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.link.type.invalid")
+        );
     }
 
     #[test]
@@ -309,13 +317,17 @@ mod tests {
             .push(ObjectMimetypeConstraints::default())
             .push(LinkMimetypeConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.object.type.invalid"));
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.link.type.invalid"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.object.type.invalid")
+        );
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.link.type.invalid")
+        );
     }
 }

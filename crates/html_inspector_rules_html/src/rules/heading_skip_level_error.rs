@@ -2,7 +2,7 @@ use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
-use super::foreign_content::{namespace_for_next_start_tag, Namespace};
+use super::foreign_content::{Namespace, namespace_for_next_start_tag};
 
 #[derive(Default)]
 pub struct HeadingSkipLevelError {
@@ -69,10 +69,11 @@ impl Rule for HeadingSkipLevelError {
                 let current_name = normalize_name(ctx, name);
 
                 if let Some(prev) = &self.last_heading
-                    && computed_level > prev.computed_level + 1 {
-                        let skipped = computed_level - prev.computed_level - 1;
-                        let levels_word = if skipped == 1 { "level" } else { "levels" };
-                        out.push(Message::new(
+                    && computed_level > prev.computed_level + 1
+                {
+                    let skipped = computed_level - prev.computed_level - 1;
+                    let levels_word = if skipped == 1 { "level" } else { "levels" };
+                    out.push(Message::new(
                             "html.heading.skip_level",
                             Severity::Error,
                             Category::Html,
@@ -82,7 +83,7 @@ impl Rule for HeadingSkipLevelError {
                             ),
                             *span,
                         ));
-                    }
+                }
 
                 self.last_heading = Some(HeadingInfo {
                     name: current_name,
@@ -126,11 +127,7 @@ fn parse_headingoffset(ctx: &ValidationContext, attrs: &[html_inspector_core::At
         .and_then(|a| a.value.as_deref());
     let Some(raw) = raw else { return 0 };
     let n = raw.trim().parse::<i32>().ok().unwrap_or(0);
-    if n >= 0 {
-        n
-    } else {
-        0
-    }
+    if n >= 0 { n } else { 0 }
 }
 
 fn has_headingreset(ctx: &ValidationContext, attrs: &[html_inspector_core::Attribute]) -> bool {
@@ -181,10 +178,12 @@ mod tests {
             Config::default(),
         )
         .unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.heading.skip_level"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.heading.skip_level")
+        );
     }
 
     #[test]

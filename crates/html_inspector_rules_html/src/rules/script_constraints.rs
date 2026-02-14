@@ -172,7 +172,13 @@ impl Rule for ScriptConstraints {
                 ),
             ] {
                 if has_attr(attrs, attr) {
-                    out.push(Message::new(code, Severity::Error, Category::Html, msg, *span));
+                    out.push(Message::new(
+                        code,
+                        Severity::Error,
+                        Category::Html,
+                        msg,
+                        *span,
+                    ));
                     return;
                 }
             }
@@ -270,7 +276,13 @@ impl Rule for ScriptConstraints {
                 ),
             ] {
                 if has_attr(attrs, attr) {
-                    out.push(Message::new(code, Severity::Error, Category::Html, msg, *span));
+                    out.push(Message::new(
+                        code,
+                        Severity::Error,
+                        Category::Html,
+                        msg,
+                        *span,
+                    ));
                     return;
                 }
             }
@@ -388,7 +400,13 @@ impl Rule for ScriptConstraints {
                 ),
             ] {
                 if has_attr(attrs, attr) {
-                    out.push(Message::new(code, Severity::Error, Category::Html, msg, *span));
+                    out.push(Message::new(
+                        code,
+                        Severity::Error,
+                        Category::Html,
+                        msg,
+                        *span,
+                    ));
                     return;
                 }
             }
@@ -433,7 +451,13 @@ impl Rule for ScriptConstraints {
                 ),
             ] {
                 if has_attr(attrs, attr) {
-                    out.push(Message::new(code, Severity::Error, Category::Html, msg, *span));
+                    out.push(Message::new(
+                        code,
+                        Severity::Error,
+                        Category::Html,
+                        msg,
+                        *span,
+                    ));
                     return;
                 }
             }

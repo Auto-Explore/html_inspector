@@ -100,10 +100,11 @@ mod tests {
             );
         }
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.main.visible.multiple"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.main.visible.multiple")
+        );
     }
 
     #[test]
@@ -137,10 +138,12 @@ mod tests {
             &mut sink,
         );
 
-        assert!(!sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.main.visible.multiple"));
+        assert!(
+            !sink
+                .0
+                .iter()
+                .any(|m| m.code == "html.main.visible.multiple")
+        );
     }
 
     #[test]
@@ -167,9 +170,10 @@ mod tests {
             );
         }
 
-        assert!(sink
-            .0
-            .iter()
-            .any(|m| m.code == "html.main.visible.multiple"));
+        assert!(
+            sink.0
+                .iter()
+                .any(|m| m.code == "html.main.visible.multiple")
+        );
     }
 }

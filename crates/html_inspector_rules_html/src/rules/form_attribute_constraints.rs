@@ -47,9 +47,9 @@ impl Rule for FormAttributeConstraints {
                 .and_then(|a| a.value.as_deref())
                 .map(|s| s.trim())
                 .filter(|s| !s.is_empty())
-            {
-                self.form_ids.insert(id.to_string());
-            }
+        {
+            self.form_ids.insert(id.to_string());
+        }
 
         if let Some(form) = attrs
             .iter()

@@ -2,7 +2,7 @@ use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
-use super::foreign_content::{namespace_for_next_start_tag, Namespace};
+use super::foreign_content::{Namespace, namespace_for_next_start_tag};
 
 #[derive(Default)]
 pub struct AttributeNotAllowedConstraints;
@@ -171,10 +171,12 @@ mod tests {
         .unwrap();
         let rules = RuleSet::new().push(AttributeNotAllowedConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.attr.prefix.bad_value"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.attr.prefix.bad_value")
+        );
     }
 
     #[test]
@@ -183,10 +185,12 @@ mod tests {
             HtmlEventSource::from_str("t", InputFormat::Html, r#"<div prefix=""></div>"#).unwrap();
         let rules = RuleSet::new().push(AttributeNotAllowedConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(!report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.attr.prefix.bad_value"));
+        assert!(
+            !report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.attr.prefix.bad_value")
+        );
     }
 
     #[test]
@@ -195,9 +199,11 @@ mod tests {
             HtmlEventSource::from_str("t", InputFormat::Html, r#"<div prefix=" "></div>"#).unwrap();
         let rules = RuleSet::new().push(AttributeNotAllowedConstraints::default());
         let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        assert!(report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.attr.prefix.bad_value"));
+        assert!(
+            report
+                .messages
+                .iter()
+                .any(|m| m.code == "html.attr.prefix.bad_value")
+        );
     }
 }
