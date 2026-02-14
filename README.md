@@ -2,7 +2,7 @@
 
 Rust HTML validator focused on runtime risk (DOM correctness + interaction stability), not strict spec conformance.
 
-MSRV: Rust 1.93 (Edition 2021).
+MSRV: Rust 1.93 (Edition 2024).
 
 - VNU test suite inputs: `tests/`
 - VNU manifest (fixtures metadata): `tests/manifest.jsonl` (regenerate with `python3 scripts/generate_vnu_manifest.py`)
