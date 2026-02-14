@@ -53,8 +53,7 @@ impl Rule for AriaRoleHierarchyConstraints {
                 // Record aria-owns relationships for later containment checks.
                 if let (Some(owner_role), Some(owns)) =
                     (role_lc.as_deref(), ctx.attr_value(attrs, "aria-owns"))
-                {
-                    if is_owner_role(owner_role) {
+                    && is_owner_role(owner_role) {
                         for token in owns.split_ascii_whitespace() {
                             self.owned_by_roles
                                 .entry(token.to_string())
@@ -62,7 +61,6 @@ impl Rule for AriaRoleHierarchyConstraints {
                                 .push(owner_role.to_string());
                         }
                     }
-                }
 
                 // Enforce specific role + attribute warnings.
                 if role_lc.as_deref() == Some("listitem") && ctx.has_attr(attrs, "aria-level") {
@@ -118,8 +116,8 @@ impl Rule for AriaRoleHierarchyConstraints {
                 }
 
                 // Enforce constraints for <li> descendants of particular role containers.
-                if ctx.name_is(name, "li") {
-                    if let Some(li_role) = role_lc.as_deref() {
+                if ctx.name_is(name, "li")
+                    && let Some(li_role) = role_lc.as_deref() {
                         if self.has_ancestor_role("listbox")
                             && !(li_role == "group" || li_role == "option")
                         {
@@ -182,7 +180,6 @@ impl Rule for AriaRoleHierarchyConstraints {
                             ));
                         }
                     }
-                }
 
                 // Track ancestor roles we care about for descendant/containment checks.
                 let pushes = match ctx.format {
@@ -199,14 +196,13 @@ impl Rule for AriaRoleHierarchyConstraints {
                     {
                         self.implicit_list_stack.push(name.clone());
                     }
-                    if let Some(role) = role_lc {
-                        if is_tracked_container_role(&role) {
+                    if let Some(role) = role_lc
+                        && is_tracked_container_role(&role) {
                             self.role_stack.push(RoleEntry {
                                 role_lc: role,
                                 depth: ctx.open_elements().len() + 1,
                             });
                         }
-                    }
                 }
             }
             ParseEvent::EndTag { name, .. } => self.on_end_tag(name, ctx),

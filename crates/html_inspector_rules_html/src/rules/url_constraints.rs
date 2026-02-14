@@ -36,8 +36,8 @@ impl Rule for UrlConstraints {
                     html_inspector_core::InputFormat::Xhtml => a.name == "href",
                 })
                 .and_then(|a| a.value.as_deref());
-            if let Some(href) = href {
-                if href.is_empty() {
+            if let Some(href) = href
+                && href.is_empty() {
                     out.push(Message::new(
                         "html.url.empty",
                         Severity::Error,
@@ -46,7 +46,6 @@ impl Rule for UrlConstraints {
                         *span,
                     ));
                 }
-            }
         }
     }
 }

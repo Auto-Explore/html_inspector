@@ -75,9 +75,9 @@ impl Rule for UncheckedSubtreeWarnings {
             ));
         }
 
-        if !self.warned_svg_version && is_svg_element(ctx, name) {
-            if let Some(version) = attr_value(ctx, attrs, "version") {
-                if version == "1.0" || version == "1.2" {
+        if !self.warned_svg_version && is_svg_element(ctx, name)
+            && let Some(version) = attr_value(ctx, attrs, "version")
+                && (version == "1.0" || version == "1.2") {
                     self.warned_svg_version = true;
                     out.push(Message::new(
                         "html.unchecked_subtree.svg_version",
@@ -87,8 +87,6 @@ impl Rule for UncheckedSubtreeWarnings {
                         *span,
                     ));
                 }
-            }
-        }
     }
 
     fn on_finish(&mut self, _ctx: &mut ValidationContext, _out: &mut dyn MessageSink) {

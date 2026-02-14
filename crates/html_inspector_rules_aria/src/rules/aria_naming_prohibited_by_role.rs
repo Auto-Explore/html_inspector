@@ -96,11 +96,10 @@ fn computed_role(
     el_lc: &str,
     attrs: &[html_inspector_core::Attribute],
 ) -> String {
-    if let Some(role) = ctx.attr_value(attrs, "role") {
-        if let Some(t) = role.split_ascii_whitespace().next() {
+    if let Some(role) = ctx.attr_value(attrs, "role")
+        && let Some(t) = role.split_ascii_whitespace().next() {
             return t.to_ascii_lowercase();
         }
-    }
 
     match el_lc {
         "a" | "area" => {

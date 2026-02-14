@@ -286,11 +286,9 @@ fn resolve_wpt_repo_root(wpt_root: &Path) -> Result<PathBuf, SuiteError> {
         && wpt_root
             .file_name()
             .is_some_and(|s| s == std::ffi::OsStr::new("html"))
-    {
-        if let Some(parent) = wpt_root.parent() {
+        && let Some(parent) = wpt_root.parent() {
             return Ok(parent.to_path_buf());
         }
-    }
 
     if !wpt_root.is_dir() {
         return Err(SuiteError::InvalidManifest(format!(

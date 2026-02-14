@@ -42,8 +42,8 @@ impl Rule for OptionConstraints {
                     return;
                 }
 
-                if let Some(label) = attr_value(ctx, attrs, "label") {
-                    if label.is_empty() {
+                if let Some(label) = attr_value(ctx, attrs, "label")
+                    && label.is_empty() {
                         out.push(Message::new(
                             "html.option.label.empty",
                             Severity::Error,
@@ -52,7 +52,6 @@ impl Rule for OptionConstraints {
                             *span,
                         ));
                     }
-                }
 
                 let has_label_attr = has_attr(ctx, attrs, "label");
                 let has_value_attr = has_attr(ctx, attrs, "value");
@@ -79,11 +78,10 @@ impl Rule for OptionConstraints {
                 });
             }
             ParseEvent::Text { text, .. } => {
-                if let Some(state) = self.stack.last_mut() {
-                    if text.chars().any(|c| !c.is_whitespace()) {
+                if let Some(state) = self.stack.last_mut()
+                    && text.chars().any(|c| !c.is_whitespace()) {
                         state.saw_non_whitespace_text = true;
                     }
-                }
             }
             ParseEvent::EndTag { name, span } => {
                 if !is(ctx, name, "option") {

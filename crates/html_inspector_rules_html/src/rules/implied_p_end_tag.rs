@@ -30,9 +30,9 @@ impl Rule for ImpliedPEndTag {
             return;
         }
 
-        if ctx.has_ancestor("p") {
-            if let Some(parent) = ctx.current_parent() {
-                if !is(ctx, parent, "p") {
+        if ctx.has_ancestor("p")
+            && let Some(parent) = ctx.current_parent()
+                && !is(ctx, parent, "p") {
                     out.push(Message::new(
                         "html.parse.p.end_tag_implied_open_elements",
                         Severity::Error,
@@ -41,8 +41,6 @@ impl Rule for ImpliedPEndTag {
                         *span,
                     ));
                 }
-            }
-        }
     }
 }
 

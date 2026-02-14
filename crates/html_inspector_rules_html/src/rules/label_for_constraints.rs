@@ -65,16 +65,15 @@ impl Rule for LabelForConstraints {
 
                 if is(ctx, name, "label") {
                     let for_value = attr_value(ctx, attrs, "for").map(|s| s.to_string());
-                    if let Some(v) = for_value.as_ref() {
-                        if !v.is_empty() {
+                    if let Some(v) = for_value.as_ref()
+                        && !v.is_empty() {
                             self.label_for_refs.push((v.clone(), *span));
                         }
-                    }
                     let has_aria_hidden = has_attr(ctx, attrs, "aria-hidden");
                     let has_role = has_attr(ctx, attrs, "role");
                     let has_aria_label = has_attr(ctx, attrs, "aria-label");
-                    if let Some(v) = for_value.as_ref() {
-                        if !v.is_empty() && (has_role || has_aria_label) {
+                    if let Some(v) = for_value.as_ref()
+                        && !v.is_empty() && (has_role || has_aria_label) {
                             self.label_assoc_checks.push(LabelAssocCheck {
                                 for_value: v.clone(),
                                 has_role,
@@ -82,7 +81,6 @@ impl Rule for LabelForConstraints {
                                 span: *span,
                             });
                         }
-                    }
                     self.label_stack.push(LabelState {
                         for_value,
                         has_aria_hidden,
@@ -94,13 +92,11 @@ impl Rule for LabelForConstraints {
                 }
 
                 // Collect IDs of non-hidden form controls for later "for" checks.
-                if is_non_hidden_form_control(ctx, name, attrs) {
-                    if let Some(id) = attr_value(ctx, attrs, "id") {
-                        if !id.is_empty() {
+                if is_non_hidden_form_control(ctx, name, attrs)
+                    && let Some(id) = attr_value(ctx, attrs, "id")
+                        && !id.is_empty() {
                             self.labelable_ids.insert(id.to_string());
                         }
-                    }
-                }
 
                 // role=button ancestors must not have input descendants (suite coverage).
                 if !self.role_button_stack.is_empty() && is(ctx, name, "input") {
@@ -115,9 +111,9 @@ impl Rule for LabelForConstraints {
 
                 // Descendant checks within labels.
                 if !self.label_stack.is_empty() {
-                    if is(ctx, name, "input") {
-                        if let Some(state) = self.label_stack.last() {
-                            if let Some(for_value) = state.for_value.as_deref() {
+                    if is(ctx, name, "input")
+                        && let Some(state) = self.label_stack.last()
+                            && let Some(for_value) = state.for_value.as_deref() {
                                 let id = attr_value(ctx, attrs, "id");
                                 let matches = id.is_some_and(|v| v == for_value);
                                 if !matches {
@@ -130,8 +126,6 @@ impl Rule for LabelForConstraints {
                                     ));
                                 }
                             }
-                        }
-                    }
 
                     if is_labelable_descendant(ctx, name, attrs) {
                         // aria-hidden must not be used on a label that is an ancestor of a labelable element.
@@ -165,11 +159,10 @@ impl Rule for LabelForConstraints {
                     self.label_stack.pop();
                 }
 
-                if let Some(top) = self.role_button_stack.last() {
-                    if names_match(ctx, top, name) {
+                if let Some(top) = self.role_button_stack.last()
+                    && names_match(ctx, top, name) {
                         self.role_button_stack.pop();
                     }
-                }
             }
             _ => {}
         }

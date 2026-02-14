@@ -68,8 +68,8 @@ impl Rule for HeadingSkipLevelError {
                 }
                 let current_name = normalize_name(ctx, name);
 
-                if let Some(prev) = &self.last_heading {
-                    if computed_level > prev.computed_level + 1 {
+                if let Some(prev) = &self.last_heading
+                    && computed_level > prev.computed_level + 1 {
                         let skipped = computed_level - prev.computed_level - 1;
                         let levels_word = if skipped == 1 { "level" } else { "levels" };
                         out.push(Message::new(
@@ -83,7 +83,6 @@ impl Rule for HeadingSkipLevelError {
                             *span,
                         ));
                     }
-                }
 
                 self.last_heading = Some(HeadingInfo {
                     name: current_name,

@@ -45,14 +45,13 @@ impl Rule for MathmlConstraints {
                     .map(|s| s.byte_start)
                     .is_some_and(|pos| self.is_inside_closed_math_range(pos));
 
-                if let Some(top) = self.missing_children_stack.last_mut() {
-                    if ctx
+                if let Some(top) = self.missing_children_stack.last_mut()
+                    && ctx
                         .current_parent()
                         .is_some_and(|p| p.eq_ignore_ascii_case(&top.name_lc))
                     {
                         top.seen = top.seen.saturating_add(1);
                     }
-                }
 
                 let ns = namespace_for_next_start_tag(ctx, name);
 
@@ -210,14 +209,12 @@ impl Rule for MathmlConstraints {
                         .math_start_stack
                         .pop()
                         .zip(span.as_ref().map(|s| s.byte_start))
-                    {
-                        if start < end {
+                        && start < end {
                             self.closed_math_ranges.push((start, end));
                         }
-                    }
                 }
-                if let Some(top) = self.missing_children_stack.last() {
-                    if top.name_lc.eq_ignore_ascii_case(&name_lc) {
+                if let Some(top) = self.missing_children_stack.last()
+                    && top.name_lc.eq_ignore_ascii_case(&name_lc) {
                         let top = self.missing_children_stack.pop().expect("just checked");
                         if top.seen < top.required {
                             out.push(Message::new(
@@ -232,7 +229,6 @@ impl Rule for MathmlConstraints {
                             ));
                         }
                     }
-                }
             }
             _ => {}
         }

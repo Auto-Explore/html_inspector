@@ -89,8 +89,8 @@ impl Rule for SelectConstraints {
                             html_inspector_core::InputFormat::Xhtml => a.name == "autocomplete",
                         })
                         .and_then(|a| a.value.as_deref());
-                    if let Some(v) = autocomplete {
-                        if v.split_ascii_whitespace()
+                    if let Some(v) = autocomplete
+                        && v.split_ascii_whitespace()
                             .any(|t| t.eq_ignore_ascii_case("webauthn"))
                         {
                             out.push(Message::new(
@@ -101,7 +101,6 @@ impl Rule for SelectConstraints {
                                 *span,
                             ));
                         }
-                    }
 
                     self.stack.push(SelectState {
                         multiple,
@@ -167,19 +166,18 @@ impl Rule for SelectConstraints {
             }
             ParseEvent::EndTag { name, span } => {
                 if is(ctx, name, "option") {
-                    if let Some(state) = self.stack.last_mut() {
-                        if state.in_first_option {
+                    if let Some(state) = self.stack.last_mut()
+                        && state.in_first_option {
                             state.first_option_placeholder_ok =
                                 state.first_option_value_empty || !state.first_option_has_text;
                             state.in_first_option = false;
                         }
-                    }
                     return;
                 }
 
-                if is(ctx, name, "select") && !self.stack.is_empty() {
-                    if let Some(state) = self.stack.pop() {
-                        if state.required && !state.multiple && !state.size_gt_one {
+                if is(ctx, name, "select") && !self.stack.is_empty()
+                    && let Some(state) = self.stack.pop()
+                        && state.required && !state.multiple && !state.size_gt_one {
                             if state.option_count == 0 {
                                 out.push(Message::new(
                                     "html.select.required.must_have_option",
@@ -198,8 +196,6 @@ impl Rule for SelectConstraints {
                                 ));
                             }
                         }
-                    }
-                }
             }
             _ => {}
         }

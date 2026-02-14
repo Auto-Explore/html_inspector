@@ -43,8 +43,8 @@ impl Rule for DetailsSummaryConstraints {
                     return;
                 }
 
-                if let Some(state) = self.stack.last_mut() {
-                    if is(ctx, ctx.current_parent().unwrap_or(""), "details") {
+                if let Some(state) = self.stack.last_mut()
+                    && is(ctx, ctx.current_parent().unwrap_or(""), "details") {
                         if !state.saw_element_child {
                             state.saw_element_child = true;
                             if is(ctx, name, "summary") {
@@ -67,12 +67,11 @@ impl Rule for DetailsSummaryConstraints {
                             }
                         }
                     }
-                }
             }
             ParseEvent::EndTag { name, span } => {
-                if is(ctx, name, "details") {
-                    if let Some(state) = self.stack.pop() {
-                        if !state.saw_summary || !state.first_child_was_summary {
+                if is(ctx, name, "details")
+                    && let Some(state) = self.stack.pop()
+                        && (!state.saw_summary || !state.first_child_was_summary) {
                             out.push(Message::new(
                                 "html.details.missing_summary",
                                 Severity::Error,
@@ -81,8 +80,6 @@ impl Rule for DetailsSummaryConstraints {
                                 *span,
                             ));
                         }
-                    }
-                }
             }
             _ => {}
         }

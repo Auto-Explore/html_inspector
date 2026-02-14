@@ -478,11 +478,10 @@ impl Html5EverEventSource {
                     let in_template = open_stack.iter().any(|(n, _)| n == "template");
                     let in_foreign_content =
                         open_stack.iter().any(|(n, _)| n == "svg" || n == "math");
-                    if !in_foreign_content && lc == "image" {
-                        if let Some(span) = span {
+                    if !in_foreign_content && lc == "image"
+                        && let Some(span) = span {
                             Self::push_span_for_tag(&mut self.start_tag_spans, "img", span);
                         }
-                    }
                     if lc == "head" {
                         in_head = true;
                     } else if lc == "body" {
@@ -524,8 +523,8 @@ impl Html5EverEventSource {
                         in_noscript_in_head = false;
                         body_opened = true;
                     }
-                    if is_p_end_tag_implying_start_tag(&lc) {
-                        if let Some(pos) = open_stack.iter().rposition(|(n, _)| n == "p") {
+                    if is_p_end_tag_implying_start_tag(&lc)
+                        && let Some(pos) = open_stack.iter().rposition(|(n, _)| n == "p") {
                             if open_stack.last().is_none_or(|(n, _)| n != "p") {
                                 errors.push(ParseEvent::ParseError {
                                     code: "html.parse.p.end_tag_implied_open_elements".to_string(),
@@ -536,7 +535,6 @@ impl Html5EverEventSource {
                             }
                             open_stack.truncate(pos);
                         }
-                    }
                     // Head insertion mode "anything else": implicitly close <head>.
                     // This is a small, targeted subset needed for VNU/Java parse-error parity.
                     if !in_template
@@ -560,11 +558,10 @@ impl Html5EverEventSource {
                                 | "template"
                                 | "title"
                         );
-                        if !allowed_in_head {
-                            if let Some(pos) = open_stack.iter().rposition(|(n, _)| n == "head") {
+                        if !allowed_in_head
+                            && let Some(pos) = open_stack.iter().rposition(|(n, _)| n == "head") {
                                 open_stack.truncate(pos);
                             }
-                        }
                     }
                     if !saw_doctype && !reported_missing_doctype {
                         errors.push(ParseEvent::ParseError {
@@ -1003,12 +1000,11 @@ impl EventSource for Html5EverEventSource {
 
         loop {
             if let Some(staged) = self.staged.take() {
-                if let Some(before) = staged.flush_syntax_errors_before {
-                    if let Some(ev) = self.pop_ready_syntax_error(before) {
+                if let Some(before) = staged.flush_syntax_errors_before
+                    && let Some(ev) = self.pop_ready_syntax_error(before) {
                         self.staged = Some(staged);
                         return Ok(Some(ev));
                     }
-                }
                 return Ok(Some(staged.event));
             }
 

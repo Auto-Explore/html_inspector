@@ -37,16 +37,15 @@ impl Rule for SectionHeadingWarning {
                     self.stack.push(SectionState { has_heading: false });
                     return;
                 }
-                if let Some(top) = self.stack.last_mut() {
-                    if is_heading_element(ctx, name) {
+                if let Some(top) = self.stack.last_mut()
+                    && is_heading_element(ctx, name) {
                         top.has_heading = true;
                     }
-                }
             }
             ParseEvent::EndTag { name, span } => {
-                if is(ctx, name, "section") {
-                    if let Some(state) = self.stack.pop() {
-                        if !state.has_heading {
+                if is(ctx, name, "section")
+                    && let Some(state) = self.stack.pop()
+                        && !state.has_heading {
                             out.push(Message::new(
                                 "html.section.lacks_heading",
                                 Severity::Warning,
@@ -55,8 +54,6 @@ impl Rule for SectionHeadingWarning {
                                 *span,
                             ));
                         }
-                    }
-                }
             }
             _ => {}
         }

@@ -200,8 +200,8 @@ impl Rule for LinkConstraints {
                 ));
             }
 
-            if let Some(imagesrcset) = imagesrcset {
-                if !has_imagesizes && srcset_has_width_descriptor(imagesrcset) {
+            if let Some(imagesrcset) = imagesrcset
+                && !has_imagesizes && srcset_has_width_descriptor(imagesrcset) {
                     out.push(Message::new(
                         "html.link.imagesrcset.width_descriptor_requires_imagesizes",
                         Severity::Error,
@@ -210,7 +210,6 @@ impl Rule for LinkConstraints {
                         *span,
                     ));
                 }
-            }
         }
 
         let has_blocking = attrs.iter().any(|a| match ctx.format {
@@ -374,11 +373,10 @@ fn srcset_has_width_descriptor(srcset: &str) -> bool {
         }
         for token in candidate.split_ascii_whitespace().skip(1) {
             let token = token.trim();
-            if let Some(num) = token.strip_suffix('w') {
-                if !num.is_empty() && num.chars().all(|c| c.is_ascii_digit()) {
+            if let Some(num) = token.strip_suffix('w')
+                && !num.is_empty() && num.chars().all(|c| c.is_ascii_digit()) {
                     return true;
                 }
-            }
         }
     }
     false

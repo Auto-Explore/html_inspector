@@ -47,11 +47,10 @@ impl Rule for EmptyHeadingWarning {
                 }
             }
             ParseEvent::Text { text, .. } => {
-                if !text.trim().is_empty() {
-                    if let Some(top) = self.stack.last_mut() {
+                if !text.trim().is_empty()
+                    && let Some(top) = self.stack.last_mut() {
                         top.has_content = true;
                     }
-                }
             }
             ParseEvent::EndTag { name, span } => {
                 let Some(level) = heading_level(ctx, name) else {

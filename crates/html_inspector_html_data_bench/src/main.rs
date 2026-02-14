@@ -369,7 +369,7 @@ fn start_java_server(
 }
 
 #[cfg(unix)]
-unsafe extern "C" fn handle_term_signal(sig: i32) {
+unsafe extern "C" fn handle_term_signal(sig: i32) { unsafe {
     let java_pgid = JAVA_PGID.load(Ordering::Relaxed);
     if java_pgid > 0 {
         let _ = libc::kill(-java_pgid, libc::SIGKILL);
@@ -379,7 +379,7 @@ unsafe extern "C" fn handle_term_signal(sig: i32) {
         let _ = libc::kill(-rust_pgid, libc::SIGKILL);
     }
     libc::_exit(128 + sig);
-}
+}}
 
 #[cfg(unix)]
 fn install_signal_handlers() -> Result<(), String> {

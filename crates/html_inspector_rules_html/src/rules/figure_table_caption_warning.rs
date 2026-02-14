@@ -84,9 +84,9 @@ impl Rule for FigureTableCaptionWarning {
                     return;
                 }
 
-                if is(ctx, name, "figure") {
-                    if let Some(state) = self.stack.pop() {
-                        if state.seen_table
+                if is(ctx, name, "figure")
+                    && let Some(state) = self.stack.pop()
+                        && state.seen_table
                             && state.seen_figcaption
                             && state.table_has_caption
                             && !state.seen_other_content
@@ -99,8 +99,6 @@ impl Rule for FigureTableCaptionWarning {
                                 *span,
                             ));
                         }
-                    }
-                }
             }
             _ => {}
         }

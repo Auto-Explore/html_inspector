@@ -57,8 +57,8 @@ impl Rule for DlStructureConstraints {
                 ..
             } => {
                 if is(ctx, name, "dl") {
-                    if let Some(parent) = self.stack.last() {
-                        if parent.mode == DlMode::Dl && !ctx.has_ancestor("template") {
+                    if let Some(parent) = self.stack.last()
+                        && parent.mode == DlMode::Dl && !ctx.has_ancestor("template") {
                             let current_parent = ctx.current_parent().unwrap_or("");
                             let msg = if is(ctx, current_parent, "div") {
                                 "Element “dl” not allowed as child of “div” in this context."
@@ -75,7 +75,6 @@ impl Rule for DlStructureConstraints {
                                 *span,
                             ));
                         }
-                    }
                     if !*self_closing {
                         self.stack.push(DlCtx {
                             mode: DlMode::Dl,
@@ -212,14 +211,13 @@ impl Rule for DlStructureConstraints {
                     return;
                 }
 
-                if let Some(top) = self.stack.last_mut() {
-                    if is(ctx, name, "dt") || is(ctx, name, "dd") {
+                if let Some(top) = self.stack.last_mut()
+                    && (is(ctx, name, "dt") || is(ctx, name, "dd")) {
                         if is(ctx, name, "dt") && span.is_some() {
                             top.saw_dt_end_tag = true;
                         }
                         top.mode = DlMode::Dl;
                     }
-                }
             }
             ParseEvent::Text { text, span } => {
                 let Some(top) = self.stack.last() else { return };

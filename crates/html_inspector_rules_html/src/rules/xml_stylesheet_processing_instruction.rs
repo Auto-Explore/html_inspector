@@ -203,8 +203,8 @@ impl Rule for XmlStylesheetProcessingInstruction {
                     }
                 }
 
-                if let Some(media) = media {
-                    if is_invalid_media_query_list(media) {
+                if let Some(media) = media
+                    && is_invalid_media_query_list(media) {
                         out.push(Message::new(
                             "xhtml.xml_stylesheet.media.bad_value",
                             Severity::Error,
@@ -215,7 +215,6 @@ impl Rule for XmlStylesheetProcessingInstruction {
                             *span,
                         ));
                     }
-                }
             }
             _ => {}
         }

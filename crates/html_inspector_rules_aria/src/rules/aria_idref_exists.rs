@@ -34,11 +34,10 @@ impl Rule for AriaIdrefExists {
             return;
         };
 
-        if let Some(id) = ctx.attr_value(attrs, "id") {
-            if !id.is_empty() {
+        if let Some(id) = ctx.attr_value(attrs, "id")
+            && !id.is_empty() {
                 self.ids.insert(id.to_string());
             }
-        }
 
         for attr in [
             "aria-controls",

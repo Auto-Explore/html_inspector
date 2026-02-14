@@ -117,8 +117,8 @@ impl ScriptSpeculationrulesConstraints {
             return;
         }
 
-        if let Some(v) = obj.get("prefetch") {
-            if let Some(msg) = validate_rules_array("prefetch", v) {
+        if let Some(v) = obj.get("prefetch")
+            && let Some(msg) = validate_rules_array("prefetch", v) {
                 out.push(Message::new(
                     "html.script.speculationrules.prefetch.invalid",
                     Severity::Error,
@@ -128,9 +128,8 @@ impl ScriptSpeculationrulesConstraints {
                 ));
                 return;
             }
-        }
-        if let Some(v) = obj.get("prerender") {
-            if let Some(msg) = validate_rules_array("prerender", v) {
+        if let Some(v) = obj.get("prerender")
+            && let Some(msg) = validate_rules_array("prerender", v) {
                 out.push(Message::new(
                     "html.script.speculationrules.prerender.invalid",
                     Severity::Error,
@@ -139,7 +138,6 @@ impl ScriptSpeculationrulesConstraints {
                     self.span,
                 ));
             }
-        }
     }
 
     fn err_json(&self, out: &mut dyn MessageSink) {

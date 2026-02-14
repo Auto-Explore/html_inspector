@@ -55,8 +55,8 @@ impl Rule for DelInsTransparentContentModel {
                     return;
                 }
 
-                if let Some(top) = self.stack.last().copied() {
-                    if top.phrasing_context && !is_phrasing_element(ctx, name) {
+                if let Some(top) = self.stack.last().copied()
+                    && top.phrasing_context && !is_phrasing_element(ctx, name) {
                         let child = normalize_name(ctx, name);
                         out.push(Message::new(
                             "html.del_ins.transparent.disallowed_child_in_phrasing",
@@ -69,7 +69,6 @@ impl Rule for DelInsTransparentContentModel {
                             *span,
                         ));
                     }
-                }
             }
             ParseEvent::EndTag { name, .. } => {
                 if ctx.name_is(name, "del") || ctx.name_is(name, "ins") {

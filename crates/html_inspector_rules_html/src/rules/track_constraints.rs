@@ -48,8 +48,8 @@ impl Rule for TrackConstraints {
                     .find(|a| attr_name_matches(ctx.format, &a.name, "label"))
                     .and_then(|a| a.value.as_deref());
 
-                if let Some(label) = label {
-                    if label.trim().is_empty() {
+                if let Some(label) = label
+                    && label.trim().is_empty() {
                         out.push(Message::new(
                             "html.track.label.non_empty",
                             Severity::Error,
@@ -58,13 +58,12 @@ impl Rule for TrackConstraints {
                             *span,
                         ));
                     }
-                }
 
                 let has_default = attrs
                     .iter()
                     .any(|a| attr_name_matches(ctx.format, &a.name, "default"));
-                if has_default {
-                    if let Some(state) = self.media_stack.last_mut() {
+                if has_default
+                    && let Some(state) = self.media_stack.last_mut() {
                         if state.saw_default_track {
                             out.push(Message::new(
                                 "html.track.default.multiple",
@@ -77,7 +76,6 @@ impl Rule for TrackConstraints {
                             state.saw_default_track = true;
                         }
                     }
-                }
             }
             ParseEvent::EndTag { name, .. } => {
                 if is_media_element(ctx, name) {

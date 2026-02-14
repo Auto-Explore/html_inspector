@@ -45,8 +45,8 @@ impl Rule for InputNumberConstraints {
             ));
         }
 
-        if let Some(value) = attr_value(ctx, attrs, "value") {
-            if value.is_empty() || value.parse::<f64>().is_err() {
+        if let Some(value) = attr_value(ctx, attrs, "value")
+            && (value.is_empty() || value.parse::<f64>().is_err()) {
                 out.push(Message::new(
                     "html.input.number.value.invalid",
                     Severity::Error,
@@ -55,7 +55,6 @@ impl Rule for InputNumberConstraints {
                     *span,
                 ));
             }
-        }
     }
 }
 

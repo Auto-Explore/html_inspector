@@ -217,11 +217,10 @@ pub(crate) fn external_url_allowed_by_sources(
             if is_relative_url(url) {
                 return true;
             }
-            if let (Some(base), Some(actual)) = (base.as_ref(), resolved.as_ref()) {
-                if origin_key(base) == origin_key(actual) {
+            if let (Some(base), Some(actual)) = (base.as_ref(), resolved.as_ref())
+                && origin_key(base) == origin_key(actual) {
                     return true;
                 }
-            }
             continue;
         }
 

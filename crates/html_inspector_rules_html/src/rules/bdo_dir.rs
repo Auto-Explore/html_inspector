@@ -43,8 +43,8 @@ impl Rule for BdoDir {
             return;
         };
 
-        if let Some(value) = dir.value.as_deref() {
-            if value.eq_ignore_ascii_case("auto") {
+        if let Some(value) = dir.value.as_deref()
+            && value.eq_ignore_ascii_case("auto") {
                 out.push(Message::new(
                     "html.bdo.dir.auto",
                     Severity::Error,
@@ -53,7 +53,6 @@ impl Rule for BdoDir {
                     *span,
                 ));
             }
-        }
     }
 }
 

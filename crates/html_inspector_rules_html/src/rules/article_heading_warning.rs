@@ -38,16 +38,15 @@ impl Rule for ArticleHeadingWarning {
                     return;
                 }
 
-                if let Some(top) = self.stack.last_mut() {
-                    if is_heading_element(ctx, name) {
+                if let Some(top) = self.stack.last_mut()
+                    && is_heading_element(ctx, name) {
                         top.has_heading = true;
                     }
-                }
             }
             ParseEvent::EndTag { name, span } => {
-                if is(ctx, name, "article") {
-                    if let Some(state) = self.stack.pop() {
-                        if !state.has_heading {
+                if is(ctx, name, "article")
+                    && let Some(state) = self.stack.pop()
+                        && !state.has_heading {
                             out.push(Message::new(
                                 "html.article.lacks_heading",
                                 Severity::Warning,
@@ -56,8 +55,6 @@ impl Rule for ArticleHeadingWarning {
                                 *span,
                             ));
                         }
-                    }
-                }
             }
             _ => {}
         }

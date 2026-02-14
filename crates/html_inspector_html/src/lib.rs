@@ -541,8 +541,8 @@ impl SimpleHtmlEventSource {
         let comment_start = self.cursor + 4;
         let comment_end = end;
         let text = bytes_to_string_lossy(&self.bytes[comment_start..comment_end]);
-        if self.format == InputFormat::Html {
-            if let Some(off) = text.find("<!--") {
+        if self.format == InputFormat::Html
+            && let Some(off) = text.find("<!--") {
                 let err_start = comment_start + off;
                 self.pending.push_back(ParseEvent::ParseError {
                     code: "html.tokenizer.nested_comment".to_string(),
@@ -552,7 +552,6 @@ impl SimpleHtmlEventSource {
                     span: Some(self.current_span(err_start, err_start + 4, start_line, start_col)),
                 });
             }
-        }
         let close_end = end + 3;
         self.bump_to(close_end);
         self.pending.push_back(ParseEvent::Comment {
@@ -1032,8 +1031,8 @@ impl SimpleHtmlEventSource {
         }
 
         // Doctype conformance classification (VNU-style).
-        if !saw_syntax_error && !saw_bogus_doctype {
-            if let Some(n) = name.as_deref() {
+        if !saw_syntax_error && !saw_bogus_doctype
+            && let Some(n) = name.as_deref() {
                 let is_html = n.eq_ignore_ascii_case("html");
                 if !is_html || public_id.is_some() || system_id.is_some() {
                     let transitional_public =
@@ -1052,7 +1051,6 @@ impl SimpleHtmlEventSource {
                     });
                 }
             }
-        }
 
         self.bump_to(end);
         if end == self.bytes.len() {

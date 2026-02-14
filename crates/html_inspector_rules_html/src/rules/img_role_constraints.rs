@@ -63,8 +63,8 @@ impl Rule for ImgRoleConstraints {
         }
 
         // If a role attribute is present, alt must not be the empty string.
-        if let Some(alt) = attr_value(ctx, attrs, "alt") {
-            if alt.is_empty() {
+        if let Some(alt) = attr_value(ctx, attrs, "alt")
+            && alt.is_empty() {
                 out.push(Message::new(
                     "html.img.role.alt_empty",
                     Severity::Error,
@@ -74,7 +74,6 @@ impl Rule for ImgRoleConstraints {
                 ));
                 return;
             }
-        }
 
         // A role attribute implies the image participates in accessibility tree and needs a name.
         // For VNU parity, accept aria-label/labelledby as naming mechanisms too.

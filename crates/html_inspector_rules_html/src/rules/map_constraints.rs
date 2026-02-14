@@ -35,8 +35,8 @@ impl Rule for MapConstraints {
         let id = attr_value(ctx, attrs, "id");
         let name_attr = attr_value(ctx, attrs, "name");
 
-        if let Some((id, name_attr)) = id.zip(name_attr) {
-            if id != name_attr {
+        if let Some((id, name_attr)) = id.zip(name_attr)
+            && id != name_attr {
                 out.push(Message::new(
                     "html.map.id_name.mismatch",
                     Severity::Error,
@@ -45,7 +45,6 @@ impl Rule for MapConstraints {
                     *span,
                 ));
             }
-        }
     }
 }
 

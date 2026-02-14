@@ -101,8 +101,8 @@ impl Rule for TableConstraints {
 
                     // If this col is a child of a colgroup that has a pending span, warn that
                     // the colgroup span is ignored (matches Java TableChecker behavior).
-                    if ctx.current_parent().is_some_and(|p| is(ctx, p, "colgroup")) {
-                        if let Some(frame) = state.colgroup_stack.last_mut() {
+                    if ctx.current_parent().is_some_and(|p| is(ctx, p, "colgroup"))
+                        && let Some(frame) = state.colgroup_stack.last_mut() {
                             if frame.span_attr_present {
                                 out.push(Message::new(
                                     "html.table.col.not_allowed_in_colgroup_with_span",
@@ -126,7 +126,6 @@ impl Rule for TableConstraints {
                                 frame.pending_span = 0;
                             }
                         }
-                    }
                     state.has_col_markup = true;
                     state.col_markup_count =
                         state.col_markup_count.saturating_add(span_value.min(1000));
@@ -143,8 +142,8 @@ impl Rule for TableConstraints {
                         return;
                     };
 
-                    if let Some(colspan_raw) = attr_value(ctx, attrs, "colspan") {
-                        if colspan_raw.trim().parse::<u32>().ok() == Some(0) {
+                    if let Some(colspan_raw) = attr_value(ctx, attrs, "colspan")
+                        && colspan_raw.trim().parse::<u32>().ok() == Some(0) {
                             let elem = if is(ctx, name, "td") { "td" } else { "th" };
                             out.push(Message::new(
                                 "html.table.cell.colspan.zero",
@@ -156,7 +155,6 @@ impl Rule for TableConstraints {
                                 *span,
                             ));
                         }
-                    }
 
                     let colspan = attr_u32(ctx, attrs, "colspan").unwrap_or(1).max(1);
                     if colspan > 1000 {
@@ -180,13 +178,11 @@ impl Rule for TableConstraints {
                         ));
                     }
 
-                    if is(ctx, name, "th") {
-                        if let Some(id) = attr_value(ctx, attrs, "id") {
-                            if !id.is_empty() {
+                    if is(ctx, name, "th")
+                        && let Some(id) = attr_value(ctx, attrs, "id")
+                            && !id.is_empty() {
                                 state.th_ids.insert(id.to_string());
                             }
-                        }
-                    }
 
                     if let Some(headers_raw) = attr_value(ctx, attrs, "headers") {
                         let ids: Vec<String> = headers_raw
@@ -230,14 +226,13 @@ impl Rule for TableConstraints {
                     let Some(state) = self.stack.last_mut() else {
                         return;
                     };
-                    if let Some(frame) = state.colgroup_stack.pop() {
-                        if frame.pending_span > 0 {
+                    if let Some(frame) = state.colgroup_stack.pop()
+                        && frame.pending_span > 0 {
                             state.has_col_markup = true;
                             state.col_markup_count = state
                                 .col_markup_count
                                 .saturating_add(frame.pending_span.min(1000));
                         }
-                    }
                     return;
                 }
 

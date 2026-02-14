@@ -74,8 +74,8 @@ impl Rule for FigureFigcaption {
                             state.seen_figcaption = true;
                         }
 
-                        if !state.role_error_emitted {
-                            if let Some(role) = state.role_token.as_deref() {
+                        if !state.role_error_emitted
+                            && let Some(role) = state.role_token.as_deref() {
                                 let role_allows_figcaption = role.eq_ignore_ascii_case("figure")
                                     || html_inspector_core::starts_with_ascii_ci(role, "doc-");
                                 if !role_allows_figcaption {
@@ -89,7 +89,6 @@ impl Rule for FigureFigcaption {
                                     ));
                                 }
                             }
-                        }
                     }
                     return;
                 }

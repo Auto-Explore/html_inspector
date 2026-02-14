@@ -134,11 +134,9 @@ impl Drop for Node {
                 ref template_contents,
                 ..
             } = node.data
-            {
-                if let Some(template_contents) = template_contents.borrow_mut().take() {
+                && let Some(template_contents) = template_contents.borrow_mut().take() {
                     nodes.push(template_contents);
                 }
-            }
         }
     }
 }
@@ -293,11 +291,10 @@ impl TreeSink for RcDom {
         match child {
             NodeOrText::AppendNode(node) => append(parent, node),
             NodeOrText::AppendText(text) => {
-                if let Some(prev) = parent.children.borrow().last() {
-                    if append_to_existing_text(prev, &text) {
+                if let Some(prev) = parent.children.borrow().last()
+                    && append_to_existing_text(prev, &text) {
                         return;
                     }
-                }
                 append(
                     parent,
                     Node::new(NodeData::Text {
@@ -411,15 +408,13 @@ impl TreeSink for RcDom {
             ref name,
             ..
         } = node.data
-        {
-            if name.local.as_ref() == "script" {
+            && name.local.as_ref() == "script" {
                 let mut attrs = attrs.borrow_mut();
                 attrs.push(Attribute {
                     name: QualName::new(None, ns!(html), "already-started".into()),
                     value: "".into(),
                 })
             }
-        }
     }
 
     fn is_mathml_annotation_xml_integration_point(&self, handle: &Handle) -> bool {

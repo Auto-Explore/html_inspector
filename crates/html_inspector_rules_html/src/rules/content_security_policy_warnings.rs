@@ -43,11 +43,10 @@ impl Rule for ContentSecurityPolicyWarnings {
         self.inline_style_content.clear();
         self.inline_style_span = None;
         self.inline_style_nonce = None;
-        if let Some(v) = ctx.config.csp_header.as_deref() {
-            if !v.trim().is_empty() {
+        if let Some(v) = ctx.config.csp_header.as_deref()
+            && !v.trim().is_empty() {
                 self.http_policies = csp::parse_csp_policies(v);
             }
-        }
     }
 
     fn on_event(
@@ -138,9 +137,9 @@ impl Rule for ContentSecurityPolicyWarnings {
             self.inline_style_nonce = ctx.attr_value(attrs, "nonce").map(str::to_owned);
         }
 
-        if let Some(style_value) = ctx.attr_value(attrs, "style") {
-            if !style_value.is_empty() {
-                if let Some((source, violating_directive)) =
+        if let Some(style_value) = ctx.attr_value(attrs, "style")
+            && !style_value.is_empty()
+                && let Some((source, violating_directive)) =
                     self.first_blocking(CspKind::StyleAttribute, None, Some(style_value))
                 {
                     out.push(Message::new(
@@ -154,16 +153,13 @@ impl Rule for ContentSecurityPolicyWarnings {
                         *span,
                     ));
                 }
-            }
-        }
 
-        if ctx.name_is(name, "script") && ctx.has_attr(attrs, "src") {
-            if let Some(src) = ctx
+        if ctx.name_is(name, "script") && ctx.has_attr(attrs, "src")
+            && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-            {
-                if let Some((source, violating_directive)) = self.first_blocking_external(
+                && let Some((source, violating_directive)) = self.first_blocking_external(
                     CspExternalKind::Script,
                     src,
                     ctx.config.base_uri.as_deref(),
@@ -180,21 +176,17 @@ impl Rule for ContentSecurityPolicyWarnings {
                         *span,
                     ));
                 }
-            }
-        }
 
         if ctx.name_is(name, "link") {
             let rel = ctx.attr_value(attrs, "rel").unwrap_or("");
             if rel
                 .split_ascii_whitespace()
                 .any(|t| t.eq_ignore_ascii_case("stylesheet"))
-            {
-                if let Some(href) = ctx
+                && let Some(href) = ctx
                     .attr_value(attrs, "href")
                     .map(str::trim)
                     .filter(|s| !s.is_empty())
-                {
-                    if let Some((source, violating_directive)) = self.first_blocking_external(
+                    && let Some((source, violating_directive)) = self.first_blocking_external(
                         CspExternalKind::Style,
                         href,
                         ctx.config.base_uri.as_deref(),
@@ -211,17 +203,14 @@ impl Rule for ContentSecurityPolicyWarnings {
                             *span,
                         ));
                     }
-                }
-            }
         }
 
-        if ctx.name_is(name, "img") {
-            if let Some(src) = ctx
+        if ctx.name_is(name, "img")
+            && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-            {
-                if let Some((source, violating_directive)) = self.first_blocking_external(
+                && let Some((source, violating_directive)) = self.first_blocking_external(
                     CspExternalKind::Image,
                     src,
                     ctx.config.base_uri.as_deref(),
@@ -238,16 +227,13 @@ impl Rule for ContentSecurityPolicyWarnings {
                         *span,
                     ));
                 }
-            }
-        }
 
-        if ctx.name_is(name, "iframe") {
-            if let Some(src) = ctx
+        if ctx.name_is(name, "iframe")
+            && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-            {
-                if let Some((source, violating_directive)) = self.first_blocking_external(
+                && let Some((source, violating_directive)) = self.first_blocking_external(
                     CspExternalKind::Frame,
                     src,
                     ctx.config.base_uri.as_deref(),
@@ -264,16 +250,13 @@ impl Rule for ContentSecurityPolicyWarnings {
                         *span,
                     ));
                 }
-            }
-        }
 
-        if ctx.name_is(name, "object") {
-            if let Some(data) = ctx
+        if ctx.name_is(name, "object")
+            && let Some(data) = ctx
                 .attr_value(attrs, "data")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-            {
-                if let Some((source, violating_directive)) = self.first_blocking_external(
+                && let Some((source, violating_directive)) = self.first_blocking_external(
                     CspExternalKind::Object,
                     data,
                     ctx.config.base_uri.as_deref(),
@@ -290,16 +273,13 @@ impl Rule for ContentSecurityPolicyWarnings {
                         *span,
                     ));
                 }
-            }
-        }
 
-        if ctx.name_is(name, "embed") {
-            if let Some(src) = ctx
+        if ctx.name_is(name, "embed")
+            && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-            {
-                if let Some((source, violating_directive)) = self.first_blocking_external(
+                && let Some((source, violating_directive)) = self.first_blocking_external(
                     CspExternalKind::Object,
                     src,
                     ctx.config.base_uri.as_deref(),
@@ -316,16 +296,13 @@ impl Rule for ContentSecurityPolicyWarnings {
                         *span,
                     ));
                 }
-            }
-        }
 
-        if ctx.name_is(name, "audio") || ctx.name_is(name, "video") {
-            if let Some(src) = ctx
+        if (ctx.name_is(name, "audio") || ctx.name_is(name, "video"))
+            && let Some(src) = ctx
                 .attr_value(attrs, "src")
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
-            {
-                if let Some((source, violating_directive)) = self.first_blocking_external(
+                && let Some((source, violating_directive)) = self.first_blocking_external(
                     CspExternalKind::Media,
                     src,
                     ctx.config.base_uri.as_deref(),
@@ -342,8 +319,6 @@ impl Rule for ContentSecurityPolicyWarnings {
                         *span,
                     ));
                 }
-            }
-        }
     }
 
     fn on_finish(&mut self, _ctx: &mut ValidationContext, out: &mut dyn MessageSink) {

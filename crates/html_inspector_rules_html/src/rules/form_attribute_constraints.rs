@@ -37,8 +37,8 @@ impl Rule for FormAttributeConstraints {
             return;
         };
 
-        if is(ctx, name, "form") {
-            if let Some(id) = attrs
+        if is(ctx, name, "form")
+            && let Some(id) = attrs
                 .iter()
                 .find(|a| match ctx.format {
                     html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("id"),
@@ -50,7 +50,6 @@ impl Rule for FormAttributeConstraints {
             {
                 self.form_ids.insert(id.to_string());
             }
-        }
 
         if let Some(form) = attrs
             .iter()

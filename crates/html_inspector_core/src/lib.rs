@@ -632,11 +632,10 @@ pub fn validate_events(
         // Once a fatal parse error with a source position has occurred, skip processing any
         // subsequent events that are positioned after it. This prevents later events (e.g. a
         // duplicate-ID) from triggering additional messages that point back to earlier spans.
-        if let Some(fatal_pos) = fatal_parse_error_pos.filter(|&p| p != usize::MAX) {
-            if parse_event_span_start(&event).is_some_and(|pos| pos > fatal_pos) {
+        if let Some(fatal_pos) = fatal_parse_error_pos.filter(|&p| p != usize::MAX)
+            && parse_event_span_start(&event).is_some_and(|pos| pos > fatal_pos) {
                 continue;
             }
-        }
 
         let kind = match &event {
             ParseEvent::ParseError { code, span, .. } => {
@@ -791,20 +790,17 @@ fn is_spec_purism_html_code(code: &str) -> bool {
 }
 
 fn is_framework_noise_html_message(m: &Message) -> bool {
-    if m.code.starts_with("html.unknown_element.") {
-        if let Some(name) = first_curly_quoted_token(&m.message) {
-            if name.contains('-') {
+    if m.code.starts_with("html.unknown_element.")
+        && let Some(name) = first_curly_quoted_token(&m.message)
+            && name.contains('-') {
                 return true;
             }
-        }
-    }
 
     // Attribute diagnostics include the attribute name as the first quoted token.
-    if m.message.starts_with("Attribute “") {
-        if let Some(attr) = first_curly_quoted_token(&m.message) {
+    if m.message.starts_with("Attribute “")
+        && let Some(attr) = first_curly_quoted_token(&m.message) {
             return is_framework_attribute_name(attr);
         }
-    }
 
     false
 }

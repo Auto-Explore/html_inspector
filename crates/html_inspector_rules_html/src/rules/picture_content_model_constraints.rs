@@ -30,8 +30,8 @@ impl Rule for PictureContentModelConstraints {
         match event {
             ParseEvent::StartTag { name, span, .. } => {
                 if is(ctx, name, "picture") {
-                    if let Some(parent) = ctx.current_parent() {
-                        if is(ctx, parent, "picture") {
+                    if let Some(parent) = ctx.current_parent()
+                        && is(ctx, parent, "picture") {
                             out.push(Message::new(
                                 "html.picture.child.picture.disallowed",
                                 Severity::Error,
@@ -40,7 +40,6 @@ impl Rule for PictureContentModelConstraints {
                                 *span,
                             ));
                         }
-                    }
                     self.stack.push(PictureState::default());
                     return;
                 }

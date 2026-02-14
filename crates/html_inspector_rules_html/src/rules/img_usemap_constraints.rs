@@ -33,11 +33,10 @@ impl Rule for ImgUsemapConstraints {
         };
 
         if is(ctx, name, "map") {
-            if let Some(name) = attr_value(ctx, attrs, "name") {
-                if !name.is_empty() {
+            if let Some(name) = attr_value(ctx, attrs, "name")
+                && !name.is_empty() {
                     self.map_names.insert(name.to_string());
                 }
-            }
             return;
         }
 

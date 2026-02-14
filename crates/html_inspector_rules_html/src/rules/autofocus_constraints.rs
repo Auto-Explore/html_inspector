@@ -57,8 +57,8 @@ impl Rule for AutofocusConstraints {
                     }
                     html_inspector_core::InputFormat::Xhtml => a.name == "autofocus",
                 });
-                if autofocus {
-                    if let Some(root) = self.root_stack.last_mut() {
+                if autofocus
+                    && let Some(root) = self.root_stack.last_mut() {
                         root.autofocus_count += 1;
                         if root.autofocus_count > 1 {
                             out.push(Message::new(
@@ -70,18 +70,16 @@ impl Rule for AutofocusConstraints {
                             ));
                         }
                     }
-                }
 
                 if *self_closing && is_scoping_root(ctx, name, attrs) && self.root_stack.len() > 1 {
                     self.root_stack.pop();
                 }
             }
             ParseEvent::EndTag { name, .. } => {
-                if let Some(top) = self.root_stack.last() {
-                    if matches_name(ctx, &top.tag, name) && self.root_stack.len() > 1 {
+                if let Some(top) = self.root_stack.last()
+                    && matches_name(ctx, &top.tag, name) && self.root_stack.len() > 1 {
                         self.root_stack.pop();
                     }
-                }
             }
             _ => {}
         }

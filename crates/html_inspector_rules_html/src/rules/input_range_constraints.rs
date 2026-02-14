@@ -35,8 +35,8 @@ impl Rule for InputRangeConstraints {
             return;
         }
 
-        if let Some(min) = attr_value(ctx, attrs, "min") {
-            if min.is_empty() || min.parse::<f64>().is_err() {
+        if let Some(min) = attr_value(ctx, attrs, "min")
+            && (min.is_empty() || min.parse::<f64>().is_err()) {
                 out.push(Message::new(
                     "html.input.range.min.invalid",
                     Severity::Error,
@@ -45,7 +45,6 @@ impl Rule for InputRangeConstraints {
                     *span,
                 ));
             }
-        }
     }
 }
 
