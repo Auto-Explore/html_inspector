@@ -175,7 +175,7 @@ mod video_transparent_content_model;
 mod void_element_end_tag;
 mod xml_stylesheet_processing_instruction;
 
-use html_inspector_core::Rule;
+use html_inspector::Rule;
 
 pub fn all() -> Vec<Box<dyn Rule>> {
     vec![

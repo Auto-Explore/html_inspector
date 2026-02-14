@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 use serde_json::Value;
@@ -264,12 +264,12 @@ fn is_url_like_specifier(s: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::SimpleHtmlEventSource;
 
-    fn validate(html: &str) -> Vec<html_inspector_core::Message> {
+    fn validate(html: &str) -> Vec<html_inspector::Message> {
         let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, html);
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptImportmapConstraints::default()),
             Config::default(),

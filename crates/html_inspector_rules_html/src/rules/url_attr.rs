@@ -1,4 +1,4 @@
-use html_inspector_core::{Category, Message, MessageSink, Span, ValidationContext};
+use html_inspector::{Category, Message, MessageSink, Span, ValidationContext};
 
 use super::a_href_constraints::{emit_forbidden_url_code_point, href_issue_severity};
 
@@ -29,7 +29,7 @@ pub(super) fn validate_url_attr_value(
 
 pub(super) fn validate_optional_url_attr(
     ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
     attr: &str,
     element: &str,
     invalid_code: &'static str,
@@ -46,7 +46,7 @@ pub(super) fn validate_optional_url_attr(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, Message, Severity};
+    use html_inspector::{Config, InputFormat, Message, Severity};
 
     #[derive(Default)]
     struct Sink(Vec<Message>);
@@ -76,7 +76,7 @@ mod tests {
         let html = ValidationContext::new(Config::default(), InputFormat::Html);
         let xhtml = ValidationContext::new(Config::default(), InputFormat::Xhtml);
 
-        let attrs = vec![html_inspector_core::Attribute {
+        let attrs = vec![html_inspector::Attribute {
             name: "HREF".to_string(),
             value: Some("http:example.com".to_string()),
             span: None,

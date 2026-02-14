@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Attribute, Config, EventSource, InputFormat, Message, MessageSink, ParseEvent, Rule, RuleSet,
     ValidationContext, ValidatorError,
 };
@@ -78,10 +78,10 @@ fn aria_checked_disallowed_on_checkbox() {
         }],
     );
     let rules = RuleSet::new().push(AriaCheckedOnCheckbox);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_checked.disallowed_on_input_checkbox"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -101,10 +101,10 @@ fn aria_hidden_true_on_body_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AriaHiddenConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.hidden.disallowed_on_body"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
             && m.message == "“aria-hidden=true” must not be used on the “body” element."
     }));
 }
@@ -132,7 +132,7 @@ fn aria_hidden_true_conflicts_with_hidden_until_found_case_insensitively() {
         }],
     );
     let rules = RuleSet::new().push(AriaHiddenConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -164,10 +164,10 @@ fn aria_disabled_on_role_main_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(AriaGlobalPropertiesOnMainWarning);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.role.main.aria_disabled.discouraged"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
             && m.message
                 == "The “aria-disabled” attribute should not be used on any element which has “role=main”."
     }));
@@ -197,10 +197,9 @@ fn aria_expanded_not_allowed_on_listbox_role_emits_error() {
     );
     let rules = RuleSet::new()
         .push(super::aria_properties_supported_by_role::AriaPropertiesSupportedByRole);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.code == "aria.aria-expanded.not_allowed"
-            && m.severity == html_inspector_core::Severity::Error
+        m.code == "aria.aria-expanded.not_allowed" && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -220,10 +219,10 @@ fn aria_idref_missing_emits_error_on_finish() {
         }],
     );
     let rules = RuleSet::new().push(AriaIdrefExists::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.idref.missing.aria-labelledby"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -255,11 +254,11 @@ fn aria_idref_is_ok_when_target_id_appears_later() {
         ],
     );
     let rules = RuleSet::new().push(AriaIdrefExists::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -287,13 +286,13 @@ fn aria_br_role_separator_is_disallowed() {
         }],
     );
     let rules = RuleSet::new().push(AriaBrWbrConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     let msg = report
         .messages
         .iter()
         .find(|m| m.code == "aria.role.separator.disallowed_on_br_wbr")
         .expect("expected separator disallowed message");
-    assert_eq!(msg.severity, html_inspector_core::Severity::Error);
+    assert_eq!(msg.severity, html_inspector::Severity::Error);
     assert_eq!(
         msg.message,
         "Bad value “separator” for attribute “role” on element “br”."
@@ -316,10 +315,10 @@ fn aria_atomic_is_disallowed_on_wbr() {
         }],
     );
     let rules = RuleSet::new().push(AriaBrWbrConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_atomic.disallowed_on_br_wbr"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -351,7 +350,7 @@ fn aria_range_properties_on_input_number_with_native_min_max_emit_errors() {
         }],
     );
     let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -383,7 +382,7 @@ fn aria_properties_supported_by_role_progress_with_max_disallows_aria_valuemax()
         }],
     );
     let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -408,10 +407,10 @@ fn aria_properties_supported_by_role_meter_discourages_aria_valuemin() {
         }],
     );
     let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_valuemin.meter.discouraged"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -431,7 +430,7 @@ fn aria_select_role_button_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -456,7 +455,7 @@ fn aria_select_role_button_is_invalid_case_insensitively() {
         }],
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -481,7 +480,7 @@ fn aria_select_role_combobox_requires_aria_expanded() {
         }],
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -506,7 +505,7 @@ fn aria_select_role_combobox_requires_aria_expanded_case_insensitively() {
         }],
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -538,7 +537,7 @@ fn aria_tabpanel_is_required_for_active_tab_case_insensitively() {
         }],
     );
     let rules = RuleSet::new().push(AriaTabpanelRequiredForActiveTab::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -582,7 +581,7 @@ fn aria_tabpanel_requirement_is_satisfied_when_tabpanel_present_case_insensitive
         ],
     );
     let rules = RuleSet::new().push(AriaTabpanelRequiredForActiveTab::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -619,7 +618,7 @@ fn aria_multiple_visible_main_warns_on_second_role_main_case_insensitively() {
         ],
     );
     let rules = RuleSet::new().push(AriaMultipleMainWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -644,7 +643,7 @@ fn aria_select_role_listbox_requires_multiple_or_size_gt_one() {
         }],
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -673,11 +672,11 @@ fn aria_select_role_listbox_requires_multiple_or_size_gt_one() {
         }],
     );
     let rules = RuleSet::new().push(AriaSelectRoleConstraints);
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -714,7 +713,7 @@ fn aria_summary_constraints_apply_only_for_details_summary() {
         ],
     );
     let rules = RuleSet::new().push(AriaSummaryConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -737,11 +736,11 @@ fn aria_summary_constraints_apply_only_for_details_summary() {
         }],
     );
     let rules = RuleSet::new().push(AriaSummaryConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -777,7 +776,7 @@ fn aria_summary_disallows_non_global_aria_attributes_on_details_summary() {
         ],
     );
     let rules = RuleSet::new().push(AriaSummaryConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -807,11 +806,11 @@ fn aria_summary_disallows_non_global_aria_attributes_on_details_summary() {
         ],
     );
     let rules = RuleSet::new().push(AriaSummaryConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -844,10 +843,9 @@ fn aria_haspopup_on_datalist_text_input_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(AriaHaspopupOnDatalistInputWarning);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.code == "aria.haspopup.datalist_input"
-            && m.severity == html_inspector_core::Severity::Warning
+        m.code == "aria.haspopup.datalist_input" && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -879,11 +877,11 @@ fn aria_haspopup_on_datalist_input_does_not_warn_for_non_text_types() {
         }],
     );
     let rules = RuleSet::new().push(AriaHaspopupOnDatalistInputWarning);
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -917,7 +915,7 @@ fn aria_disabled_is_unnecessary_on_disabled_elements() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaDisabledUnnecessaryOnDisabledWarning),
         Config::default(),
@@ -925,7 +923,7 @@ fn aria_disabled_is_unnecessary_on_disabled_elements() {
     .unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_disabled.unnecessary_on_disabled"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 
     let src = VecSource::new(
@@ -948,7 +946,7 @@ fn aria_disabled_is_unnecessary_on_disabled_elements() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaDisabledUnnecessaryOnDisabledWarning),
         Config::default(),
@@ -957,8 +955,8 @@ fn aria_disabled_is_unnecessary_on_disabled_elements() {
     let mut report = report;
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -985,7 +983,7 @@ fn aria_checked_allowed_role_rejects_elements_without_checked_roles() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
@@ -1021,7 +1019,7 @@ fn aria_checked_allowed_role_allows_role_checkbox() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
@@ -1030,8 +1028,8 @@ fn aria_checked_allowed_role_allows_role_checkbox() {
     let mut report = report;
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -1065,7 +1063,7 @@ fn aria_checked_allowed_role_allows_role_checkbox_case_insensitive() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
@@ -1074,8 +1072,8 @@ fn aria_checked_allowed_role_allows_role_checkbox_case_insensitive() {
     let mut report = report;
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -1109,7 +1107,7 @@ fn aria_checked_allowed_role_skips_native_checkbox_inputs() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
@@ -1118,8 +1116,8 @@ fn aria_checked_allowed_role_skips_native_checkbox_inputs() {
     let mut report = report;
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -1146,7 +1144,7 @@ fn aria_naming_prohibited_by_computed_role_emits_errors() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1180,7 +1178,7 @@ fn aria_naming_prohibited_by_computed_role_emits_errors() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1189,8 +1187,8 @@ fn aria_naming_prohibited_by_computed_role_emits_errors() {
     let mut report = report;
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -1218,7 +1216,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1252,7 +1250,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1263,8 +1261,8 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
         0,
         Message::new(
             "test.dummy",
-            html_inspector_core::Severity::Info,
-            html_inspector_core::Category::Aria,
+            html_inspector::Severity::Info,
+            html_inspector::Category::Aria,
             "x".to_string(),
             None,
         ),
@@ -1295,7 +1293,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1303,7 +1301,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
     .unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_label.prohibited_on_role.presentation"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 
     // Elements whose implicit role depends on accessible name / attributes should avoid false positives.
@@ -1320,7 +1318,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1348,7 +1346,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1377,7 +1375,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -1401,7 +1399,7 @@ fn aria_readonly_requires_context_covers_xhtml_and_non_start_tag_branch() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaReadonlyRequiresContext),
         Config::default(),
@@ -1409,7 +1407,7 @@ fn aria_readonly_requires_context_covers_xhtml_and_non_start_tag_branch() {
     .unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_readonly.requires_role_or_state"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 
     struct Sink(Vec<Message>);
@@ -1433,8 +1431,8 @@ fn aria_readonly_requires_context_covers_xhtml_and_non_start_tag_branch() {
     assert!(sink.0.is_empty());
     sink.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -1456,7 +1454,7 @@ fn aria_hidden_disallowed_on_meta_and_conflicts_with_hidden_until_found() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaHiddenConstraints),
         Config::default(),
@@ -1489,7 +1487,7 @@ fn aria_hidden_disallowed_on_meta_and_conflicts_with_hidden_until_found() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaHiddenConstraints),
         Config::default(),
@@ -1527,7 +1525,7 @@ fn aria_role_hierarchy_requires_listbox_for_option_unless_owned() {
         }],
     );
     let rules = RuleSet::new().push(AriaRoleHierarchyConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1576,11 +1574,11 @@ fn aria_role_hierarchy_requires_listbox_for_option_unless_owned() {
         ],
     );
     let rules = RuleSet::new().push(AriaRoleHierarchyConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Aria,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Aria,
         "x".to_string(),
         None,
     ));
@@ -1615,10 +1613,10 @@ fn aria_role_hierarchy_warns_on_listitem_with_aria_level() {
         }],
     );
     let rules = RuleSet::new().push(AriaRoleHierarchyConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.role_listitem.aria_level.discouraged"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -1645,10 +1643,10 @@ fn aria_placeholder_disallowed_with_placeholder() {
         }],
     );
     let rules = RuleSet::new().push(AriaPlaceholderWithPlaceholder);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_placeholder.disallowed_with_placeholder"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -1668,7 +1666,7 @@ fn aria_readonly_requires_role_or_state() {
         }],
     );
     let rules = RuleSet::new().push(AriaReadonlyRequiresContext);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1693,10 +1691,10 @@ fn aria_selected_discouraged_on_option_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(AriaSelectedOnOption);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_selected.option.discouraged"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -1716,7 +1714,7 @@ fn aria_pressed_on_output_without_role_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AriaPressedRequiresRole);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1741,7 +1739,7 @@ fn aria_pressed_on_summary_without_role_is_allowed() {
         }],
     );
     let rules = RuleSet::new().push(AriaPressedRequiresRole);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -1766,12 +1764,12 @@ fn aria_dropeffect_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(AriaDeprecatedAttributes);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
-            .any(|m| m.severity == html_inspector_core::Severity::Warning)
+            .any(|m| m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -1798,7 +1796,7 @@ fn aria_expanded_disallowed_with_command() {
         }],
     );
     let rules = RuleSet::new().push(AriaExpandedWithCommand);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1830,7 +1828,7 @@ fn aria_expanded_disallowed_with_popovertarget() {
         }],
     );
     let rules = RuleSet::new().push(AriaExpandedWithPopoverTarget);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2015,7 +2013,7 @@ fn aria_role_hierarchy_required_owner_roles_can_be_satisfied_by_aria_owns() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaRoleHierarchyConstraints::default()),
         Config::default(),
@@ -2198,7 +2196,7 @@ fn aria_role_hierarchy_li_descendant_constraints_and_implicit_lists() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaRoleHierarchyConstraints::default()),
         Config::default(),
@@ -2312,7 +2310,7 @@ fn aria_properties_supported_by_role_emits_not_allowed_and_exercises_exceptions(
         ],
     );
 
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaPropertiesSupportedByRole),
         Config::default(),
@@ -2401,7 +2399,7 @@ fn aria_naming_prohibited_by_role_emits_for_implicit_and_explicit_prohibited_rol
         ],
     );
 
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
@@ -2494,7 +2492,7 @@ fn aria_naming_prohibited_by_role_covers_more_implicit_prohibited_roles() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),

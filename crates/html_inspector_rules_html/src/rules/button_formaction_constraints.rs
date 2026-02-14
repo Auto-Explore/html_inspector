@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, ValidationContext,
 };
 
@@ -38,7 +38,7 @@ impl Rule for ButtonFormactionConstraints {
         if formaction.is_empty() {
             out.push(Message::new(
                 "html.button.formaction.empty",
-                html_inspector_core::Severity::Error,
+                html_inspector::Severity::Error,
                 Category::Html,
                 "Bad value “” for attribute “formaction” on element “button”.",
                 *span,

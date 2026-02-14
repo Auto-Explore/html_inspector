@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 use std::borrow::Cow;
@@ -376,46 +376,42 @@ fn is_balanced_parens(s: &str) -> bool {
     depth == 0 && s.trim_end().ends_with(')')
 }
 
-fn loading_is_lazy(ctx: &ValidationContext, attrs: &[html_inspector_core::Attribute]) -> bool {
+fn loading_is_lazy(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> bool {
     let Some(loading) = attr_value(ctx, attrs, "loading") else {
         return false;
     };
     match ctx.format {
-        html_inspector_core::InputFormat::Html => loading.eq_ignore_ascii_case("lazy"),
-        html_inspector_core::InputFormat::Xhtml => loading == "lazy",
+        html_inspector::InputFormat::Html => loading.eq_ignore_ascii_case("lazy"),
+        html_inspector::InputFormat::Xhtml => loading == "lazy",
     }
 }
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => {
+        html_inspector::InputFormat::Html => {
             attrs.iter().any(|a| a.name.eq_ignore_ascii_case(needle))
         }
-        html_inspector_core::InputFormat::Xhtml => attrs.iter().any(|a| a.name == needle),
+        html_inspector::InputFormat::Xhtml => attrs.iter().any(|a| a.name == needle),
     }
 }
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     let attr = match ctx.format {
-        html_inspector_core::InputFormat::Html => {
+        html_inspector::InputFormat::Html => {
             attrs.iter().find(|a| a.name.eq_ignore_ascii_case(needle))
         }
-        html_inspector_core::InputFormat::Xhtml => attrs.iter().find(|a| a.name == needle),
+        html_inspector::InputFormat::Xhtml => attrs.iter().find(|a| a.name == needle),
     };
     attr.and_then(|a| a.value.as_deref())
 }
@@ -424,7 +420,7 @@ fn attr_value<'a>(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat, ValidationContext};
+    use html_inspector::{Attribute, Config, InputFormat, ValidationContext};
 
     fn attr(name: &str, value: Option<&str>) -> Attribute {
         Attribute {

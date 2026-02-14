@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -61,7 +61,7 @@ impl Rule for VideoSrcConstraints {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -69,7 +69,7 @@ mod tests {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Html, "<video src=\"\"></video>").unwrap();
         let rules = RuleSet::new().push(VideoSrcConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -80,21 +80,20 @@ mod tests {
 
     #[test]
     fn html_src_attribute_name_matching_is_case_insensitive() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
 
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
         let mut rule = VideoSrcConstraints::default();
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "video".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "SRC".to_string(),
                     value: Some("".to_string()),
                     span: None,
@@ -111,14 +110,13 @@ mod tests {
 
     #[test]
     fn rule_ignores_non_start_tag_events() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
         let mut rule = VideoSrcConstraints::default();
         rule.on_event(
@@ -130,12 +128,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -152,7 +150,7 @@ mod tests {
         )
         .unwrap();
         let rules = RuleSet::new().push(VideoSrcConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -163,21 +161,20 @@ mod tests {
 
     #[test]
     fn xhtml_invalid_src_emits_error() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
 
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Xhtml);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Xhtml);
         let mut sink = Sink(Vec::new());
         let mut rule = VideoSrcConstraints::default();
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "video".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "src".to_string(),
                     value: Some("http:example.com".to_string()),
                     span: None,
@@ -194,21 +191,20 @@ mod tests {
 
     #[test]
     fn xhtml_src_attribute_name_matching_is_case_sensitive() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
 
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Xhtml);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Xhtml);
         let mut sink = Sink(Vec::new());
         let mut rule = VideoSrcConstraints::default();
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "video".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "SRC".to_string(),
                     value: Some("".to_string()),
                     span: None,

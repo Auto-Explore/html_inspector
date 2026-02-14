@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
@@ -373,15 +373,15 @@ mod tests {
         }
 
         let mut ctx = ValidationContext::new(
-            html_inspector_core::Config::default(),
-            html_inspector_core::InputFormat::Xhtml,
+            html_inspector::Config::default(),
+            html_inspector::InputFormat::Xhtml,
         );
         let mut sink = Sink::default();
         let mut rule = AHrefConstraints::default();
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "a".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "href".to_string(),
                     value: Some("data:text/plain".to_string()),
                     span: None,
@@ -451,8 +451,8 @@ mod tests {
         }
 
         let mut ctx = ValidationContext::new(
-            html_inspector_core::Config::default(),
-            html_inspector_core::InputFormat::Html,
+            html_inspector::Config::default(),
+            html_inspector::InputFormat::Html,
         );
         let mut sink = Sink::default();
         let mut rule = AHrefConstraints::default();
@@ -470,7 +470,7 @@ mod tests {
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "div".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "href".to_string(),
                     value: Some("http://example.com/".to_string()),
                     span: None,
@@ -487,7 +487,7 @@ mod tests {
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "a".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "href".to_string(),
                     value: Some("http://example.com/\u{000B}".to_string()),
                     span: None,

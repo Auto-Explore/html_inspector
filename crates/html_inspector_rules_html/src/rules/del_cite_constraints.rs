@@ -1,4 +1,4 @@
-use html_inspector_core::{Interest, MessageSink, ParseEvent, Rule, ValidationContext};
+use html_inspector::{Interest, MessageSink, ParseEvent, Rule, ValidationContext};
 
 use super::url_attr;
 

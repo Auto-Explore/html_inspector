@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -59,22 +59,18 @@ impl Rule for LabelControlCount {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
-fn is_labelable(
-    ctx: &ValidationContext,
-    name: &str,
-    attrs: &[html_inspector_core::Attribute],
-) -> bool {
+fn is_labelable(ctx: &ValidationContext, name: &str, attrs: &[html_inspector::Attribute]) -> bool {
     if is(ctx, name, "input") {
         let t = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("type"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "type",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("type"),
+                html_inspector::InputFormat::Xhtml => a.name == "type",
             })
             .and_then(|a| a.value.as_deref())
             .unwrap_or("");

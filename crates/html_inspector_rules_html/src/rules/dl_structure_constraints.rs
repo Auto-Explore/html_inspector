@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -16,7 +16,7 @@ struct DlCtx {
     pending_dd: bool,
     saw_any_dt: bool,
     dd_before_dt: bool,
-    span: Option<html_inspector_core::Span>,
+    span: Option<html_inspector::Span>,
     saw_dt_end_tag: bool,
 }
 
@@ -253,8 +253,8 @@ impl Rule for DlStructureConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -275,7 +275,7 @@ mod tests {
 
     use std::collections::VecDeque;
 
-    use html_inspector_core::{Config, EventSource, InputFormat, RuleSet, ValidatorError};
+    use html_inspector::{Config, EventSource, InputFormat, RuleSet, ValidatorError};
 
     struct VecSource {
         name: String,
@@ -326,14 +326,14 @@ mod tests {
     fn end_with_span(name: &str) -> ParseEvent {
         ParseEvent::EndTag {
             name: name.to_string(),
-            span: Some(html_inspector_core::Span::new(0, 0, 1, 1)),
+            span: Some(html_inspector::Span::new(0, 0, 1, 1)),
         }
     }
 
     #[test]
     fn dl_pushes_context_for_non_self_closing_dl() {
         let src = VecSource::new(InputFormat::Html, vec![start("dl"), end("dl")]);
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -355,7 +355,7 @@ mod tests {
             InputFormat::Html,
             vec![start("dl"), start("div"), start("dt"), end("dl")],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -375,7 +375,7 @@ mod tests {
             InputFormat::Html,
             vec![start("dl"), start("div"), start("dd"), end("dl")],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -402,7 +402,7 @@ mod tests {
                 end("dl"),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -428,7 +428,7 @@ mod tests {
                 end("dl"),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -454,7 +454,7 @@ mod tests {
                 end("dl"),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -474,7 +474,7 @@ mod tests {
             InputFormat::Html,
             vec![start("dl"), start("dt"), end("dt"), start("div"), end("dl")],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -491,7 +491,7 @@ mod tests {
     #[test]
     fn dd_before_dt_emits_missing_required_child_error() {
         let src = VecSource::new(InputFormat::Html, vec![start("dl"), start("dd"), end("dl")]);
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -516,7 +516,7 @@ mod tests {
                 end_with_span("dl"),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -547,7 +547,7 @@ mod tests {
                 end("dl"),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlStructureConstraints::default()),
             Config::default(),
@@ -563,9 +563,9 @@ mod tests {
 
     #[test]
     fn rule_covers_unmatched_event_branch() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -581,12 +581,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -598,18 +598,18 @@ mod tests {
     fn in_dl_div_group_returns_false_when_open_stack_starts_with_div() {
         #[derive(Default)]
         struct Probe;
-        impl html_inspector_core::Rule for Probe {
+        impl html_inspector::Rule for Probe {
             fn id(&self) -> &'static str {
                 "test.dl.in_div_group.probe"
             }
-            fn interest(&self) -> html_inspector_core::Interest {
-                html_inspector_core::Interest::TEXT
+            fn interest(&self) -> html_inspector::Interest {
+                html_inspector::Interest::TEXT
             }
             fn on_event(
                 &mut self,
                 event: &ParseEvent,
                 ctx: &mut ValidationContext,
-                _out: &mut dyn html_inspector_core::MessageSink,
+                _out: &mut dyn html_inspector::MessageSink,
             ) {
                 if matches!(event, ParseEvent::Text { .. }) {
                     assert_eq!(ctx.open_elements(), ["div"]);
@@ -629,7 +629,7 @@ mod tests {
                 end("div"),
             ],
         );
-        let _report = html_inspector_core::validate_events(
+        let _report = html_inspector::validate_events(
             src,
             RuleSet::new().push(Probe::default()),
             Config::default(),

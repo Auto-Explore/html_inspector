@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -34,15 +34,15 @@ impl Rule for ADownloadConstraints {
             return;
         };
         let has_download = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("download"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "download",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("download"),
+            html_inspector::InputFormat::Xhtml => a.name == "download",
         });
         if !has_download {
             return;
         }
         let has_href = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("href"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "href",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("href"),
+            html_inspector::InputFormat::Xhtml => a.name == "href",
         });
         if !has_href {
             if element == "area"
@@ -66,20 +66,16 @@ impl Rule for ADownloadConstraints {
     }
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }

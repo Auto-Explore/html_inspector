@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, ValidationContext,
 };
 
@@ -51,7 +51,7 @@ impl Rule for InputUrlValueConstraints {
 
         let mut sev = href_issue_severity(v);
         if sev.is_none() && !has_valid_scheme(v) {
-            sev = Some(html_inspector_core::Severity::Error);
+            sev = Some(html_inspector::Severity::Error);
         }
 
         if let Some(sev) = sev {

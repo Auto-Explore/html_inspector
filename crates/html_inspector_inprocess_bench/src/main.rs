@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use html_inspector_core::{Config, InputFormat, MessageOrder, Report};
+use html_inspector::{Config, InputFormat, MessageOrder, Report};
 use html_inspector_html::HtmlEventSource;
 use html_inspector_rules_aria::pack_aria;
 use html_inspector_rules_css::pack_css_checks;
@@ -112,7 +112,7 @@ fn run_once(docs: &[Doc], config: &Config) -> Result<RunOnceOutput, String> {
         let mut config = config.clone();
         config.base_uri = doc.base_uri.clone();
 
-        let report: Report = html_inspector_core::validate_events(source, rules, config)
+        let report: Report = html_inspector::validate_events(source, rules, config)
             .map_err(|e| e.to_string())?;
         total_msgs += report.messages.len();
         let (errors, warnings, infos) = report.counts();
@@ -131,7 +131,7 @@ fn run_once(docs: &[Doc], config: &Config) -> Result<RunOnceOutput, String> {
 #[cfg(test)]
 mod tests {
     use super::detect_format;
-    use html_inspector_core::InputFormat;
+    use html_inspector::InputFormat;
     use std::path::Path;
 
     #[test]

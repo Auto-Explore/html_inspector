@@ -1,4 +1,4 @@
-use html_inspector_core::{Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity};
+use html_inspector::{Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity};
 
 #[derive(Default)]
 pub struct Html5EverParseErrors;
@@ -15,7 +15,7 @@ impl Rule for Html5EverParseErrors {
     fn on_event(
         &mut self,
         event: &ParseEvent,
-        _ctx: &mut html_inspector_core::ValidationContext,
+        _ctx: &mut html_inspector::ValidationContext,
         out: &mut dyn MessageSink,
     ) {
         let ParseEvent::ParseError {

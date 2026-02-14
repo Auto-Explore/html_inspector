@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -93,8 +93,8 @@ impl Rule for TrackConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -104,14 +104,10 @@ fn is_media_element(ctx: &ValidationContext, name: &str) -> bool {
 }
 
 #[inline]
-fn attr_name_matches(
-    format: html_inspector_core::InputFormat,
-    actual: &str,
-    expected: &str,
-) -> bool {
+fn attr_name_matches(format: html_inspector::InputFormat, actual: &str, expected: &str) -> bool {
     match format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -119,11 +115,11 @@ fn attr_name_matches(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -149,12 +145,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "track".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "label".to_string(),
                         value: Some("   ".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "default".to_string(),
                         value: None,
                         span: None,
@@ -204,12 +200,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "TrAcK".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "LaBeL".to_string(),
                         value: Some("   ".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "DeFaUlT".to_string(),
                         value: None,
                         span: None,
@@ -225,7 +221,7 @@ mod tests {
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "track".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "default".to_string(),
                     value: None,
                     span: None,

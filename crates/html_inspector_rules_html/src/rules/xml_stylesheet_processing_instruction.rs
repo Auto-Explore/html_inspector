@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -32,7 +32,7 @@ impl Rule for XmlStylesheetProcessingInstruction {
                 self.seen_any_element = true;
             }
             ParseEvent::ProcessingInstruction { target, data, span } => {
-                if ctx.format != html_inspector_core::InputFormat::Xhtml {
+                if ctx.format != html_inspector::InputFormat::Xhtml {
                     return;
                 }
                 if target != "xml-stylesheet" {
@@ -331,7 +331,7 @@ fn mime_indicates_xslt(mime_main: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat, Span};
+    use html_inspector::{Attribute, Config, InputFormat, Span};
 
     #[derive(Default)]
     struct Sink(Vec<Message>);

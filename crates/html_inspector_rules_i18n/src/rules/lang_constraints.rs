@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -35,7 +35,7 @@ impl Rule for LangConstraints {
             return;
         };
 
-        let is_html_format = matches!(ctx.format, html_inspector_core::InputFormat::Html);
+        let is_html_format = matches!(ctx.format, html_inspector::InputFormat::Html);
         let is_html_element = if is_html_format {
             name.eq_ignore_ascii_case("html")
         } else {

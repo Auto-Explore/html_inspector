@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -86,15 +86,15 @@ fn is_p_end_tag_implying_start_tag(ctx: &ValidationContext, name: &str) -> bool 
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::is_p_end_tag_implying_start_tag;
-    use html_inspector_core::{Config, InputFormat, ValidationContext};
+    use html_inspector::{Config, InputFormat, ValidationContext};
 
     #[test]
     fn p_implying_start_tags_match_case_insensitively_in_html() {

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -92,7 +92,7 @@ fn is_leap_year(y: i32) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet, Span};
+    use html_inspector::{Config, InputFormat, RuleSet, Span};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -116,7 +116,7 @@ mod tests {
         )
         .unwrap();
         let rules = RuleSet::new().push(InputDateConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -125,9 +125,9 @@ mod tests {
         );
 
         // Also cover the non-StartTag path by calling the rule directly.
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -147,9 +147,9 @@ mod tests {
 
     #[test]
     fn html_attribute_name_matching_is_case_insensitive() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -162,12 +162,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "input".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "TYPE".to_string(),
                         value: Some("date".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "VALUE".to_string(),
                         value: Some("2020-02-30".to_string()),
                         span: None,
@@ -191,7 +191,7 @@ mod tests {
             "<input type=\"date\" value=\"2020-02-30\"/>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(InputDateConstraints::default()),
             Config::default(),
@@ -213,7 +213,7 @@ mod tests {
             "<input TYPE=\"date\" VALUE=\"2020-02-30\"/>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(InputDateConstraints::default()),
             Config::default(),

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -49,7 +49,7 @@ impl Rule for ScriptConstraints {
         }
 
         let type_value = attr_value(attrs, "type").unwrap_or("").trim();
-        let type_lower = html_inspector_core::ascii_lowercase_cow_if_needed(type_value);
+        let type_lower = html_inspector::ascii_lowercase_cow_if_needed(type_value);
 
         if has_attr(attrs, "language") {
             if attr_value(attrs, "language")
@@ -487,11 +487,11 @@ fn is_javascript_mime_type(type_lower: &str) -> bool {
     )
 }
 
-fn has_attr(attrs: &[html_inspector_core::Attribute], name: &str) -> bool {
+fn has_attr(attrs: &[html_inspector::Attribute], name: &str) -> bool {
     attrs.iter().any(|a| a.name == name)
 }
 
-fn attr_value<'a>(attrs: &'a [html_inspector_core::Attribute], name: &str) -> Option<&'a str> {
+fn attr_value<'a>(attrs: &'a [html_inspector::Attribute], name: &str) -> Option<&'a str> {
     attrs
         .iter()
         .find(|a| a.name == name)

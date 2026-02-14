@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, ForeignContentNamespace, Interest, Message, MessageSink, ParseEvent, Rule, Severity,
     ValidationContext,
 };
@@ -30,7 +30,7 @@ impl Rule for XmlLangConsistency {
 
         // In XHTML, `xml:lang` is in the XML namespace and doesn't carry the HTML "no namespace"
         // constraint that VNU reports for HTML documents.
-        if ctx.format == html_inspector_core::InputFormat::Xhtml {
+        if ctx.format == html_inspector::InputFormat::Xhtml {
             return;
         }
 

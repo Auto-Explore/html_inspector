@@ -1,4 +1,4 @@
-use html_inspector_core::Span;
+use html_inspector::Span;
 use rustc_hash::FxHashSet;
 
 #[derive(Default)]

@@ -1,12 +1,12 @@
 use rustc_hash::FxHashMap;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
 #[derive(Default)]
 pub struct DuplicateId {
-    first: FxHashMap<String, Option<html_inspector_core::Span>>,
+    first: FxHashMap<String, Option<html_inspector::Span>>,
 }
 
 impl Rule for DuplicateId {
@@ -72,13 +72,13 @@ impl Rule for DuplicateId {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat, Span};
+    use html_inspector::{Attribute, Config, InputFormat, Span};
 
     #[derive(Default)]
-    struct Sink(Vec<html_inspector_core::Message>);
+    struct Sink(Vec<html_inspector::Message>);
 
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }

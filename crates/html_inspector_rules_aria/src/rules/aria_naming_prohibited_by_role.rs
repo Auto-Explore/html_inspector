@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -93,7 +93,7 @@ fn is_name_prohibited_role(role_lc: &str) -> bool {
 fn computed_role(
     ctx: &ValidationContext,
     el_lc: &str,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
 ) -> String {
     if let Some(role) = ctx.attr_value(attrs, "role")
         && let Some(t) = role.split_ascii_whitespace().next()
@@ -160,7 +160,7 @@ fn computed_role(
 
 fn implicit_input_role(
     ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
 ) -> String {
     let ty = ctx.attr_value(attrs, "type").unwrap_or("text").trim();
     let ty_lc = ty.to_ascii_lowercase();
@@ -179,7 +179,7 @@ fn implicit_input_role(
 
 fn implicit_select_role(
     ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
 ) -> String {
     let is_listbox = ctx.has_attr(attrs, "multiple")
         || ctx
@@ -193,7 +193,7 @@ fn implicit_select_role(
     }
 }
 
-fn has_accessible_name(ctx: &ValidationContext, attrs: &[html_inspector_core::Attribute]) -> bool {
+fn has_accessible_name(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> bool {
     ctx.has_attr(attrs, "aria-label") || ctx.has_attr(attrs, "aria-labelledby")
 }
 
@@ -201,7 +201,7 @@ fn has_accessible_name(ctx: &ValidationContext, attrs: &[html_inspector_core::At
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat, ValidationContext};
+    use html_inspector::{Attribute, Config, InputFormat, ValidationContext};
 
     fn attr(name: &str, value: Option<&str>) -> Attribute {
         Attribute {

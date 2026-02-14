@@ -5,7 +5,7 @@ use std::thread;
 use base64::Engine as _;
 use rustc_hash::FxHashMap;
 
-use html_inspector_core::{Config, InputFormat, MessageOrder, Report, Severity};
+use html_inspector::{Config, InputFormat, MessageOrder, Report, Severity};
 use html_inspector_html::HtmlEventSource;
 use html_inspector_rules_aria::pack_aria;
 use html_inspector_rules_css::pack_css_checks;
@@ -1173,7 +1173,7 @@ fn validate_html_bytes(
     bytes: Vec<u8>,
     params: &Params,
     default_min_severity: Severity,
-) -> Result<Report, html_inspector_core::ValidatorError> {
+) -> Result<Report, html_inspector::ValidatorError> {
     let source = HtmlEventSource::from_bytes(source_name, format, bytes)?;
     let rules = pack_html_conformance()
         .merge(pack_aria())
@@ -1193,7 +1193,7 @@ fn validate_html_bytes(
         _ => default_min_severity,
     };
 
-    html_inspector_core::validate_events(
+    html_inspector::validate_events(
         source,
         rules,
         Config {
@@ -1279,7 +1279,7 @@ fn write_response(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use html_inspector_core::{Category, Message, Span};
+    use html_inspector::{Category, Message, Span};
     use std::io::{BufReader, Cursor};
 
     #[test]

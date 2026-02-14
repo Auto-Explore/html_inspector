@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -27,10 +27,8 @@ impl Rule for HeadingoffsetConstraints {
         let value = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => {
-                    a.name.eq_ignore_ascii_case("headingoffset")
-                }
-                html_inspector_core::InputFormat::Xhtml => a.name == "headingoffset",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("headingoffset"),
+                html_inspector::InputFormat::Xhtml => a.name == "headingoffset",
             })
             .and_then(|a| a.value.as_deref());
 

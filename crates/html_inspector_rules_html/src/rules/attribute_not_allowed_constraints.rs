@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -30,7 +30,7 @@ impl Rule for AttributeNotAllowedConstraints {
         };
 
         // These checks are for HTML documents and the HTML namespace.
-        if ctx.format != html_inspector_core::InputFormat::Html {
+        if ctx.format != html_inspector::InputFormat::Html {
             return;
         }
         if namespace_for_next_start_tag(ctx, name) != Namespace::Html {
@@ -141,7 +141,7 @@ fn is_valid_prefix_label(label: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -170,7 +170,7 @@ mod tests {
         )
         .unwrap();
         let rules = RuleSet::new().push(AttributeNotAllowedConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -184,7 +184,7 @@ mod tests {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Html, r#"<div prefix=""></div>"#).unwrap();
         let rules = RuleSet::new().push(AttributeNotAllowedConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             !report
                 .messages
@@ -198,7 +198,7 @@ mod tests {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Html, r#"<div prefix=" "></div>"#).unwrap();
         let rules = RuleSet::new().push(AttributeNotAllowedConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages

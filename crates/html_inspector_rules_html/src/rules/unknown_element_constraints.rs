@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -394,7 +394,7 @@ fn report_unknown(
     ns: Namespace,
     name: &str,
     parent: &str,
-    span: Option<html_inspector_core::Span>,
+    span: Option<html_inspector::Span>,
     out: &mut dyn MessageSink,
 ) {
     let content_kind = match ns {

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -51,19 +51,19 @@ impl Rule for SvgImageSrcsetConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 fn has_attr(
     ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
     needle: &str,
 ) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }
 
@@ -71,11 +71,11 @@ fn has_attr(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -96,12 +96,12 @@ mod tests {
         );
 
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -115,7 +115,7 @@ mod tests {
         assert!(is(&ctx, "image", "image"));
         assert!(!is(&ctx, "Image", "image"));
 
-        let attrs = vec![html_inspector_core::Attribute {
+        let attrs = vec![html_inspector::Attribute {
             name: "srcset".to_string(),
             value: None,
             span: None,

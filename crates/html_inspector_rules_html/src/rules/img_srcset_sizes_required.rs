@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -39,8 +39,8 @@ impl Rule for ImgSrcsetSizesRequired {
         // vnu treats missing `sizes` as OK for lazy-loaded images with explicit dimensions (suite coverage).
         let loading = attr_value(ctx, attrs, "loading").unwrap_or("");
         let loading_is_lazy = match ctx.format {
-            html_inspector_core::InputFormat::Html => loading.eq_ignore_ascii_case("lazy"),
-            html_inspector_core::InputFormat::Xhtml => loading == "lazy",
+            html_inspector::InputFormat::Html => loading.eq_ignore_ascii_case("lazy"),
+            html_inspector::InputFormat::Xhtml => loading == "lazy",
         };
         if loading_is_lazy && has_attr(ctx, attrs, "width") && has_attr(ctx, attrs, "height") {
             return;
@@ -81,32 +81,28 @@ fn srcset_has_width_descriptor(srcset: &str) -> bool {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs
         .iter()
         .find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-            html_inspector_core::InputFormat::Xhtml => a.name == needle,
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+            html_inspector::InputFormat::Xhtml => a.name == needle,
         })
         .and_then(|a| a.value.as_deref())
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }

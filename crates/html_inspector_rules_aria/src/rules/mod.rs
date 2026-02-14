@@ -24,7 +24,7 @@ mod aria_summary_constraints;
 mod aria_tabpanel_required_for_active_tab;
 mod shared;
 
-use html_inspector_core::Rule;
+use html_inspector::Rule;
 
 pub fn all() -> Vec<Box<dyn Rule>> {
     vec![

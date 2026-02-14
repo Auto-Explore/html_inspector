@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -121,7 +121,7 @@ fn is_leap_year(y: i32) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -132,7 +132,7 @@ mod tests {
             r#"<input type="datetime-local" min="2024-02-30T10:00">"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(InputDatetimeLocalConstraints::default()),
             Config::default(),
@@ -154,7 +154,7 @@ mod tests {
             r#"<input type="datetime-local" value="2024-02-29T23:59:59.123">"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(InputDatetimeLocalConstraints::default()),
             Config::default(),
@@ -176,7 +176,7 @@ mod tests {
             r#"<input TYPE="datetime-local" min="2024-02-30T10:00"/>"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(InputDatetimeLocalConstraints::default()),
             Config::default(),
@@ -198,7 +198,7 @@ mod tests {
             r#"<input type="datetime-local" min="2024-02-30T10:00"/>"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(InputDatetimeLocalConstraints::default()),
             Config::default(),

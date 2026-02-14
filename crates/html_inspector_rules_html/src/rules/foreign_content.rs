@@ -1,4 +1,4 @@
-use html_inspector_core::ValidationContext;
+use html_inspector::ValidationContext;
 use std::borrow::Cow;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -10,9 +10,9 @@ pub enum Namespace {
 
 pub fn namespace_for_next_start_tag(ctx: &ValidationContext, name: &str) -> Namespace {
     match ctx.foreign_insertion_namespace() {
-        html_inspector_core::ForeignContentNamespace::Html => {}
-        html_inspector_core::ForeignContentNamespace::Svg => return Namespace::Svg,
-        html_inspector_core::ForeignContentNamespace::Math => return Namespace::Math,
+        html_inspector::ForeignContentNamespace::Html => {}
+        html_inspector::ForeignContentNamespace::Svg => return Namespace::Svg,
+        html_inspector::ForeignContentNamespace::Math => return Namespace::Math,
     }
 
     if ctx.name_is(name, "svg") {
@@ -63,10 +63,8 @@ pub fn last_open_svg_integration_point(ctx: &ValidationContext) -> Option<&'stat
 
 fn normalize<'a>(ctx: &ValidationContext, name: &'a str) -> Cow<'a, str> {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => {
-            html_inspector_core::ascii_lowercase_cow_if_needed(name)
-        }
-        html_inspector_core::InputFormat::Xhtml => Cow::Borrowed(name),
+        html_inspector::InputFormat::Html => html_inspector::ascii_lowercase_cow_if_needed(name),
+        html_inspector::InputFormat::Xhtml => Cow::Borrowed(name),
     }
 }
 
@@ -76,7 +74,7 @@ mod tests {
 
     use std::sync::{Arc, Mutex};
 
-    use html_inspector_core::{
+    use html_inspector::{
         Config, EventSource, InputFormat, Interest, ParseEvent, Rule, RuleSet, ValidatorError,
         validate_events,
     };
@@ -132,7 +130,7 @@ mod tests {
             &mut self,
             event: &ParseEvent,
             ctx: &mut ValidationContext,
-            _out: &mut dyn html_inspector_core::MessageSink,
+            _out: &mut dyn html_inspector::MessageSink,
         ) {
             let ParseEvent::StartTag { name, .. } = event else {
                 return;
@@ -155,7 +153,7 @@ mod tests {
             &mut self,
             event: &ParseEvent,
             ctx: &mut ValidationContext,
-            _out: &mut dyn html_inspector_core::MessageSink,
+            _out: &mut dyn html_inspector::MessageSink,
         ) {
             let ParseEvent::StartTag { name, .. } = event else {
                 return;

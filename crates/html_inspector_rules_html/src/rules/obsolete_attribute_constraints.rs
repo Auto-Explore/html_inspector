@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -56,14 +56,10 @@ impl Rule for ObsoleteAttributeConstraints {
     }
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }
 
@@ -71,7 +67,7 @@ fn has_attr(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -82,7 +78,7 @@ mod tests {
             r#"<div aria-dropeffect="copy" aria-grabbed="true"></div>"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ObsoleteAttributeConstraints::default()),
             Config::default(),

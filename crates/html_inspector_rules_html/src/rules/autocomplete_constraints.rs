@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -211,7 +211,7 @@ fn is_known_field(field: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat};
+    use html_inspector::{Attribute, Config, InputFormat};
 
     #[derive(Default)]
     struct Sink(Vec<Message>);

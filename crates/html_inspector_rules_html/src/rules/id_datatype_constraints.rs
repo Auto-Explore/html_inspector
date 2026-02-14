@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -29,8 +29,8 @@ impl Rule for IdDatatypeConstraints {
         let id = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("id"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "id",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("id"),
+                html_inspector::InputFormat::Xhtml => a.name == "id",
             })
             .and_then(|a| a.value.as_deref());
         let Some(id) = id else { return };

@@ -1,9 +1,9 @@
 use std::borrow::Cow;
 
-use html_inspector_core::{Attribute, ValidationContext};
+use html_inspector::{Attribute, ValidationContext};
 
-pub(super) use html_inspector_core::ascii_lowercase_cow_if_needed;
-pub(super) use html_inspector_core::starts_with_ascii_ci;
+pub(super) use html_inspector::ascii_lowercase_cow_if_needed;
+pub(super) use html_inspector::starts_with_ascii_ci;
 
 pub(super) fn eq_name(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     ctx.name_is(actual, expected)
@@ -22,8 +22,8 @@ pub(super) fn attr_value<'a>(
 
 pub(super) fn normalize_name<'a>(ctx: &ValidationContext, name: &'a str) -> Cow<'a, str> {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => ascii_lowercase_cow_if_needed(name),
-        html_inspector_core::InputFormat::Xhtml => Cow::Borrowed(name),
+        html_inspector::InputFormat::Html => ascii_lowercase_cow_if_needed(name),
+        html_inspector::InputFormat::Xhtml => Cow::Borrowed(name),
     }
 }
 
@@ -79,7 +79,7 @@ pub(super) fn is_phrasing_element(ctx: &ValidationContext, name: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::{attr_value, eq_name, is_phrasing_element, starts_with_ascii_ci};
-    use html_inspector_core::{Attribute, Config, InputFormat, ValidationContext};
+    use html_inspector::{Attribute, Config, InputFormat, ValidationContext};
 
     #[test]
     fn phrasing_elements_match_case_insensitively_in_html() {

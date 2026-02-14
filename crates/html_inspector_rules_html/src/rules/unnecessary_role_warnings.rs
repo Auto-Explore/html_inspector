@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -149,7 +149,7 @@ fn in_sectioning_context(ctx: &ValidationContext) -> bool {
         || ctx.has_ancestor("section")
 }
 
-fn has_accessible_name(attrs: &[html_inspector_core::Attribute], ctx: &ValidationContext) -> bool {
+fn has_accessible_name(attrs: &[html_inspector::Attribute], ctx: &ValidationContext) -> bool {
     ctx.attr_value(attrs, "aria-label")
         .is_some_and(|v| !v.trim().is_empty())
         || ctx
@@ -161,12 +161,12 @@ fn has_accessible_name(attrs: &[html_inspector_core::Attribute], ctx: &Validatio
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
-    fn validate_fmt(format: InputFormat, html: &str) -> Vec<html_inspector_core::Message> {
+    fn validate_fmt(format: InputFormat, html: &str) -> Vec<html_inspector::Message> {
         let src = HtmlEventSource::from_str("t", format, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(UnnecessaryRoleWarnings::default()),
             Config::default(),
@@ -190,7 +190,7 @@ mod tests {
         assert!(msgs.iter().any(|m| m.code == "html.role.unnecessary"));
         assert!(msgs.iter().any(|m| {
             m.code == "html.role.unnecessary"
-                && m.severity == html_inspector_core::Severity::Warning
+                && m.severity == html_inspector::Severity::Warning
                 && m.message == "The “button” role is unnecessary for element “summary”."
         }));
     }

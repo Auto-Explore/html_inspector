@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
@@ -361,38 +361,32 @@ impl Rule for SvgSuiteConstraints {
 fn closed_stack_depth(name: &str, ctx: &ValidationContext) -> usize {
     let depth = ctx.open_elements().len();
     let pos = match ctx.format {
-        html_inspector_core::InputFormat::Html => ctx
+        html_inspector::InputFormat::Html => ctx
             .open_elements()
             .iter()
             .rposition(|n| n.eq_ignore_ascii_case(name)),
-        html_inspector_core::InputFormat::Xhtml => {
-            ctx.open_elements().iter().rposition(|n| n == name)
-        }
+        html_inspector::InputFormat::Xhtml => ctx.open_elements().iter().rposition(|n| n == name),
     };
     pos.unwrap_or(depth)
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs
         .iter()
         .find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-            html_inspector_core::InputFormat::Xhtml => a.name == needle,
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+            html_inspector::InputFormat::Xhtml => a.name == needle,
         })
         .and_then(|a| a.value.as_deref())
 }
@@ -409,9 +403,7 @@ mod tests {
 
     use std::collections::VecDeque;
 
-    use html_inspector_core::{
-        Attribute, Config, EventSource, InputFormat, RuleSet, ValidatorError,
-    };
+    use html_inspector::{Attribute, Config, EventSource, InputFormat, RuleSet, ValidatorError};
 
     struct VecSource {
         name: String,
@@ -478,7 +470,7 @@ mod tests {
                 end("font"),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(SvgSuiteConstraints::default()),
             Config::default(),
@@ -499,7 +491,7 @@ mod tests {
                 start("font", vec![attr("horiz-adv-x", Some("1"))]),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(SvgSuiteConstraints::default()),
             Config::default(),
@@ -522,7 +514,7 @@ mod tests {
                 end("font"),
             ],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(SvgSuiteConstraints::default()),
             Config::default(),
@@ -538,9 +530,9 @@ mod tests {
 
     #[test]
     fn rule_covers_unmatched_event_branch() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -556,12 +548,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),

@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use html_inspector_core::{Config, InputFormat, MessageOrder};
+use html_inspector::{Config, InputFormat, MessageOrder};
 use html_inspector_html::HtmlEventSource;
 use html_inspector_rules_aria::pack_aria;
 use html_inspector_rules_css::pack_css_checks;
@@ -359,7 +359,7 @@ fn run_rust_on_files(files: &[PathBuf]) -> Result<CompareCounts, CompareError> {
             .merge(pack_i18n())
             .merge(pack_css_checks());
         let base_uri = Some(format!("file://{}", source_name));
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             source,
             rules,
             Config {
@@ -379,18 +379,18 @@ fn run_rust_on_files(files: &[PathBuf]) -> Result<CompareCounts, CompareError> {
         let mut counts = Counts::default();
         for m in report.messages {
             match m.severity {
-                html_inspector_core::Severity::Error => counts.errors += 1,
-                html_inspector_core::Severity::Warning => counts.warnings += 1,
-                html_inspector_core::Severity::Info => counts.infos += 1,
+                html_inspector::Severity::Error => counts.errors += 1,
+                html_inspector::Severity::Warning => counts.warnings += 1,
+                html_inspector::Severity::Info => counts.infos += 1,
             }
             if m.code == "html.css.error" {
                 counts.css_errors += 1;
             }
 
             let sev_str = match m.severity {
-                html_inspector_core::Severity::Error => "error",
-                html_inspector_core::Severity::Warning => "warning",
-                html_inspector_core::Severity::Info => "info",
+                html_inspector::Severity::Error => "error",
+                html_inspector::Severity::Warning => "warning",
+                html_inspector::Severity::Info => "info",
             }
             .to_string();
             if m.code == "html.css.error" {

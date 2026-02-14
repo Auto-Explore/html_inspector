@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -25,18 +25,16 @@ impl Rule for AriaPlaceholderWithPlaceholder {
         };
 
         let has_aria_placeholder = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => {
-                a.name.eq_ignore_ascii_case("aria-placeholder")
-            }
-            html_inspector_core::InputFormat::Xhtml => a.name == "aria-placeholder",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-placeholder"),
+            html_inspector::InputFormat::Xhtml => a.name == "aria-placeholder",
         });
         if !has_aria_placeholder {
             return;
         }
 
         let has_placeholder = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("placeholder"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "placeholder",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("placeholder"),
+            html_inspector::InputFormat::Xhtml => a.name == "placeholder",
         });
         if has_placeholder {
             out.push(Message::new(
@@ -54,11 +52,11 @@ impl Rule for AriaPlaceholderWithPlaceholder {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -91,12 +89,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "input".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "aria-placeholder".to_string(),
                         value: Some("x".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "placeholder".to_string(),
                         value: Some("y".to_string()),
                         span: None,

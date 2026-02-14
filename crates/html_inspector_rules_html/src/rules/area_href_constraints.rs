@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, ValidationContext,
 };
 
@@ -40,7 +40,7 @@ impl Rule for AreaHrefConstraints {
             if alt.is_some_and(|v| !v.is_empty()) {
                 out.push(Message::new(
                     "html.area.href.missing",
-                    html_inspector_core::Severity::Error,
+                    html_inspector::Severity::Error,
                     Category::Html,
                     "Element “area” is missing required attribute “href”.",
                     *span,
@@ -75,8 +75,8 @@ mod tests {
     #[test]
     fn missing_href_with_nonempty_alt_is_error() {
         let mut ctx = ValidationContext::new(
-            html_inspector_core::Config::default(),
-            html_inspector_core::InputFormat::Html,
+            html_inspector::Config::default(),
+            html_inspector::InputFormat::Html,
         );
         let mut sink = Sink::default();
         let mut rule = AreaHrefConstraints::default();
@@ -84,7 +84,7 @@ mod tests {
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "area".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "alt".to_string(),
                     value: Some("x".to_string()),
                     span: None,
@@ -101,8 +101,8 @@ mod tests {
     #[test]
     fn missing_href_with_empty_or_missing_alt_is_ok() {
         let mut ctx = ValidationContext::new(
-            html_inspector_core::Config::default(),
-            html_inspector_core::InputFormat::Html,
+            html_inspector::Config::default(),
+            html_inspector::InputFormat::Html,
         );
         let mut rule = AreaHrefConstraints::default();
 
@@ -110,7 +110,7 @@ mod tests {
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "area".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "alt".to_string(),
                     value: Some("".to_string()),
                     span: None,

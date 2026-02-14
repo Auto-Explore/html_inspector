@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -29,8 +29,8 @@ impl Rule for ImgAltRequired {
             return;
         };
         let is_img = match ctx.format {
-            html_inspector_core::InputFormat::Html => name.eq_ignore_ascii_case("img"),
-            html_inspector_core::InputFormat::Xhtml => name == "img",
+            html_inspector::InputFormat::Html => name.eq_ignore_ascii_case("img"),
+            html_inspector::InputFormat::Xhtml => name == "img",
         };
         if !is_img {
             return;
@@ -59,7 +59,7 @@ impl Rule for ImgAltRequired {
     }
 }
 
-fn has_accessible_name(ctx: &ValidationContext, attrs: &[html_inspector_core::Attribute]) -> bool {
+fn has_accessible_name(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> bool {
     if ctx
         .attr_value(attrs, "alt")
         .is_some_and(|alt| !alt.is_empty())
@@ -75,13 +75,13 @@ fn has_accessible_name(ctx: &ValidationContext, attrs: &[html_inspector_core::At
 
 fn has_aria_attrs_other_than_hidden(
     ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
 ) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => {
+        html_inspector::InputFormat::Html => {
             starts_with_ascii_ci(&a.name, "aria-") && !a.name.eq_ignore_ascii_case("aria-hidden")
         }
-        html_inspector_core::InputFormat::Xhtml => {
+        html_inspector::InputFormat::Xhtml => {
             a.name.starts_with("aria-") && a.name != "aria-hidden"
         }
     })
@@ -91,11 +91,11 @@ fn has_aria_attrs_other_than_hidden(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -116,12 +116,12 @@ mod tests {
         );
 
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -132,7 +132,7 @@ mod tests {
     #[test]
     fn has_accessible_name_returns_true_for_non_empty_alt() {
         let ctx = ValidationContext::new(Config::default(), InputFormat::Html);
-        let attrs = vec![html_inspector_core::Attribute {
+        let attrs = vec![html_inspector::Attribute {
             name: "alt".to_string(),
             value: Some("ok".to_string()),
             span: None,
@@ -144,12 +144,12 @@ mod tests {
     fn has_accessible_name_with_empty_alt_falls_through_to_aria_label() {
         let ctx = ValidationContext::new(Config::default(), InputFormat::Html);
         let attrs = vec![
-            html_inspector_core::Attribute {
+            html_inspector::Attribute {
                 name: "alt".to_string(),
                 value: Some("".to_string()),
                 span: None,
             },
-            html_inspector_core::Attribute {
+            html_inspector::Attribute {
                 name: "aria-label".to_string(),
                 value: Some("name".to_string()),
                 span: None,
@@ -162,12 +162,12 @@ mod tests {
     fn attr_value_is_case_sensitive_in_xhtml() {
         let ctx = ValidationContext::new(Config::default(), InputFormat::Xhtml);
         let attrs = vec![
-            html_inspector_core::Attribute {
+            html_inspector::Attribute {
                 name: "alt".to_string(),
                 value: Some("x".to_string()),
                 span: None,
             },
-            html_inspector_core::Attribute {
+            html_inspector::Attribute {
                 name: "ALT".to_string(),
                 value: Some("y".to_string()),
                 span: None,

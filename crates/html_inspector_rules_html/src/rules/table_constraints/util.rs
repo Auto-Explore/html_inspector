@@ -1,4 +1,4 @@
-use html_inspector_core::{Attribute, ValidationContext};
+use html_inspector::{Attribute, ValidationContext};
 
 pub(super) fn attr_u32(ctx: &ValidationContext, attrs: &[Attribute], needle: &str) -> Option<u32> {
     ctx.attr_value(attrs, needle)?.trim().parse::<u32>().ok()

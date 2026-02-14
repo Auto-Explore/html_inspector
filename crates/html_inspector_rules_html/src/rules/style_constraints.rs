@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, DocumentSection, Interest, Message, MessageSink, ParseEvent, Rule, Severity,
     ValidationContext,
 };

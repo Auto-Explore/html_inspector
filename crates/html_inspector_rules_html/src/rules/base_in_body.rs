@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, DocumentSection, Interest, Message, MessageSink, ParseEvent, Rule, Severity,
     ValidationContext,
 };
@@ -25,8 +25,8 @@ impl Rule for BaseInBody {
             return;
         };
         let is_base = match ctx.format {
-            html_inspector_core::InputFormat::Html => name.eq_ignore_ascii_case("base"),
-            html_inspector_core::InputFormat::Xhtml => name == "base",
+            html_inspector::InputFormat::Html => name.eq_ignore_ascii_case("base"),
+            html_inspector::InputFormat::Xhtml => name == "base",
         };
         if !is_base {
             return;

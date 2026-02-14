@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -25,20 +25,20 @@ impl Rule for MicrodataConstraints {
         };
 
         let has_itemscope = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("itemscope"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "itemscope",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("itemscope"),
+            html_inspector::InputFormat::Xhtml => a.name == "itemscope",
         });
         let has_itemtype = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("itemtype"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "itemtype",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("itemtype"),
+            html_inspector::InputFormat::Xhtml => a.name == "itemtype",
         });
         let has_itemid = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("itemid"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "itemid",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("itemid"),
+            html_inspector::InputFormat::Xhtml => a.name == "itemid",
         });
         let has_itemref = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("itemref"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "itemref",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("itemref"),
+            html_inspector::InputFormat::Xhtml => a.name == "itemref",
         });
 
         if has_itemid && !(has_itemscope && has_itemtype) {

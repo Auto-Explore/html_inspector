@@ -5,7 +5,7 @@ mod meta_http_equiv_charset;
 mod unicode_normalization_nfc_warning;
 mod xml_lang_consistency;
 
-use html_inspector_core::Rule;
+use html_inspector::Rule;
 
 pub fn all() -> Vec<Box<dyn Rule>> {
     vec![

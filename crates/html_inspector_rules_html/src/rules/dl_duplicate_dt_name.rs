@@ -1,14 +1,14 @@
 use std::collections::BTreeMap;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
 #[derive(Default)]
 pub struct DlDuplicateDtName {
-    dl_stack: Vec<BTreeMap<String, Option<html_inspector_core::Span>>>,
+    dl_stack: Vec<BTreeMap<String, Option<html_inspector::Span>>>,
     dt_text: Option<String>,
-    dt_span: Option<html_inspector_core::Span>,
+    dt_span: Option<html_inspector::Span>,
 }
 
 impl Rule for DlDuplicateDtName {
@@ -139,8 +139,8 @@ fn normalize_dt_name(s: &str) -> String {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -148,7 +148,7 @@ fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{
+    use html_inspector::{
         Config, EventSource, InputFormat, ParseEvent, RuleSet, Span, ValidatorError,
     };
 
@@ -227,7 +227,7 @@ mod tests {
             ],
         );
         let rules = RuleSet::new().push(DlDuplicateDtName::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -254,7 +254,7 @@ mod tests {
             ],
         );
         let rules = RuleSet::new().push(DlDuplicateDtName::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             !report
                 .messages
@@ -282,7 +282,7 @@ mod tests {
             ],
         );
         let rules = RuleSet::new().push(DlDuplicateDtName::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         let warnings = report
             .messages
             .iter()
@@ -319,7 +319,7 @@ mod tests {
             ],
         );
 
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DlDuplicateDtName::default()),
             Config::default(),

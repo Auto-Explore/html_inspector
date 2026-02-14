@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -8,7 +8,7 @@ pub struct TimeTextContentConstraints {
     has_datetime_attr: bool,
     saw_non_whitespace: bool,
     buf: String,
-    span: Option<html_inspector_core::Span>,
+    span: Option<html_inspector::Span>,
 }
 
 impl Rule for TimeTextContentConstraints {
@@ -274,13 +274,13 @@ fn is_leap_year(y: i32) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
     fn time_text_without_datetime_is_validated() {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, "<time>bad</time>").unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TimeTextContentConstraints::default()),
             Config::default(),
@@ -298,7 +298,7 @@ mod tests {
     fn time_text_valid_date_is_allowed() {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Html, "<time>2024-01-02</time>").unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TimeTextContentConstraints::default()),
             Config::default(),
@@ -315,7 +315,7 @@ mod tests {
             "<time datetime=\"2024-01-02\">bad</time>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TimeTextContentConstraints::default()),
             Config::default(),

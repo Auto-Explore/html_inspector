@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 use rustc_hash::FxHashSet;
@@ -58,7 +58,7 @@ impl Rule for IFrameSandboxConstraints {
         let mut has_same_origin = false;
 
         for token in sandbox.split_ascii_whitespace() {
-            let token_lc = html_inspector_core::ascii_lowercase_cow_if_needed(token);
+            let token_lc = html_inspector::ascii_lowercase_cow_if_needed(token);
             let token_lc_str = token_lc.as_ref();
             if !ALLOWED_SANDBOX_TOKENS.contains(&token_lc_str) {
                 out.push(Message::new(
@@ -102,7 +102,7 @@ impl Rule for IFrameSandboxConstraints {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat, RuleSet};
+    use html_inspector::{Attribute, Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -114,7 +114,7 @@ mod tests {
         )
         .unwrap();
         let rules = RuleSet::new().push(IFrameSandboxConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -132,7 +132,7 @@ mod tests {
         )
         .unwrap();
         let rules = RuleSet::new().push(IFrameSandboxConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages

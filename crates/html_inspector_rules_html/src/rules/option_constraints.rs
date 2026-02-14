@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Attribute, Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity,
     ValidationContext,
 };
@@ -137,7 +137,7 @@ fn attr_value<'a>(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet, ValidationContext};
+    use html_inspector::{Config, InputFormat, RuleSet, ValidationContext};
     use html_inspector_html::{HtmlEventSource, SimpleHtmlEventSource};
 
     #[test]
@@ -148,7 +148,7 @@ mod tests {
             r#"<select><option label=""></option></select>"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -167,7 +167,7 @@ mod tests {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Html, "<select><option></option></select>")
                 .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -189,7 +189,7 @@ mod tests {
             "<datalist><option value=\"\"></option></datalist>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -211,7 +211,7 @@ mod tests {
             r#"<select><option label="x"></option></select>"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -229,7 +229,7 @@ mod tests {
     fn self_closing_option_without_label_emits_error() {
         let src =
             SimpleHtmlEventSource::from_str("t", InputFormat::Html, "<select><option/></select>");
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -251,7 +251,7 @@ mod tests {
             "<select><option>\n \t</option></select>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -272,7 +272,7 @@ mod tests {
             InputFormat::Html,
             "<select><option label></option></select>",
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -294,7 +294,7 @@ mod tests {
             r#"<select><option label="x">y</option></select>"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(OptionConstraints::default()),
             Config::default(),
@@ -305,9 +305,9 @@ mod tests {
 
     #[test]
     fn rule_ignores_unhandled_events() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -323,12 +323,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),

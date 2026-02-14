@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -109,8 +109,8 @@ fn looks_like_absolute_url(token: &str) -> bool {
 
 fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => name.to_ascii_lowercase(),
-        html_inspector_core::InputFormat::Xhtml => name.to_string(),
+        html_inspector::InputFormat::Html => name.to_ascii_lowercase(),
+        html_inspector::InputFormat::Xhtml => name.to_string(),
     }
 }
 
@@ -118,7 +118,7 @@ fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat};
+    use html_inspector::{Attribute, Config, InputFormat};
 
     #[test]
     fn looks_like_absolute_url_rejects_empty_and_invalid_scheme_chars() {

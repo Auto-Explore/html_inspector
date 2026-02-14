@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -28,16 +28,16 @@ impl Rule for AriaCheckedOnCheckbox {
         };
 
         let is_input = match ctx.format {
-            html_inspector_core::InputFormat::Html => name.eq_ignore_ascii_case("input"),
-            html_inspector_core::InputFormat::Xhtml => name == "input",
+            html_inspector::InputFormat::Html => name.eq_ignore_ascii_case("input"),
+            html_inspector::InputFormat::Xhtml => name == "input",
         };
         if !is_input {
             return;
         }
 
         let has_aria_checked = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-checked"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "aria-checked",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-checked"),
+            html_inspector::InputFormat::Xhtml => a.name == "aria-checked",
         });
         if !has_aria_checked {
             return;
@@ -46,8 +46,8 @@ impl Rule for AriaCheckedOnCheckbox {
         let type_value = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("type"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "type",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("type"),
+                html_inspector::InputFormat::Xhtml => a.name == "type",
             })
             .and_then(|a| a.value.as_deref())
             .unwrap_or("");

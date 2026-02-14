@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -11,11 +11,11 @@ pub struct ContentSecurityPolicyWarnings {
     http_policies: Vec<CspPolicy>,
     collecting_inline_script: bool,
     inline_script_content: String,
-    inline_script_span: Option<html_inspector_core::Span>,
+    inline_script_span: Option<html_inspector::Span>,
     inline_script_nonce: Option<String>,
     collecting_inline_style: bool,
     inline_style_content: String,
-    inline_style_span: Option<html_inspector_core::Span>,
+    inline_style_span: Option<html_inspector::Span>,
     inline_style_nonce: Option<String>,
 }
 
@@ -443,7 +443,7 @@ mod tests {
     use super::*;
 
     use base64::Engine as _;
-    use html_inspector_core::{Attribute, Config, InputFormat, Span};
+    use html_inspector::{Attribute, Config, InputFormat, Span};
     use sha2::{Digest, Sha256};
 
     use super::csp::{is_event_handler_attr, nonce_matches_sources, parse_csp_policies};

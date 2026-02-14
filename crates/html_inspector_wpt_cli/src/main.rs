@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::{Component, Path, PathBuf};
 use std::process::Command;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Config, InputFormat, Message, MessageOrder, Report, Severity, SeverityProfile,
     ValidatorError,
 };
@@ -629,7 +629,7 @@ fn validate_wpt_html_bytes(rel: &str, bytes: Vec<u8>, cfg: &WptHtmlResultsConfig
 
     report_from_validator_result(
         rel,
-        html_inspector_core::validate_events(source, rules, cfg.as_core()),
+        html_inspector::validate_events(source, rules, cfg.as_core()),
     )
 }
 

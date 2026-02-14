@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -30,8 +30,8 @@ impl Rule for TargetBrowsingContextConstraints {
         let target = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("target"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "target",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("target"),
+                html_inspector::InputFormat::Xhtml => a.name == "target",
             })
             .and_then(|a| a.value.as_deref());
 

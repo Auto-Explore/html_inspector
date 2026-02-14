@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, ValidationContext,
 };
 
@@ -43,7 +43,7 @@ impl Rule for InputImageSrcConstraints {
         if src.is_empty() {
             out.push(Message::new(
                 "html.input.image.src.empty",
-                html_inspector_core::Severity::Error,
+                html_inspector::Severity::Error,
                 Category::Html,
                 "Bad value “” for attribute “src” on element “input”.",
                 *span,

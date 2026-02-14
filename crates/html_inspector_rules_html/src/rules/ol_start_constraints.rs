@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -59,12 +59,12 @@ fn is_valid_integer(v: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
-    fn validate(format: InputFormat, html: &str) -> html_inspector_core::Report {
+    fn validate(format: InputFormat, html: &str) -> html_inspector::Report {
         let src = HtmlEventSource::from_str("t", format, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(OlStartConstraints::default()),
             Config::default(),
@@ -144,7 +144,7 @@ fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs

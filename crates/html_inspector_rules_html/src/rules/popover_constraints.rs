@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -28,8 +28,8 @@ impl Rule for PopoverConstraints {
         };
 
         let popover = attrs.iter().find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("popover"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "popover",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("popover"),
+            html_inspector::InputFormat::Xhtml => a.name == "popover",
         });
         let Some(popover) = popover else { return };
 

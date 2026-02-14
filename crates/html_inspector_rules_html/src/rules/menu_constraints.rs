@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -40,7 +40,7 @@ impl Rule for MenuConstraints {
                         ));
                         return;
                     }
-                    if ctx.format == html_inspector_core::InputFormat::Xhtml
+                    if ctx.format == html_inspector::InputFormat::Xhtml
                         && has_attr(ctx, attrs, "type")
                     {
                         out.push(Message::new(
@@ -94,25 +94,21 @@ impl Rule for MenuConstraints {
 
 fn is_parent_menu(ctx: &ValidationContext) -> bool {
     ctx.current_parent().is_some_and(|p| match ctx.format {
-        html_inspector_core::InputFormat::Html => p.eq_ignore_ascii_case("menu"),
-        html_inspector_core::InputFormat::Xhtml => p == "menu",
+        html_inspector::InputFormat::Html => p.eq_ignore_ascii_case("menu"),
+        html_inspector::InputFormat::Xhtml => p == "menu",
     })
 }
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }

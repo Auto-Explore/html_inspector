@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
@@ -63,10 +63,10 @@ impl Rule for AriaActivedescendantRequiresDescendantOrOwnsWarning {
                     });
 
                 let pushes = match ctx.format {
-                    html_inspector_core::InputFormat::Html => {
-                        !html_inspector_core::is_void_html_element(name)
+                    html_inspector::InputFormat::Html => {
+                        !html_inspector::is_void_html_element(name)
                     }
-                    html_inspector_core::InputFormat::Xhtml => !*self_closing,
+                    html_inspector::InputFormat::Xhtml => !*self_closing,
                 };
                 if !pushes {
                     if target_id.is_some() && !has_owns {
@@ -133,7 +133,7 @@ mod tests {
 
     use std::collections::VecDeque;
 
-    use html_inspector_core::{
+    use html_inspector::{
         Attribute, Config, EventSource, InputFormat, RuleSet, ValidationContext, ValidatorError,
     };
 
@@ -400,7 +400,7 @@ mod tests {
                 span: None,
             }],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(AriaActivedescendantRequiresDescendantOrOwnsWarning::default()),
             Config::default(),

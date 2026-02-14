@@ -1,4 +1,4 @@
-use html_inspector_core::{Category, Message, MessageSink, Rule, Severity, ValidationContext};
+use html_inspector::{Category, Message, MessageSink, Rule, Severity, ValidationContext};
 
 #[derive(Default)]
 pub struct PictureUnclosedEndOfFile;
@@ -9,7 +9,7 @@ impl Rule for PictureUnclosedEndOfFile {
     }
 
     fn on_finish(&mut self, ctx: &mut ValidationContext, out: &mut dyn MessageSink) {
-        if ctx.format != html_inspector_core::InputFormat::Html {
+        if ctx.format != html_inspector::InputFormat::Html {
             return;
         }
         if ctx.has_ancestor("picture") {

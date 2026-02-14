@@ -1,6 +1,6 @@
 use rustc_hash::FxHashSet;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
@@ -54,10 +54,10 @@ impl Rule for LabelForConstraints {
             } => {
                 // Track role=button ancestors (suite coverage).
                 let pushes = match ctx.format {
-                    html_inspector_core::InputFormat::Html => {
-                        !html_inspector_core::is_void_html_element(name)
+                    html_inspector::InputFormat::Html => {
+                        !html_inspector::is_void_html_element(name)
                     }
-                    html_inspector_core::InputFormat::Xhtml => !*self_closing,
+                    html_inspector::InputFormat::Xhtml => !*self_closing,
                 };
                 if has_role_button(ctx, attrs) && pushes {
                     self.role_button_stack.push(normalize_name(ctx, name));
@@ -225,7 +225,7 @@ impl Rule for LabelForConstraints {
 fn is_labelable_descendant(
     ctx: &ValidationContext,
     name: &str,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
 ) -> bool {
     if is(ctx, name, "input") {
         let t = attr_value(ctx, attrs, "type").unwrap_or("");
@@ -242,7 +242,7 @@ fn is_labelable_descendant(
 fn is_non_hidden_form_control(
     ctx: &ValidationContext,
     name: &str,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
 ) -> bool {
     if is(ctx, name, "input") {
         let t = attr_value(ctx, attrs, "type").unwrap_or("");
@@ -251,32 +251,32 @@ fn is_non_hidden_form_control(
     is(ctx, name, "textarea") || is(ctx, name, "select") || is(ctx, name, "button")
 }
 
-fn has_role_button(ctx: &ValidationContext, attrs: &[html_inspector_core::Attribute]) -> bool {
+fn has_role_button(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> bool {
     let role = attr_value(ctx, attrs, "role").unwrap_or("");
     match ctx.format {
-        html_inspector_core::InputFormat::Html => role.eq_ignore_ascii_case("button"),
-        html_inspector_core::InputFormat::Xhtml => role == "button",
+        html_inspector::InputFormat::Html => role.eq_ignore_ascii_case("button"),
+        html_inspector::InputFormat::Xhtml => role == "button",
     }
 }
 
 fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => name.to_ascii_lowercase(),
-        html_inspector_core::InputFormat::Xhtml => name.to_string(),
+        html_inspector::InputFormat::Html => name.to_ascii_lowercase(),
+        html_inspector::InputFormat::Xhtml => name.to_string(),
     }
 }
 
 fn names_match(ctx: &ValidationContext, a: &str, b: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => a.eq_ignore_ascii_case(b),
-        html_inspector_core::InputFormat::Xhtml => a == b,
+        html_inspector::InputFormat::Html => a.eq_ignore_ascii_case(b),
+        html_inspector::InputFormat::Xhtml => a == b,
     }
 }
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -284,12 +284,12 @@ fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet, ValidationContext};
+    use html_inspector::{Config, InputFormat, RuleSet, ValidationContext};
     use html_inspector_html::HtmlEventSource;
 
-    fn validate(html: &str) -> html_inspector_core::Report {
+    fn validate(html: &str) -> html_inspector::Report {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(LabelForConstraints::default()),
             Config::default(),
@@ -297,9 +297,9 @@ mod tests {
         .unwrap()
     }
 
-    fn validate_fmt(format: InputFormat, html: &str) -> html_inspector_core::Report {
+    fn validate_fmt(format: InputFormat, html: &str) -> html_inspector::Report {
         let src = HtmlEventSource::from_str("t", format, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(LabelForConstraints::default()),
             Config::default(),
@@ -386,9 +386,9 @@ mod tests {
 
     #[test]
     fn finish_skips_empty_and_unmatched_association_checks() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -414,12 +414,12 @@ mod tests {
         rule.on_finish(&mut ctx, &mut sink);
         assert!(sink.0.is_empty());
 
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -430,8 +430,8 @@ mod tests {
     #[test]
     fn rule_ignores_unhandled_events() {
         struct NoopSink;
-        impl html_inspector_core::MessageSink for NoopSink {
-            fn push(&mut self, _msg: html_inspector_core::Message) {}
+        impl html_inspector::MessageSink for NoopSink {
+            fn push(&mut self, _msg: html_inspector::Message) {}
         }
         let mut ctx = ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = NoopSink;
@@ -445,12 +445,12 @@ mod tests {
             &mut sink,
         );
 
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -458,27 +458,23 @@ mod tests {
     }
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs
         .iter()
         .find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-            html_inspector_core::InputFormat::Xhtml => a.name == needle,
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+            html_inspector::InputFormat::Xhtml => a.name == needle,
         })
         .and_then(|a| a.value.as_deref())
 }

@@ -1,6 +1,6 @@
 use rustc_hash::FxHashSet;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -32,8 +32,8 @@ impl Rule for AccesskeyConstraints {
         let raw = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("accesskey"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "accesskey",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("accesskey"),
+                html_inspector::InputFormat::Xhtml => a.name == "accesskey",
             })
             .and_then(|a| a.value.as_deref());
 

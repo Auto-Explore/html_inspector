@@ -1,13 +1,13 @@
 use rustc_hash::FxHashSet;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
 #[derive(Default)]
 pub struct CommandforConstraints {
     ids: FxHashSet<String>,
-    refs: Vec<(String, Option<html_inspector_core::Span>)>,
+    refs: Vec<(String, Option<html_inspector::Span>)>,
 }
 
 impl Rule for CommandforConstraints {
@@ -37,8 +37,8 @@ impl Rule for CommandforConstraints {
         if let Some(id) = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("id"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "id",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("id"),
+                html_inspector::InputFormat::Xhtml => a.name == "id",
             })
             .and_then(|a| a.value.as_deref())
             .map(|s| s.trim())
@@ -50,8 +50,8 @@ impl Rule for CommandforConstraints {
         if let Some(cmdfor) = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("commandfor"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "commandfor",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("commandfor"),
+                html_inspector::InputFormat::Xhtml => a.name == "commandfor",
             })
             .and_then(|a| a.value.as_deref())
             .map(|s| s.trim())

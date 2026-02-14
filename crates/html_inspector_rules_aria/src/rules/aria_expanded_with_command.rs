@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -25,16 +25,16 @@ impl Rule for AriaExpandedWithCommand {
         };
 
         let has_command = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("command"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "command",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("command"),
+            html_inspector::InputFormat::Xhtml => a.name == "command",
         });
         if !has_command {
             return;
         }
 
         let has_aria_expanded = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-expanded"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "aria-expanded",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-expanded"),
+            html_inspector::InputFormat::Xhtml => a.name == "aria-expanded",
         });
         if has_aria_expanded {
             out.push(Message::new(

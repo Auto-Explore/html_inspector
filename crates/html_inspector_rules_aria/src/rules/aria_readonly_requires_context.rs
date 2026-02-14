@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -25,21 +25,21 @@ impl Rule for AriaReadonlyRequiresContext {
         };
 
         let has_aria_readonly = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-readonly"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "aria-readonly",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-readonly"),
+            html_inspector::InputFormat::Xhtml => a.name == "aria-readonly",
         });
         if !has_aria_readonly {
             return;
         }
 
         let has_context = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => {
+            html_inspector::InputFormat::Html => {
                 a.name.eq_ignore_ascii_case("role")
                     || a.name.eq_ignore_ascii_case("aria-checked")
                     || a.name.eq_ignore_ascii_case("aria-expanded")
                     || a.name.eq_ignore_ascii_case("aria-valuenow")
             }
-            html_inspector_core::InputFormat::Xhtml => {
+            html_inspector::InputFormat::Xhtml => {
                 a.name == "role"
                     || a.name == "aria-checked"
                     || a.name == "aria-expanded"

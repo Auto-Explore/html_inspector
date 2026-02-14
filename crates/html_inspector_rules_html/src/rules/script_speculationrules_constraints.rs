@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 use serde_json::{Map, Value};
@@ -394,13 +394,13 @@ fn validate_predicate(obj: &Map<String, Value>) -> Option<String> {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::SimpleHtmlEventSource;
     use serde_json::json;
 
-    fn validate(html: &str) -> Vec<html_inspector_core::Message> {
+    fn validate(html: &str) -> Vec<html_inspector::Message> {
         let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, html);
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
             Config::default(),
@@ -599,9 +599,9 @@ mod tests {
 
     #[test]
     fn xhtml_attribute_matching_is_case_sensitive() {
-        fn validate_xhtml(xhtml: &str) -> Vec<html_inspector_core::Message> {
+        fn validate_xhtml(xhtml: &str) -> Vec<html_inspector::Message> {
             let src = SimpleHtmlEventSource::from_str("t", InputFormat::Xhtml, xhtml);
-            html_inspector_core::validate_events(
+            html_inspector::validate_events(
                 src,
                 RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
                 Config::default(),
@@ -716,32 +716,32 @@ mod tests {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 fn has_attr(
     ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
     needle: &str,
 ) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-        html_inspector_core::InputFormat::Xhtml => a.name == needle,
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+        html_inspector::InputFormat::Xhtml => a.name == needle,
     })
 }
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs
         .iter()
         .find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-            html_inspector_core::InputFormat::Xhtml => a.name == needle,
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+            html_inspector::InputFormat::Xhtml => a.name == needle,
         })
         .and_then(|a| a.value.as_deref())
 }

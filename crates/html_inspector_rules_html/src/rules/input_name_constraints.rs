@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -32,8 +32,8 @@ impl Rule for InputNameConstraints {
         let n = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("name"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "name",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("name"),
+                html_inspector::InputFormat::Xhtml => a.name == "name",
             })
             .and_then(|a| a.value.as_deref());
         let Some(n) = n else { return };
@@ -49,8 +49,8 @@ impl Rule for InputNameConstraints {
         }
 
         let is_isindex = match ctx.format {
-            html_inspector_core::InputFormat::Html => n.eq_ignore_ascii_case("isindex"),
-            html_inspector_core::InputFormat::Xhtml => n == "isindex",
+            html_inspector::InputFormat::Html => n.eq_ignore_ascii_case("isindex"),
+            html_inspector::InputFormat::Xhtml => n == "isindex",
         };
         if is_isindex {
             out.push(Message::new(
@@ -66,7 +66,7 @@ impl Rule for InputNameConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }

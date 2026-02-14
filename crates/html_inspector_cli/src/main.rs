@@ -1,6 +1,6 @@
 use std::env;
 
-use html_inspector_core::{Config, InputFormat, Severity};
+use html_inspector::{Config, InputFormat, Severity};
 use html_inspector_html::HtmlEventSource;
 use html_inspector_rules_aria::pack_aria;
 use html_inspector_rules_css::pack_css_checks;
@@ -140,7 +140,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .ok()
                     .map(|p| format!("file://{}", p.to_string_lossy()));
                 let source = HtmlEventSource::from_bytes(path_or_uri, format, bytes)?;
-                let report = html_inspector_core::validate_events(
+                let report = html_inspector::validate_events(
                     source,
                     rules,
                     Config {
@@ -184,7 +184,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .ok()
                 .map(|p| format!("file://{}", p.to_string_lossy()));
             let source = HtmlEventSource::from_bytes(path, format, bytes)?;
-            let report = html_inspector_core::validate_events(
+            let report = html_inspector::validate_events(
                 source,
                 rules,
                 Config {

@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -43,8 +43,8 @@ impl Rule for AriaSummaryConstraints {
             } => {
                 if ctx.name_is(name, "details") {
                     let should_push = match ctx.format {
-                        html_inspector_core::InputFormat::Html => true,
-                        html_inspector_core::InputFormat::Xhtml => !*self_closing,
+                        html_inspector::InputFormat::Html => true,
+                        html_inspector::InputFormat::Xhtml => !*self_closing,
                     };
                     if should_push {
                         self.details_stack.push(DetailsState { saw_summary: false });
@@ -155,10 +155,8 @@ impl Rule for AriaSummaryConstraints {
 
 fn normalize_attr_name<'a>(ctx: &ValidationContext, name: &'a str) -> Cow<'a, str> {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => {
-            html_inspector_core::ascii_lowercase_cow_if_needed(name)
-        }
-        html_inspector_core::InputFormat::Xhtml => Cow::Borrowed(name),
+        html_inspector::InputFormat::Html => html_inspector::ascii_lowercase_cow_if_needed(name),
+        html_inspector::InputFormat::Xhtml => Cow::Borrowed(name),
     }
 }
 

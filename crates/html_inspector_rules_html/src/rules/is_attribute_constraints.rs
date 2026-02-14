@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -32,8 +32,8 @@ impl Rule for IsAttributeConstraints {
         let is_value = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("is"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "is",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("is"),
+                html_inspector::InputFormat::Xhtml => a.name == "is",
             })
             .and_then(|a| a.value.as_deref());
 
@@ -66,10 +66,10 @@ impl Rule for IsAttributeConstraints {
 
 fn is_autonomous_custom_element_name(ctx: &ValidationContext, name: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => {
+        html_inspector::InputFormat::Html => {
             is_valid_custom_element_name(ascii_lowercase_cow_if_needed(name).as_ref())
         }
-        html_inspector_core::InputFormat::Xhtml => is_valid_custom_element_name(name),
+        html_inspector::InputFormat::Xhtml => is_valid_custom_element_name(name),
     }
 }
 

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -75,7 +75,7 @@ impl Rule for TableConstraints {
                 }
 
                 if is(ctx, name, "col") {
-                    if ctx.format == html_inspector_core::InputFormat::Xhtml
+                    if ctx.format == html_inspector::InputFormat::Xhtml
                         && ctx.current_parent().is_some_and(|p| p == "table")
                     {
                         out.push(Message::new(
@@ -259,7 +259,7 @@ mod tests {
     use super::validate::missing_column_range;
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet, ValidationContext};
+    use html_inspector::{Config, InputFormat, RuleSet, ValidationContext};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -305,7 +305,7 @@ mod tests {
     fn xhtml_col_direct_child_of_table_is_disallowed() {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Xhtml, "<table><col/></table>").unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -327,7 +327,7 @@ mod tests {
             "<table><tr><td headers=a>1</td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -349,7 +349,7 @@ mod tests {
             "<table><tbody><tr></tr><tr><td rowspan=2>1</td></tr></tbody></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -377,7 +377,7 @@ mod tests {
             "<table><tbody><tr><td rowspan=2>1</td></tr><tr></tr></tbody></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -405,7 +405,7 @@ mod tests {
             "<table><tr><td colspan=2></td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -443,7 +443,7 @@ mod tests {
             "<table><tr><td colspan=0></td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -465,7 +465,7 @@ mod tests {
             "<table><tfoot><tr><td>1</td></tr></tfoot></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -482,7 +482,7 @@ mod tests {
             "<table><tr><th id=a>h</th><td headers=a>1</td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -504,7 +504,7 @@ mod tests {
             "<table><tr><td colspan=2></td></tr><tr><td colspan=3></td></tr><tr><td></td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -532,7 +532,7 @@ mod tests {
             "<table><col span=2><tr><td></td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -554,7 +554,7 @@ mod tests {
             "<table><colgroup span=2></colgroup><tr><td></td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -576,7 +576,7 @@ mod tests {
             "<table><colgroup span=2><col></colgroup><tr><td></td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -598,9 +598,9 @@ mod tests {
 
     #[test]
     fn rule_ignores_unhandled_events() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -616,12 +616,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -633,7 +633,7 @@ mod tests {
     fn xhtml_row_without_cells_uses_implicit_row_group_message_variant() {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Xhtml, "<table><tr></tr></table>").unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -655,7 +655,7 @@ mod tests {
             "<table><tr><td headers=a>1</td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -674,7 +674,7 @@ mod tests {
             "<table><tr><th id=a>h</th><td headers=a>1</td></tr></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),
@@ -696,7 +696,7 @@ mod tests {
             "<table><thead><tr><td>1</td></tr></thead></table>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(TableConstraints::default()),
             Config::default(),

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -117,12 +117,12 @@ fn current_headingoffset(stack: &[ElementFrame]) -> i32 {
     total
 }
 
-fn parse_headingoffset(ctx: &ValidationContext, attrs: &[html_inspector_core::Attribute]) -> i32 {
+fn parse_headingoffset(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> i32 {
     let raw = attrs
         .iter()
         .find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("headingoffset"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "headingoffset",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("headingoffset"),
+            html_inspector::InputFormat::Xhtml => a.name == "headingoffset",
         })
         .and_then(|a| a.value.as_deref());
     let Some(raw) = raw else { return 0 };
@@ -130,10 +130,10 @@ fn parse_headingoffset(ctx: &ValidationContext, attrs: &[html_inspector_core::At
     if n >= 0 { n } else { 0 }
 }
 
-fn has_headingreset(ctx: &ValidationContext, attrs: &[html_inspector_core::Attribute]) -> bool {
+fn has_headingreset(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> bool {
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("headingreset"),
-        html_inspector_core::InputFormat::Xhtml => a.name == "headingreset",
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("headingreset"),
+        html_inspector::InputFormat::Xhtml => a.name == "headingreset",
     })
 }
 
@@ -155,8 +155,8 @@ fn heading_level(ctx: &ValidationContext, name: &str) -> Option<i32> {
 
 fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => name.to_ascii_lowercase(),
-        html_inspector_core::InputFormat::Xhtml => name.to_string(),
+        html_inspector::InputFormat::Html => name.to_ascii_lowercase(),
+        html_inspector::InputFormat::Xhtml => name.to_string(),
     }
 }
 
@@ -164,7 +164,7 @@ fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::SimpleHtmlEventSource;
 
     #[test]
@@ -172,7 +172,7 @@ mod tests {
         let html =
             "<h1>One</h1><div headingoffset=\"5\"><div headingreset><h2>Two</h2></div></div>";
         let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, html);
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(HeadingSkipLevelError::default()),
             Config::default(),
@@ -190,7 +190,7 @@ mod tests {
     fn computed_level_is_capped_at_nine() {
         let html = "<h1>One</h1><div headingoffset=\"8\"><h6>Six</h6></div>";
         let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, html);
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(HeadingSkipLevelError::default()),
             Config::default(),
@@ -207,7 +207,7 @@ mod tests {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -33,8 +33,8 @@ impl Rule for InputColorConstraints {
         let t = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("type"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "type",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("type"),
+                html_inspector::InputFormat::Xhtml => a.name == "type",
             })
             .and_then(|a| a.value.as_deref())
             .unwrap_or("");
@@ -46,8 +46,8 @@ impl Rule for InputColorConstraints {
         let value = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("value"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "value",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("value"),
+                html_inspector::InputFormat::Xhtml => a.name == "value",
             })
             .and_then(|a| a.value.as_deref());
 
@@ -66,8 +66,8 @@ impl Rule for InputColorConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 

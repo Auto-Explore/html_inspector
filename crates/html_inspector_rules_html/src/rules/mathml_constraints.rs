@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
@@ -265,7 +265,7 @@ fn required_children(name_lc: &str) -> Option<u8> {
 
 fn validate_math_attributes(
     ctx: &ValidationContext,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
     out: &mut dyn MessageSink,
     span: Option<Span>,
 ) {

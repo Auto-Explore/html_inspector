@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -29,10 +29,8 @@ impl Rule for AriaDeprecatedAttributes {
         };
 
         if attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => {
-                a.name.eq_ignore_ascii_case("aria-dropeffect")
-            }
-            html_inspector_core::InputFormat::Xhtml => a.name == "aria-dropeffect",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-dropeffect"),
+            html_inspector::InputFormat::Xhtml => a.name == "aria-dropeffect",
         }) {
             out.push(Message::new(
                 "aria.attr.aria_dropeffect.deprecated",
@@ -44,8 +42,8 @@ impl Rule for AriaDeprecatedAttributes {
         }
 
         if attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-grabbed"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "aria-grabbed",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("aria-grabbed"),
+            html_inspector::InputFormat::Xhtml => a.name == "aria-grabbed",
         }) {
             out.push(Message::new(
                 "aria.attr.aria_grabbed.deprecated",

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -41,25 +41,25 @@ impl Rule for SelectConstraints {
             } => {
                 if is(ctx, name, "select") {
                     let multiple = attrs.iter().any(|a| match ctx.format {
-                        html_inspector_core::InputFormat::Html => {
+                        html_inspector::InputFormat::Html => {
                             a.name.eq_ignore_ascii_case("multiple")
                         }
-                        html_inspector_core::InputFormat::Xhtml => a.name == "multiple",
+                        html_inspector::InputFormat::Xhtml => a.name == "multiple",
                     });
                     let required = attrs.iter().any(|a| match ctx.format {
-                        html_inspector_core::InputFormat::Html => {
+                        html_inspector::InputFormat::Html => {
                             a.name.eq_ignore_ascii_case("required")
                         }
-                        html_inspector_core::InputFormat::Xhtml => a.name == "required",
+                        html_inspector::InputFormat::Xhtml => a.name == "required",
                     });
 
                     let size_value = attrs
                         .iter()
                         .find(|a| match ctx.format {
-                            html_inspector_core::InputFormat::Html => {
+                            html_inspector::InputFormat::Html => {
                                 a.name.eq_ignore_ascii_case("size")
                             }
-                            html_inspector_core::InputFormat::Xhtml => a.name == "size",
+                            html_inspector::InputFormat::Xhtml => a.name == "size",
                         })
                         .and_then(|a| a.value.as_deref());
                     let mut size_gt_one = false;
@@ -83,10 +83,10 @@ impl Rule for SelectConstraints {
                     let autocomplete = attrs
                         .iter()
                         .find(|a| match ctx.format {
-                            html_inspector_core::InputFormat::Html => {
+                            html_inspector::InputFormat::Html => {
                                 a.name.eq_ignore_ascii_case("autocomplete")
                             }
-                            html_inspector_core::InputFormat::Xhtml => a.name == "autocomplete",
+                            html_inspector::InputFormat::Xhtml => a.name == "autocomplete",
                         })
                         .and_then(|a| a.value.as_deref());
                     if let Some(v) = autocomplete
@@ -127,20 +127,20 @@ impl Rule for SelectConstraints {
                         state.first_option_value_empty = attrs
                             .iter()
                             .find(|a| match ctx.format {
-                                html_inspector_core::InputFormat::Html => {
+                                html_inspector::InputFormat::Html => {
                                     a.name.eq_ignore_ascii_case("value")
                                 }
-                                html_inspector_core::InputFormat::Xhtml => a.name == "value",
+                                html_inspector::InputFormat::Xhtml => a.name == "value",
                             })
                             .and_then(|a| a.value.as_deref())
                             .is_some_and(|v| v.is_empty());
                     }
 
                     let selected = attrs.iter().any(|a| match ctx.format {
-                        html_inspector_core::InputFormat::Html => {
+                        html_inspector::InputFormat::Html => {
                             a.name.eq_ignore_ascii_case("selected")
                         }
-                        html_inspector_core::InputFormat::Xhtml => a.name == "selected",
+                        html_inspector::InputFormat::Xhtml => a.name == "selected",
                     });
                     if selected {
                         state.selected_count += 1;
@@ -209,8 +209,8 @@ impl Rule for SelectConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -218,12 +218,12 @@ fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet, ValidationContext};
+    use html_inspector::{Config, InputFormat, RuleSet, ValidationContext};
     use html_inspector_html::HtmlEventSource;
 
-    fn validate(html: &str) -> html_inspector_core::Report {
+    fn validate(html: &str) -> html_inspector::Report {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(SelectConstraints::default()),
             Config::default(),
@@ -295,7 +295,7 @@ mod tests {
             r#"<select required><option value="">x</option><option selected="selected"/><option selected="selected"/></select>"#,
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(SelectConstraints::default()),
             Config::default(),
@@ -311,9 +311,9 @@ mod tests {
 
     #[test]
     fn rule_ignores_unhandled_events() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
@@ -329,12 +329,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),

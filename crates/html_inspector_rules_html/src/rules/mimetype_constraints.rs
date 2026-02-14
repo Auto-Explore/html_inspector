@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -225,7 +225,7 @@ pub(crate) fn is_mime_type(v: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -264,7 +264,7 @@ mod tests {
         let rules = RuleSet::new()
             .push(ObjectMimetypeConstraints::default())
             .push(LinkMimetypeConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -290,7 +290,7 @@ mod tests {
         let rules = RuleSet::new()
             .push(ObjectMimetypeConstraints::default())
             .push(LinkMimetypeConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -316,7 +316,7 @@ mod tests {
         let rules = RuleSet::new()
             .push(ObjectMimetypeConstraints::default())
             .push(LinkMimetypeConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             !report
                 .messages

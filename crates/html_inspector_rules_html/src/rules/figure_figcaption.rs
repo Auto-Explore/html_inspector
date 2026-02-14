@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -39,10 +39,10 @@ impl Rule for FigureFigcaption {
                     let role_token = attrs
                         .iter()
                         .find(|a| match ctx.format {
-                            html_inspector_core::InputFormat::Html => {
+                            html_inspector::InputFormat::Html => {
                                 a.name.eq_ignore_ascii_case("role")
                             }
-                            html_inspector_core::InputFormat::Xhtml => a.name == "role",
+                            html_inspector::InputFormat::Xhtml => a.name == "role",
                         })
                         .and_then(|a| a.value.as_deref())
                         .and_then(|v| v.split_ascii_whitespace().next())
@@ -78,7 +78,7 @@ impl Rule for FigureFigcaption {
                             && let Some(role) = state.role_token.as_deref()
                         {
                             let role_allows_figcaption = role.eq_ignore_ascii_case("figure")
-                                || html_inspector_core::starts_with_ascii_ci(role, "doc-");
+                                || html_inspector::starts_with_ascii_ci(role, "doc-");
                             if !role_allows_figcaption {
                                 state.role_error_emitted = true;
                                 out.push(Message::new(
@@ -165,14 +165,14 @@ impl Rule for FigureFigcaption {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 fn is_direct_child_of_figure(ctx: &ValidationContext) -> bool {
     ctx.current_parent().is_some_and(|p| match ctx.format {
-        html_inspector_core::InputFormat::Html => p.eq_ignore_ascii_case("figure"),
-        html_inspector_core::InputFormat::Xhtml => p == "figure",
+        html_inspector::InputFormat::Html => p.eq_ignore_ascii_case("figure"),
+        html_inspector::InputFormat::Xhtml => p == "figure",
     })
 }

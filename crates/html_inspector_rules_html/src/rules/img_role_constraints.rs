@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -198,7 +198,7 @@ fn is_known_role(role_lc: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Attribute, Config, InputFormat, Span};
+    use html_inspector::{Attribute, Config, InputFormat, Span};
 
     #[derive(Default)]
     struct Sink(Vec<Message>);
@@ -420,21 +420,21 @@ mod tests {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs
         .iter()
         .find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-            html_inspector_core::InputFormat::Xhtml => a.name == needle,
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+            html_inspector::InputFormat::Xhtml => a.name == needle,
         })
         .and_then(|a| a.value.as_deref())
 }

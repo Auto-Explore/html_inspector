@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -95,15 +95,15 @@ fn is_disallowed_in_dt(ctx: &ValidationContext, name: &str) -> bool {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::is_disallowed_in_dt;
-    use html_inspector_core::{Config, InputFormat, ValidationContext};
+    use html_inspector::{Config, InputFormat, ValidationContext};
 
     #[test]
     fn disallowed_dt_descendants_match_case_insensitively_in_html() {

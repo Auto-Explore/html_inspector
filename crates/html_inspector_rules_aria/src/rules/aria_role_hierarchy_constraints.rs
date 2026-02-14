@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 use rustc_hash::FxHashMap;
@@ -185,10 +185,10 @@ impl Rule for AriaRoleHierarchyConstraints {
 
                 // Track ancestor roles we care about for descendant/containment checks.
                 let pushes = match ctx.format {
-                    html_inspector_core::InputFormat::Html => {
-                        !html_inspector_core::is_void_html_element(name)
+                    html_inspector::InputFormat::Html => {
+                        !html_inspector::is_void_html_element(name)
                     }
-                    html_inspector_core::InputFormat::Xhtml => !*self_closing,
+                    html_inspector::InputFormat::Xhtml => !*self_closing,
                 };
                 if pushes {
                     if (ctx.name_is(name, "ul")
@@ -239,11 +239,11 @@ impl AriaRoleHierarchyConstraints {
         let closed_depth = closed_stack_depth(name, ctx);
         self.role_stack.retain(|e| e.depth <= closed_depth);
         let pos = match ctx.format {
-            html_inspector_core::InputFormat::Html => self
+            html_inspector::InputFormat::Html => self
                 .implicit_list_stack
                 .iter()
                 .rposition(|n| n.eq_ignore_ascii_case(name)),
-            html_inspector_core::InputFormat::Xhtml => {
+            html_inspector::InputFormat::Xhtml => {
                 self.implicit_list_stack.iter().rposition(|n| n == name)
             }
         };
@@ -256,13 +256,11 @@ impl AriaRoleHierarchyConstraints {
 fn closed_stack_depth(name: &str, ctx: &ValidationContext) -> usize {
     let depth = ctx.open_elements().len();
     let pos = match ctx.format {
-        html_inspector_core::InputFormat::Html => ctx
+        html_inspector::InputFormat::Html => ctx
             .open_elements()
             .iter()
             .rposition(|n| n.eq_ignore_ascii_case(name)),
-        html_inspector_core::InputFormat::Xhtml => {
-            ctx.open_elements().iter().rposition(|n| n == name)
-        }
+        html_inspector::InputFormat::Xhtml => ctx.open_elements().iter().rposition(|n| n == name),
     };
     pos.unwrap_or(depth)
 }
@@ -294,7 +292,7 @@ fn is_tracked_container_role(role_lc: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::AriaRoleHierarchyConstraints;
-    use html_inspector_core::{
+    use html_inspector::{
         Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span, ValidatorError,
         validate_events,
     };

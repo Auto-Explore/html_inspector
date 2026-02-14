@@ -10,7 +10,7 @@ description = "Run html_inspector against vendored WPT/VNU-style fixtures."
 publish = false
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core" }
+html_inspector = { path = "../html_inspector" }
 html_inspector_html = { path = "../html_inspector_html", features = ["html5ever"] }
 html_inspector_rules_html = { path = "../html_inspector_rules_html" }
 html_inspector_rules_aria = { path = "../html_inspector_rules_aria" }

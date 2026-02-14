@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
@@ -109,12 +109,12 @@ fn is_sectioning_element(ctx: &ValidationContext, name: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
-    fn validate_html(html: &str) -> Vec<html_inspector_core::Message> {
+    fn validate_html(html: &str) -> Vec<html_inspector::Message> {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(H1TopLevelHeadingWarning::default()),
             Config::default(),

@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 use rustc_hash::{FxHashMap, FxHashSet};
@@ -104,10 +104,10 @@ impl Rule for MicrodataItemrefConstraints {
                 }
 
                 let pushes = match ctx.format {
-                    html_inspector_core::InputFormat::Html => {
-                        !html_inspector_core::is_void_html_element(name)
+                    html_inspector::InputFormat::Html => {
+                        !html_inspector::is_void_html_element(name)
                     }
-                    html_inspector_core::InputFormat::Xhtml => !*self_closing,
+                    html_inspector::InputFormat::Xhtml => !*self_closing,
                 };
                 if pushes {
                     self.open_relevant.push(OpenFrame {
@@ -238,15 +238,15 @@ impl MicrodataItemrefConstraints {
 
 fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => name.to_ascii_lowercase(),
-        html_inspector_core::InputFormat::Xhtml => name.to_string(),
+        html_inspector::InputFormat::Html => name.to_ascii_lowercase(),
+        html_inspector::InputFormat::Xhtml => name.to_string(),
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use html_inspector_core::{
+    use html_inspector::{
         Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span, ValidatorError,
         validate_events,
     };

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, DocumentSection, Interest, Message, MessageSink, ParseEvent, Rule, Severity,
     ValidationContext,
 };
@@ -32,22 +32,20 @@ impl Rule for LinkConstraints {
         }
 
         let has_href = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("href"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "href",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("href"),
+            html_inspector::InputFormat::Xhtml => a.name == "href",
         });
         let imagesrcset = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => {
-                    a.name.eq_ignore_ascii_case("imagesrcset")
-                }
-                html_inspector_core::InputFormat::Xhtml => a.name == "imagesrcset",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("imagesrcset"),
+                html_inspector::InputFormat::Xhtml => a.name == "imagesrcset",
             })
             .and_then(|a| a.value.as_deref());
         let has_imagesrcset = imagesrcset.is_some();
         let has_imagesizes = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("imagesizes"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "imagesizes",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("imagesizes"),
+            html_inspector::InputFormat::Xhtml => a.name == "imagesizes",
         });
         if has_imagesizes && !has_imagesrcset {
             out.push(Message::new(
@@ -59,7 +57,7 @@ impl Rule for LinkConstraints {
             ));
         }
         let has_rdfa = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => {
+            html_inspector::InputFormat::Html => {
                 let n = a.name.as_str();
                 n.eq_ignore_ascii_case("about")
                     || n.eq_ignore_ascii_case("datatype")
@@ -70,7 +68,7 @@ impl Rule for LinkConstraints {
                     || n.eq_ignore_ascii_case("typeof")
                     || n.eq_ignore_ascii_case("vocab")
             }
-            html_inspector_core::InputFormat::Xhtml => matches!(
+            html_inspector::InputFormat::Xhtml => matches!(
                 a.name.as_str(),
                 "about"
                     | "datatype"
@@ -97,8 +95,8 @@ impl Rule for LinkConstraints {
         let rel = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("rel"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "rel",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("rel"),
+                html_inspector::InputFormat::Xhtml => a.name == "rel",
             })
             .and_then(|a| a.value.as_deref())
             .unwrap_or("");
@@ -149,8 +147,8 @@ impl Rule for LinkConstraints {
         let as_attr = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("as"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "as",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("as"),
+                html_inspector::InputFormat::Xhtml => a.name == "as",
             })
             .and_then(|a| a.value.as_deref());
         let has_as = as_attr.is_some();
@@ -187,8 +185,8 @@ impl Rule for LinkConstraints {
             }
 
             let as_is_image = match ctx.format {
-                html_inspector_core::InputFormat::Html => as_value.eq_ignore_ascii_case("image"),
-                html_inspector_core::InputFormat::Xhtml => as_value == "image",
+                html_inspector::InputFormat::Html => as_value.eq_ignore_ascii_case("image"),
+                html_inspector::InputFormat::Xhtml => as_value == "image",
             };
             if !as_is_image {
                 out.push(Message::new(
@@ -215,15 +213,13 @@ impl Rule for LinkConstraints {
         }
 
         let has_blocking = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("blocking"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "blocking",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("blocking"),
+            html_inspector::InputFormat::Xhtml => a.name == "blocking",
         });
         if has_blocking {
             let rel_is_stylesheet_only = match ctx.format {
-                html_inspector_core::InputFormat::Html => {
-                    rel.trim().eq_ignore_ascii_case("stylesheet")
-                }
-                html_inspector_core::InputFormat::Xhtml => rel.trim() == "stylesheet",
+                html_inspector::InputFormat::Html => rel.trim().eq_ignore_ascii_case("stylesheet"),
+                html_inspector::InputFormat::Xhtml => rel.trim() == "stylesheet",
             };
             if !rel_is_stylesheet_only {
                 out.push(Message::new(
@@ -237,8 +233,8 @@ impl Rule for LinkConstraints {
         }
 
         let has_disabled = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("disabled"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "disabled",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("disabled"),
+            html_inspector::InputFormat::Xhtml => a.name == "disabled",
         });
         if has_disabled && !rel_has_stylesheet {
             out.push(Message::new(
@@ -251,8 +247,8 @@ impl Rule for LinkConstraints {
         }
 
         let has_color = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("color"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "color",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("color"),
+            html_inspector::InputFormat::Xhtml => a.name == "color",
         });
         if has_color && !rel_has_mask_icon {
             out.push(Message::new(
@@ -268,8 +264,8 @@ impl Rule for LinkConstraints {
             let title = attrs
                 .iter()
                 .find(|a| match ctx.format {
-                    html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("title"),
-                    html_inspector_core::InputFormat::Xhtml => a.name == "title",
+                    html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("title"),
+                    html_inspector::InputFormat::Xhtml => a.name == "title",
                 })
                 .and_then(|a| a.value.as_deref())
                 .unwrap_or("");
@@ -285,8 +281,8 @@ impl Rule for LinkConstraints {
         }
 
         let has_integrity = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("integrity"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "integrity",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("integrity"),
+            html_inspector::InputFormat::Xhtml => a.name == "integrity",
         });
         if has_integrity && !(rel_has_stylesheet || rel_has_preload || rel_has_modulepreload) {
             out.push(Message::new(
@@ -299,16 +295,16 @@ impl Rule for LinkConstraints {
         }
 
         let has_itemprop = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("itemprop"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "itemprop",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("itemprop"),
+            html_inspector::InputFormat::Xhtml => a.name == "itemprop",
         });
         let has_property = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("property"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "property",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("property"),
+            html_inspector::InputFormat::Xhtml => a.name == "property",
         });
         let has_rel = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("rel"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "rel",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("rel"),
+            html_inspector::InputFormat::Xhtml => a.name == "rel",
         });
         if !has_itemprop && !has_property && !has_rel {
             out.push(Message::new(
@@ -330,8 +326,8 @@ impl Rule for LinkConstraints {
         }
 
         let has_sizes = attrs.iter().any(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("sizes"),
-            html_inspector_core::InputFormat::Xhtml => a.name == "sizes",
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("sizes"),
+            html_inspector::InputFormat::Xhtml => a.name == "sizes",
         });
         if has_sizes
             && !(rel_has_icon || rel_has_apple_touch_icon || rel_has_apple_touch_icon_precomposed)
@@ -388,8 +384,8 @@ fn srcset_has_width_descriptor(srcset: &str) -> bool {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -397,12 +393,12 @@ fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
-    fn validate_xhtml(xhtml: &str) -> Vec<html_inspector_core::Message> {
+    fn validate_xhtml(xhtml: &str) -> Vec<html_inspector::Message> {
         let src = HtmlEventSource::from_str("t", InputFormat::Xhtml, xhtml).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(LinkConstraints::default()),
             Config::default(),

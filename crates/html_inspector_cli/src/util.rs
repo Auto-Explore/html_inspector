@@ -1,4 +1,4 @@
-pub(crate) use html_inspector_core::ends_with_ascii_ci;
+pub(crate) use html_inspector::ends_with_ascii_ci;
 
 #[cfg(test)]
 mod tests {

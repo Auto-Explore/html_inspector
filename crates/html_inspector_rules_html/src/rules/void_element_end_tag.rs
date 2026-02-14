@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -21,14 +21,14 @@ impl Rule for VoidElementEndTag {
         out: &mut dyn MessageSink,
     ) {
         // In XML/XHTML syntax, `</img>` etc. are well-formed and VNU doesn't report them as errors.
-        if ctx.format == html_inspector_core::InputFormat::Xhtml {
+        if ctx.format == html_inspector::InputFormat::Xhtml {
             return;
         }
 
         let ParseEvent::EndTag { name, span } = event else {
             return;
         };
-        if !html_inspector_core::is_void_html_element(name) {
+        if !html_inspector::is_void_html_element(name) {
             return;
         }
         out.push(Message::new(
@@ -45,21 +45,20 @@ impl Rule for VoidElementEndTag {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
     #[test]
     fn void_end_tags_are_errors_in_html_but_not_in_xhtml() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
 
         let mut rule = VoidElementEndTag::default();
 
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
         rule.on_event(
             &ParseEvent::EndTag {
@@ -71,8 +70,7 @@ mod tests {
         );
         assert!(sink.0.iter().any(|m| m.code == "html.void_element.end_tag"));
 
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Xhtml);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Xhtml);
         let mut sink = Sink(Vec::new());
         rule.on_event(
             &ParseEvent::EndTag {
@@ -87,14 +85,13 @@ mod tests {
 
     #[test]
     fn rule_on_event_has_non_end_tag_early_return() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
         let mut rule = VoidElementEndTag::default();
         rule.on_event(
@@ -108,12 +105,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),

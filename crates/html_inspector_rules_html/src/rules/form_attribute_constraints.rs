@@ -1,13 +1,13 @@
 use rustc_hash::FxHashSet;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
 #[derive(Default)]
 pub struct FormAttributeConstraints {
     form_ids: FxHashSet<String>,
-    form_refs: Vec<(String, Option<html_inspector_core::Span>)>,
+    form_refs: Vec<(String, Option<html_inspector::Span>)>,
 }
 
 impl Rule for FormAttributeConstraints {
@@ -41,8 +41,8 @@ impl Rule for FormAttributeConstraints {
             && let Some(id) = attrs
                 .iter()
                 .find(|a| match ctx.format {
-                    html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("id"),
-                    html_inspector_core::InputFormat::Xhtml => a.name == "id",
+                    html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("id"),
+                    html_inspector::InputFormat::Xhtml => a.name == "id",
                 })
                 .and_then(|a| a.value.as_deref())
                 .map(|s| s.trim())
@@ -54,8 +54,8 @@ impl Rule for FormAttributeConstraints {
         if let Some(form) = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("form"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "form",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("form"),
+                html_inspector::InputFormat::Xhtml => a.name == "form",
             })
             .and_then(|a| a.value.as_deref())
             .map(|s| s.trim())
@@ -82,7 +82,7 @@ impl Rule for FormAttributeConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }

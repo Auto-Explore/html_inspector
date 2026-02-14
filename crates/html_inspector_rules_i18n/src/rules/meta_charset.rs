@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -56,8 +56,8 @@ impl Rule for MetaCharsetUtf8 {
             let severity = match ctx.config.severity_profile {
                 // Many real-world documents (and WPT fixtures) intentionally exercise legacy encodings.
                 // In risk mode, treat this as a warning rather than a hard error.
-                html_inspector_core::SeverityProfile::Risk => Severity::Warning,
-                html_inspector_core::SeverityProfile::Conformance => Severity::Error,
+                html_inspector::SeverityProfile::Risk => Severity::Warning,
+                html_inspector::SeverityProfile::Conformance => Severity::Error,
             };
             out.push(Message::new(
                 "i18n.meta.charset.mismatch",

@@ -2,7 +2,7 @@ use std::borrow::Cow;
 use std::collections::VecDeque;
 use std::sync::Arc;
 
-use html_inspector_core::{Attribute, EventSource, InputFormat, ParseEvent, ValidatorError};
+use html_inspector::{Attribute, EventSource, InputFormat, ParseEvent, ValidatorError};
 use html5ever::tendril::StrTendril;
 use html5ever::tendril::TendrilSink;
 use html5ever::{ParseOpts, parse_document};
@@ -110,8 +110,8 @@ pub struct Html5EverEventSource {
     root: Option<Handle>,
     walk_stack: Vec<WalkFrame>,
     staged: Option<StagedEvent>,
-    start_tag_spans: FxHashMap<String, VecDeque<html_inspector_core::Span>>,
-    end_tag_spans: FxHashMap<String, VecDeque<html_inspector_core::Span>>,
+    start_tag_spans: FxHashMap<String, VecDeque<html_inspector::Span>>,
+    end_tag_spans: FxHashMap<String, VecDeque<html_inspector::Span>>,
     syntax_errors: VecDeque<ParseEvent>,
 }
 
@@ -188,14 +188,14 @@ impl Html5EverEventSource {
     }
 
     fn pop_span_for_tag(
-        spans: &mut FxHashMap<String, VecDeque<html_inspector_core::Span>>,
+        spans: &mut FxHashMap<String, VecDeque<html_inspector::Span>>,
         tag: &str,
-    ) -> Option<html_inspector_core::Span> {
+    ) -> Option<html_inspector::Span> {
         if let Some(span) = spans.get_mut(tag).and_then(VecDeque::pop_front) {
             return Some(span);
         }
 
-        match html_inspector_core::ascii_lowercase_cow_if_needed(tag) {
+        match html_inspector::ascii_lowercase_cow_if_needed(tag) {
             Cow::Borrowed(_) => None,
             Cow::Owned(tag_lc) => spans.get_mut(tag_lc.as_str()).and_then(VecDeque::pop_front),
         }
@@ -203,9 +203,9 @@ impl Html5EverEventSource {
 
     #[inline]
     fn push_span_for_tag(
-        spans: &mut FxHashMap<String, VecDeque<html_inspector_core::Span>>,
+        spans: &mut FxHashMap<String, VecDeque<html_inspector::Span>>,
         tag: &str,
-        span: html_inspector_core::Span,
+        span: html_inspector::Span,
     ) {
         if let Some(q) = spans.get_mut(tag) {
             q.push_back(span);
@@ -311,7 +311,7 @@ impl Html5EverEventSource {
                         }
 
                         frame.element = Some(ElementFrame {
-                            is_void: html_inspector_core::is_void_html_element(&tag),
+                            is_void: html_inspector::is_void_html_element(&tag),
                             tag: tag.clone(),
                         });
                         frame.state = WalkState::Children { next: 0 };
@@ -423,7 +423,7 @@ impl Html5EverEventSource {
         let mut reported_missing_doctype = false;
         let mut body_closed = false;
         let mut body_opened = false;
-        let mut open_stack: Vec<(String, Option<html_inspector_core::Span>)> = Vec::new();
+        let mut open_stack: Vec<(String, Option<html_inspector::Span>)> = Vec::new();
         let mut open_script = 0usize;
         let mut first_unclosed_script_span = None;
         let mut reported_meta_charset_after_1024 = false;
@@ -438,9 +438,7 @@ impl Html5EverEventSource {
         let mut reported_stray_start_tag_after_body = false;
         let mut in_head = true;
         let mut in_noscript_in_head = false;
-        fn in_table_without_cell(
-            open_stack: &[(String, Option<html_inspector_core::Span>)],
-        ) -> bool {
+        fn in_table_without_cell(open_stack: &[(String, Option<html_inspector::Span>)]) -> bool {
             let mut in_table = false;
             let mut in_cell = false;
             for (name, _) in open_stack {
@@ -628,7 +626,7 @@ impl Html5EverEventSource {
                             if token_count > 1 {
                                 for token in role_trim.split_whitespace() {
                                     let token_lc =
-                                        html_inspector_core::ascii_lowercase_cow_if_needed(token);
+                                        html_inspector::ascii_lowercase_cow_if_needed(token);
                                     let is_defined =
                                         is_defined_non_abstract_aria_role(token_lc.as_ref());
                                     if !is_defined {
@@ -722,7 +720,7 @@ impl Html5EverEventSource {
                     }
                     if self_closing
                         && !in_foreign_content
-                        && !html_inspector_core::is_void_html_element(&lc)
+                        && !html_inspector::is_void_html_element(&lc)
                     {
                         errors.push(ParseEvent::ParseError {
                             code: "html.parse.self_closing.non_void".to_string(),
@@ -730,7 +728,7 @@ impl Html5EverEventSource {
                             span,
                         });
                     }
-                    if !self_closing && !html_inspector_core::is_void_html_element(&lc) {
+                    if !self_closing && !html_inspector::is_void_html_element(&lc) {
                         open_stack.push((lc, span));
                     }
                 }
@@ -773,7 +771,7 @@ impl Html5EverEventSource {
                         }
                     }
 
-                    if html_inspector_core::is_void_html_element(lc) {
+                    if html_inspector::is_void_html_element(lc) {
                         if lc == "br" {
                             errors.push(ParseEvent::ParseError {
                                 code: "html.void_element.end_tag".to_string(),
@@ -1062,7 +1060,7 @@ fn is_p_end_tag_implying_start_tag(name_lc: &str) -> bool {
 mod tests {
     use super::*;
     use crate::HtmlEventSource;
-    use html_inspector_core::InputFormat;
+    use html_inspector::InputFormat;
 
     fn collect(mut src: Html5EverEventSource) -> Vec<ParseEvent> {
         let mut out = Vec::new();
@@ -1100,12 +1098,12 @@ mod tests {
             ParseEvent::ParseError {
                 code: "e1".to_string(),
                 message: "m1".to_string(),
-                span: Some(html_inspector_core::Span::new(5, 6, 1, 1)),
+                span: Some(html_inspector::Span::new(5, 6, 1, 1)),
             },
             ParseEvent::ParseError {
                 code: "e2".to_string(),
                 message: "m2".to_string(),
-                span: Some(html_inspector_core::Span::new(10, 11, 1, 1)),
+                span: Some(html_inspector::Span::new(10, 11, 1, 1)),
             },
         ]);
 
@@ -1229,75 +1227,70 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_falls_back_to_ascii_lowercase() {
-        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> =
-            FxHashMap::default();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector::Span>> = FxHashMap::default();
         spans.insert(
             "foreignobject".to_string(),
-            VecDeque::from([html_inspector_core::Span::new(1, 2, 1, 1)]),
+            VecDeque::from([html_inspector::Span::new(1, 2, 1, 1)]),
         );
 
         let span = Html5EverEventSource::pop_span_for_tag(&mut spans, "foreignObject").unwrap();
-        assert_eq!(span, html_inspector_core::Span::new(1, 2, 1, 1));
+        assert_eq!(span, html_inspector::Span::new(1, 2, 1, 1));
         assert!(Html5EverEventSource::pop_span_for_tag(&mut spans, "foreignObject").is_none());
     }
 
     #[test]
     fn pop_span_for_tag_falls_back_to_ascii_lowercase_with_utf8_prefix() {
-        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> =
-            FxHashMap::default();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector::Span>> = FxHashMap::default();
         spans.insert(
             "🦀a".to_string(),
-            VecDeque::from([html_inspector_core::Span::new(1, 2, 1, 1)]),
+            VecDeque::from([html_inspector::Span::new(1, 2, 1, 1)]),
         );
 
         let span = Html5EverEventSource::pop_span_for_tag(&mut spans, "🦀A").unwrap();
-        assert_eq!(span, html_inspector_core::Span::new(1, 2, 1, 1));
+        assert_eq!(span, html_inspector::Span::new(1, 2, 1, 1));
     }
 
     #[test]
     fn pop_span_for_tag_prefers_exact_key_then_falls_back_to_ascii_lowercase() {
-        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> =
-            FxHashMap::default();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector::Span>> = FxHashMap::default();
         Html5EverEventSource::push_span_for_tag(
             &mut spans,
             "DIV",
-            html_inspector_core::Span::new(1, 2, 1, 1),
+            html_inspector::Span::new(1, 2, 1, 1),
         );
         Html5EverEventSource::push_span_for_tag(
             &mut spans,
             "div",
-            html_inspector_core::Span::new(3, 4, 1, 3),
+            html_inspector::Span::new(3, 4, 1, 3),
         );
 
         let first = Html5EverEventSource::pop_span_for_tag(&mut spans, "DIV").unwrap();
-        assert_eq!(first, html_inspector_core::Span::new(1, 2, 1, 1));
+        assert_eq!(first, html_inspector::Span::new(1, 2, 1, 1));
 
         let second = Html5EverEventSource::pop_span_for_tag(&mut spans, "DIV").unwrap();
-        assert_eq!(second, html_inspector_core::Span::new(3, 4, 1, 3));
+        assert_eq!(second, html_inspector::Span::new(3, 4, 1, 3));
         assert!(Html5EverEventSource::pop_span_for_tag(&mut spans, "DIV").is_none());
     }
 
     #[test]
     fn pop_span_for_tag_falls_back_when_exact_queue_is_empty() {
-        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> =
-            FxHashMap::default();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector::Span>> = FxHashMap::default();
         spans.insert("DIV".to_string(), VecDeque::new());
         spans.insert(
             "div".to_string(),
-            VecDeque::from([html_inspector_core::Span::new(1, 2, 1, 1)]),
+            VecDeque::from([html_inspector::Span::new(1, 2, 1, 1)]),
         );
 
         let span = Html5EverEventSource::pop_span_for_tag(&mut spans, "DIV").unwrap();
-        assert_eq!(span, html_inspector_core::Span::new(1, 2, 1, 1));
+        assert_eq!(span, html_inspector::Span::new(1, 2, 1, 1));
     }
 
     #[test]
     fn pop_span_for_tag_does_not_fallback_when_tag_is_already_lowercase() {
-        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> =
-            FxHashMap::default();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector::Span>> = FxHashMap::default();
         spans.insert(
             "DIV".to_string(),
-            VecDeque::from([html_inspector_core::Span::new(1, 2, 1, 1)]),
+            VecDeque::from([html_inspector::Span::new(1, 2, 1, 1)]),
         );
         assert!(Html5EverEventSource::pop_span_for_tag(&mut spans, "div").is_none());
         assert_eq!(spans.get("DIV").unwrap().len(), 1);
@@ -1305,8 +1298,7 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_returns_none_when_exact_queue_empty_and_no_fallback_key() {
-        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> =
-            FxHashMap::default();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector::Span>> = FxHashMap::default();
         spans.insert("DIV".to_string(), VecDeque::new());
         assert!(Html5EverEventSource::pop_span_for_tag(&mut spans, "DIV").is_none());
         assert!(spans.contains_key("DIV"));
@@ -1785,14 +1777,13 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_falls_back_to_lowercase_when_needed() {
-        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> =
-            FxHashMap::default();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector::Span>> = FxHashMap::default();
         let mut q = VecDeque::new();
-        q.push_back(html_inspector_core::Span::new(1, 2, 3, 4));
+        q.push_back(html_inspector::Span::new(1, 2, 3, 4));
         spans.insert("div".to_string(), q);
 
         let got = Html5EverEventSource::pop_span_for_tag(&mut spans, "DIV");
-        assert_eq!(got, Some(html_inspector_core::Span::new(1, 2, 3, 4)));
+        assert_eq!(got, Some(html_inspector::Span::new(1, 2, 3, 4)));
         assert!(spans.get("div").unwrap().is_empty());
     }
 
@@ -1802,7 +1793,7 @@ mod tests {
         src.syntax_errors.push_back(ParseEvent::ParseError {
             code: "e".to_string(),
             message: "m".to_string(),
-            span: Some(html_inspector_core::Span::new(10, 11, 1, 1)),
+            span: Some(html_inspector::Span::new(10, 11, 1, 1)),
         });
 
         assert!(src.pop_ready_syntax_error(9).is_none());
@@ -1838,7 +1829,7 @@ mod tests {
         let mut src = Html5EverEventSource::from_bytes("t", Vec::new());
         src.syntax_errors.push_back(ParseEvent::Comment {
             text: "x".to_string(),
-            span: Some(html_inspector_core::Span::new(0, 1, 1, 1)),
+            span: Some(html_inspector::Span::new(0, 1, 1, 1)),
         });
 
         assert!(src.pop_ready_syntax_error(usize::MAX).is_none());

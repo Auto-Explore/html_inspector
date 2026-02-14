@@ -1,4 +1,4 @@
-# `html_inspector_core`
+# `html_inspector`
 
 Core types shared by the `html_inspector_*` crates: configuration, severities, spans, and the
 event model used by parsers and rule packs.

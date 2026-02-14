@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -291,12 +291,12 @@ fn days_in_month(year: i32, month: u32) -> u32 {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet, Severity};
+    use html_inspector::{Config, InputFormat, RuleSet, Severity};
     use html_inspector_html::HtmlEventSource;
 
-    fn validate(html: &str) -> html_inspector_core::Report {
+    fn validate(html: &str) -> html_inspector::Report {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(DelDatetimeConstraints::default()),
             Config::default(),
@@ -341,7 +341,7 @@ mod tests {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Xhtml, r#"<del datetime=" 2020-01-01"/>"#)
                 .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(DelDatetimeConstraints::default()),
             Config::default(),

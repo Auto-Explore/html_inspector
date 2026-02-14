@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -53,11 +53,11 @@ impl Rule for AriaPressedRequiresRole {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -78,12 +78,12 @@ mod tests {
         );
 
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Aria,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Aria,
                 "x".to_string(),
                 None,
             ),
@@ -101,12 +101,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "output".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "aria-pressed".to_string(),
                         value: Some("true".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "role".to_string(),
                         value: Some("button".to_string()),
                         span: None,

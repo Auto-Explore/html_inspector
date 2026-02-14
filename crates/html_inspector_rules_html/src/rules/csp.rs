@@ -1,5 +1,5 @@
 use base64::Engine;
-use html_inspector_core::ValidationContext;
+use html_inspector::ValidationContext;
 use rustc_hash::FxHashMap;
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use url::Url;
@@ -407,10 +407,10 @@ const EVENT_HANDLERS: &[&str] = &[
 
 pub(crate) fn is_event_handler_attr(ctx: &ValidationContext, attr_name: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => EVENT_HANDLERS
+        html_inspector::InputFormat::Html => EVENT_HANDLERS
             .iter()
             .any(|h| attr_name.eq_ignore_ascii_case(h)),
-        html_inspector_core::InputFormat::Xhtml => EVENT_HANDLERS.contains(&attr_name),
+        html_inspector::InputFormat::Xhtml => EVENT_HANDLERS.contains(&attr_name),
     }
 }
 

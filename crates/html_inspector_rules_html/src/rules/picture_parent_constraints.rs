@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -27,7 +27,7 @@ impl Rule for PictureParentConstraints {
             return;
         }
 
-        if ctx.document.section == html_inspector_core::DocumentSection::Head
+        if ctx.document.section == html_inspector::DocumentSection::Head
             && ctx.has_ancestor("noscript")
         {
             out.push(Message::new(
@@ -80,8 +80,8 @@ impl Rule for PictureParentConstraints {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -91,7 +91,7 @@ mod tests {
 
     use std::collections::VecDeque;
 
-    use html_inspector_core::{Config, EventSource, InputFormat, RuleSet, ValidatorError};
+    use html_inspector::{Config, EventSource, InputFormat, RuleSet, ValidatorError};
     use html_inspector_html::HtmlEventSource;
 
     struct VecSource {
@@ -128,12 +128,11 @@ mod tests {
     fn picture_with_no_parent_does_not_emit_parent_errors() {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, "<picture></picture>").unwrap();
         let rules = RuleSet::new().push(PictureParentConstraints::default());
-        let mut report =
-            html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-        report.messages.push(html_inspector_core::Message::new(
+        let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+        report.messages.push(html_inspector::Message::new(
             "test.dummy",
-            html_inspector_core::Severity::Info,
-            html_inspector_core::Category::Html,
+            html_inspector::Severity::Info,
+            html_inspector::Category::Html,
             "x".to_string(),
             None,
         ));
@@ -150,7 +149,7 @@ mod tests {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, "<dl><picture></picture></dl>")
             .unwrap();
         let rules = RuleSet::new().push(PictureParentConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages
@@ -176,7 +175,7 @@ mod tests {
             ],
         );
         let rules = RuleSet::new().push(PictureParentConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         assert!(
             report
                 .messages

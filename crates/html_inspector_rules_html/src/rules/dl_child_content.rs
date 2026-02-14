@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -29,22 +29,22 @@ impl Rule for DlChildContent {
         };
 
         let in_dl = match ctx.format {
-            html_inspector_core::InputFormat::Html => parent.eq_ignore_ascii_case("dl"),
-            html_inspector_core::InputFormat::Xhtml => parent == "dl",
+            html_inspector::InputFormat::Html => parent.eq_ignore_ascii_case("dl"),
+            html_inspector::InputFormat::Xhtml => parent == "dl",
         };
         if !in_dl {
             return;
         }
 
         let allowed = match ctx.format {
-            html_inspector_core::InputFormat::Html => {
+            html_inspector::InputFormat::Html => {
                 name.eq_ignore_ascii_case("dt")
                     || name.eq_ignore_ascii_case("dd")
                     || name.eq_ignore_ascii_case("div")
                     || name.eq_ignore_ascii_case("script")
                     || name.eq_ignore_ascii_case("template")
             }
-            html_inspector_core::InputFormat::Xhtml => {
+            html_inspector::InputFormat::Xhtml => {
                 name == "dt"
                     || name == "dd"
                     || name == "div"

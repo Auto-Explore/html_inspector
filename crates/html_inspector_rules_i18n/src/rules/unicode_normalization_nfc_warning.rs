@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 use unicode_normalization::{UnicodeNormalization, is_nfc};
@@ -199,7 +199,7 @@ impl UnicodeNormalizationNfcWarning {
     fn check_element_and_attrs(
         &mut self,
         name: &str,
-        attrs: &[html_inspector_core::Attribute],
+        attrs: &[html_inspector::Attribute],
         span: Option<Span>,
         out: &mut dyn MessageSink,
     ) {

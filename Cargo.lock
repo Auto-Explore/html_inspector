@@ -116,12 +116,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "html_inspector"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "html_inspector_cli"
 version = "0.1.0"
 dependencies = [
  "base64",
  "css_inspector",
- "html_inspector_core",
+ "html_inspector",
  "html_inspector_html",
  "html_inspector_rules_aria",
  "html_inspector_rules_css",
@@ -133,18 +141,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "html_inspector_core"
-version = "0.1.0"
-dependencies = [
- "serde",
- "thiserror",
-]
-
-[[package]]
 name = "html_inspector_corpus_compare"
 version = "0.1.0"
 dependencies = [
- "html_inspector_core",
+ "html_inspector",
  "html_inspector_html",
  "html_inspector_rules_aria",
  "html_inspector_rules_css",
@@ -161,7 +161,7 @@ name = "html_inspector_html"
 version = "0.1.0"
 dependencies = [
  "html5ever",
- "html_inspector_core",
+ "html_inspector",
  "markup5ever",
  "rustc-hash",
  "tendril",
@@ -179,7 +179,7 @@ dependencies = [
 name = "html_inspector_inprocess_bench"
 version = "0.1.0"
 dependencies = [
- "html_inspector_core",
+ "html_inspector",
  "html_inspector_html",
  "html_inspector_rules_aria",
  "html_inspector_rules_css",
@@ -191,7 +191,7 @@ dependencies = [
 name = "html_inspector_rules_aria"
 version = "0.1.0"
 dependencies = [
- "html_inspector_core",
+ "html_inspector",
  "rustc-hash",
 ]
 
@@ -200,7 +200,7 @@ name = "html_inspector_rules_css"
 version = "0.1.0"
 dependencies = [
  "css_inspector",
- "html_inspector_core",
+ "html_inspector",
 ]
 
 [[package]]
@@ -208,7 +208,7 @@ name = "html_inspector_rules_html"
 version = "0.1.0"
 dependencies = [
  "base64",
- "html_inspector_core",
+ "html_inspector",
  "html_inspector_html",
  "rustc-hash",
  "serde_json",
@@ -220,7 +220,7 @@ dependencies = [
 name = "html_inspector_rules_i18n"
 version = "0.1.0"
 dependencies = [
- "html_inspector_core",
+ "html_inspector",
  "unicode-normalization",
 ]
 
@@ -228,7 +228,7 @@ dependencies = [
 name = "html_inspector_wpt_cli"
 version = "0.1.0"
 dependencies = [
- "html_inspector_core",
+ "html_inspector",
  "html_inspector_html",
  "html_inspector_rules_aria",
  "html_inspector_rules_css",

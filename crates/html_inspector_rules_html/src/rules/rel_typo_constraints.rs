@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -33,8 +33,8 @@ impl Rule for RelTypoConstraints {
         let rel = attrs
             .iter()
             .find(|a| match ctx.format {
-                html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("rel"),
-                html_inspector_core::InputFormat::Xhtml => a.name == "rel",
+                html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("rel"),
+                html_inspector::InputFormat::Xhtml => a.name == "rel",
             })
             .and_then(|a| a.value.as_deref())
             .map(|s| s.trim())

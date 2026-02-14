@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -52,10 +52,8 @@ impl Rule for AutofocusConstraints {
                 }
 
                 let autofocus = attrs.iter().any(|a| match ctx.format {
-                    html_inspector_core::InputFormat::Html => {
-                        a.name.eq_ignore_ascii_case("autofocus")
-                    }
-                    html_inspector_core::InputFormat::Xhtml => a.name == "autofocus",
+                    html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("autofocus"),
+                    html_inspector::InputFormat::Xhtml => a.name == "autofocus",
                 });
                 if autofocus && let Some(root) = self.root_stack.last_mut() {
                     root.autofocus_count += 1;
@@ -90,22 +88,22 @@ impl Rule for AutofocusConstraints {
 fn is_scoping_root(
     ctx: &ValidationContext,
     name: &str,
-    attrs: &[html_inspector_core::Attribute],
+    attrs: &[html_inspector::Attribute],
 ) -> bool {
     if matches_name(ctx, name, "dialog") {
         return true;
     }
     // Treat popovers as autofocus scoping roots (sufficient for the current suite cases).
     attrs.iter().any(|a| match ctx.format {
-        html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case("popover"),
-        html_inspector_core::InputFormat::Xhtml => a.name == "popover",
+        html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case("popover"),
+        html_inspector::InputFormat::Xhtml => a.name == "popover",
     })
 }
 
 fn matches_name(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
@@ -113,11 +111,11 @@ fn matches_name(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -144,7 +142,7 @@ mod tests {
             rule.on_event(
                 &ParseEvent::StartTag {
                     name: name.to_string(),
-                    attrs: vec![html_inspector_core::Attribute {
+                    attrs: vec![html_inspector::Attribute {
                         name: "autofocus".to_string(),
                         value: None,
                         span: None,
@@ -174,7 +172,7 @@ mod tests {
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "dialog".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "autofocus".to_string(),
                     value: None,
                     span: None,

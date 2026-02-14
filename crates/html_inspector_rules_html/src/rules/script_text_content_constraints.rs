@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -8,7 +8,7 @@ pub struct ScriptTextContentConstraints {
     has_src: bool,
     saw_non_whitespace: bool,
     buf: String,
-    span: Option<html_inspector_core::Span>,
+    span: Option<html_inspector::Span>,
 }
 
 impl Rule for ScriptTextContentConstraints {
@@ -92,7 +92,7 @@ impl ScriptTextContentConstraints {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -103,7 +103,7 @@ mod tests {
             "<script src=\"x.js\">console.log(1)</script>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptTextContentConstraints::default()),
             Config::default(),
@@ -125,7 +125,7 @@ mod tests {
             "<script src=\"x.js\">   \n</script>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptTextContentConstraints::default()),
             Config::default(),

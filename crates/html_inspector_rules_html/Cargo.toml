@@ -6,12 +6,13 @@ license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 homepage.workspace = true
+publish = false
 description = "HTML rule pack for html_inspector."
 keywords = ["html", "validator", "lint", "web"]
 categories = ["web-programming"]
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
+html_inspector = { path = "../html_inspector", version = "0.1.0" }
 base64.workspace = true
 serde_json.workspace = true
 rustc-hash.workspace = true

@@ -1,6 +1,6 @@
 use rustc_hash::FxHashSet;
 
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
 
@@ -77,7 +77,7 @@ impl Rule for AriaIdrefExists {
 #[cfg(test)]
 mod tests {
     use super::AriaIdrefExists;
-    use html_inspector_core::{
+    use html_inspector::{
         Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, Span, ValidatorError,
         validate_events,
     };

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Attribute, Config, EventSource, InputFormat, ParseEvent, Rule, RuleSet, ValidatorError,
 };
 use html_inspector_html::HtmlEventSource;
@@ -182,7 +182,7 @@ fn doctype_required_emits_when_missing() {
         }],
     );
     let rules = RuleSet::new().push(DoctypeRequired::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -212,7 +212,7 @@ fn doctype_required_does_not_double_report_when_parser_already_reported_missing_
         ],
     );
     let rules = RuleSet::new().push(DoctypeRequired::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -232,7 +232,7 @@ fn html5ever_missing_doctype_is_reported_only_as_parse_error() {
     let rules = RuleSet::new()
         .push(TokenizerParseErrors::default())
         .push(DoctypeRequired::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -258,7 +258,7 @@ fn html5ever_parse_errors_are_reported() {
         }],
     );
     let rules = RuleSet::new().push(Html5EverParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| m.code == "html.parse.error"));
 }
 
@@ -281,7 +281,7 @@ fn html5ever_parse_errors_ignore_non_matching_events_and_codes() {
         ],
     );
     let rules = RuleSet::new().push(Html5EverParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert_eq!(report.messages.len(), 0);
 }
 
@@ -309,7 +309,7 @@ fn title_constraints_emits_when_title_missing() {
         ],
     );
     let rules = RuleSet::new().push(TitleConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -356,7 +356,7 @@ fn title_constraints_emits_when_title_empty() {
         ],
     );
     let rules = RuleSet::new().push(TitleConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| m.code == "html.title.empty"));
     assert!(
         !report
@@ -377,7 +377,7 @@ fn tokenizer_parse_errors_are_reported() {
         }],
     );
     let rules = RuleSet::new().push(TokenizerParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -403,7 +403,7 @@ fn tokenizer_parse_errors_skip_doctype_missing_and_non_parse_errors() {
         ],
     );
     let rules = RuleSet::new().push(TokenizerParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert_eq!(report.messages.len(), 0);
 }
 
@@ -433,7 +433,7 @@ fn unknown_element_constraints_normalizes_names_in_html() {
         ],
     );
     let rules = RuleSet::new().push(UnknownElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.unknown_element.not_allowed"
             && m.message
@@ -478,7 +478,7 @@ fn unknown_element_constraints_is_case_sensitive_in_xhtml() {
         ],
     );
     let rules = RuleSet::new().push(UnknownElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.unknown_element.not_allowed"
             && m.message
@@ -532,7 +532,7 @@ fn unknown_element_constraints_does_not_flag_custom_elements() {
         ],
     );
     let rules = RuleSet::new().push(UnknownElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -560,7 +560,7 @@ fn unknown_element_constraints_is_ignored_inside_template() {
         ],
     );
     let rules = RuleSet::new().push(UnknownElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -591,7 +591,7 @@ fn unknown_element_constraints_in_svg_preserves_parent_name_case() {
     );
     let rules = RuleSet::new()
         .push(super::unknown_element_constraints::UnknownSvgElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report.messages.iter().any(|m| {
             m.code == "html.unknown_element.not_allowed"
@@ -619,7 +619,7 @@ fn picture_unclosed_on_finish_emits_error_for_html_only() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         html_src,
         RuleSet::new().push(PictureUnclosedEndOfFile::default()),
         Config::default(),
@@ -641,7 +641,7 @@ fn picture_unclosed_on_finish_emits_error_for_html_only() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         no_picture,
         RuleSet::new().push(PictureUnclosedEndOfFile::default()),
         Config::default(),
@@ -658,7 +658,7 @@ fn picture_unclosed_on_finish_emits_error_for_html_only() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         xhtml_src,
         RuleSet::new().push(PictureUnclosedEndOfFile::default()),
         Config::default(),
@@ -683,7 +683,7 @@ fn video_src_empty_in_xhtml_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(VideoSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -714,7 +714,7 @@ fn input_datetime_local_invalid_and_valid_paths() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(InputDatetimeLocalConstraints::default()),
         Config::default(),
@@ -748,7 +748,7 @@ fn input_datetime_local_invalid_and_valid_paths() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(InputDatetimeLocalConstraints::default()),
         Config::default(),
@@ -779,7 +779,7 @@ fn script_importmap_constraints_cover_scopes_and_url_like_checks() {
                 },
             ],
         );
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptImportmapConstraints::default()),
             Config::default(),
@@ -877,14 +877,14 @@ fn script_importmap_constraints_cover_scopes_and_url_like_checks() {
 
 #[test]
 fn script_importmap_constraints_ignore_uninterested_events() {
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
 
-    let mut ctx = html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+    let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
     let mut sink = Sink(Vec::new());
     let mut rule = ScriptImportmapConstraints::default();
     rule.on_event(
@@ -896,12 +896,12 @@ fn script_importmap_constraints_ignore_uninterested_events() {
         &mut sink,
     );
     assert!(sink.0.is_empty());
-    html_inspector_core::MessageSink::push(
+    html_inspector::MessageSink::push(
         &mut sink,
-        html_inspector_core::Message::new(
+        html_inspector::Message::new(
             "test.dummy",
-            html_inspector_core::Severity::Info,
-            html_inspector_core::Category::Html,
+            html_inspector::Severity::Info,
+            html_inspector::Category::Html,
             "x".to_string(),
             None,
         ),
@@ -931,7 +931,7 @@ fn script_speculationrules_constraints_cover_predicate_validation_edges() {
                 },
             ],
         );
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
             Config::default(),
@@ -1057,13 +1057,13 @@ fn script_speculationrules_constraints_cover_predicate_validation_edges() {
     assert!(report.messages.is_empty());
 
     // Cover the `_ => {}` match branch by calling the rule directly.
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
-    let mut ctx = html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+    let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
     let mut sink = Sink(Vec::new());
     let mut rule = ScriptSpeculationrulesConstraints::default();
     rule.on_event(
@@ -1075,12 +1075,12 @@ fn script_speculationrules_constraints_cover_predicate_validation_edges() {
         &mut sink,
     );
     assert!(sink.0.is_empty());
-    html_inspector_core::MessageSink::push(
+    html_inspector::MessageSink::push(
         &mut sink,
-        html_inspector_core::Message::new(
+        html_inspector::Message::new(
             "test.dummy",
-            html_inspector_core::Severity::Info,
-            html_inspector_core::Category::Html,
+            html_inspector::Severity::Info,
+            html_inspector::Category::Html,
             "x".to_string(),
             None,
         ),
@@ -1104,7 +1104,7 @@ fn link_constraints_cover_xhtml_rdfa_as_and_imagesrcset_width_descriptor() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(LinkConstraints::default()),
         Config::default(),
@@ -1138,7 +1138,7 @@ fn link_constraints_cover_xhtml_rdfa_as_and_imagesrcset_width_descriptor() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(LinkConstraints::default()),
         Config::default(),
@@ -1182,7 +1182,7 @@ fn link_constraints_cover_xhtml_rdfa_as_and_imagesrcset_width_descriptor() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(LinkConstraints::default()),
         Config::default(),
@@ -1190,7 +1190,7 @@ fn link_constraints_cover_xhtml_rdfa_as_and_imagesrcset_width_descriptor() {
     .unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.link.imagesrcset.width_descriptor_requires_imagesizes"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -1217,10 +1217,10 @@ fn unnecessary_role_searchbox_on_input_type_search_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(UnnecessaryRoleWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.role.unnecessary"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
             && m.message
                 == "The “searchbox” role is unnecessary for an “input” element that has no “list” attribute and whose type is “search”."
     }));
@@ -1290,11 +1290,11 @@ fn svg_title_does_not_trigger_html_title_empty_error() {
         ],
     );
     let rules = RuleSet::new().push(TitleConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -1363,11 +1363,11 @@ fn svg_style_does_not_trigger_html_style_not_allowed_here_error() {
         ],
     );
     let rules = RuleSet::new().push(StyleConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -1441,11 +1441,11 @@ fn html_style_inside_svg_desc_is_allowed() {
         ],
     );
     let rules = RuleSet::new().push(StyleConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -1477,12 +1477,12 @@ fn svg_font_does_not_trigger_html_obsolete_font_error() {
         ],
     );
     let rules = RuleSet::new().push(ObsoleteElements::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     let mut report = report;
-    report.messages.push(html_inspector_core::Message::new(
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -1518,10 +1518,10 @@ fn svg_xmlns_prefix_other_than_xlink_is_disallowed() {
         ],
     );
     let rules = RuleSet::new().push(super::svg_xmlns_constraints::SvgXmlnsConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.svg.xmlns.prefix.disallowed"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
             && m.message == "Attribute “xmlns:bd” not allowed here."
     }));
 }
@@ -1550,10 +1550,10 @@ fn svg_xmlns_xlink_must_match_expected_namespace() {
         ],
     );
     let rules = RuleSet::new().push(super::svg_xmlns_constraints::SvgXmlnsConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.svg.xmlns.xlink.bad_value"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
             && m.message
                 == "Bad value “http://example.net/bar” for the attribute “xmlns:link” (only “http://www.w3.org/1999/xlink” permitted here)."
     }));
@@ -1575,10 +1575,10 @@ fn svg_xmlns_default_must_match_svg_namespace() {
         }],
     );
     let rules = RuleSet::new().push(super::svg_xmlns_constraints::SvgXmlnsConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.svg.xmlns.default.bad_value"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
             && m.message
                 == "Bad value “http://www.example.org/notsvg” for the attribute “xmlns” (only “http://www.w3.org/2000/svg” permitted here)."
     }));
@@ -1608,10 +1608,10 @@ fn svg_xml_id_attribute_is_disallowed() {
         ],
     );
     let rules = RuleSet::new().push(super::svg_suite_constraints::SvgSuiteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.svg.attr.xml_id.disallowed"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
             && m.message == "Attribute “xml:id” not allowed on element “rect” at this point."
     }));
 }
@@ -1640,10 +1640,10 @@ fn svg_font_requires_missing_glyph_child() {
         ],
     );
     let rules = RuleSet::new().push(super::svg_suite_constraints::SvgSuiteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.svg.element.font.missing_missing_glyph"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
             && m.message
                 == "Element “font” is missing a required instance of child element “missing-glyph”."
     }));
@@ -1675,10 +1675,10 @@ fn svg_a_must_not_be_nested_in_another_svg_a() {
         ],
     );
     let rules = RuleSet::new().push(super::svg_suite_constraints::SvgSuiteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.svg.a.nested_in_a"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
             && m.message
                 == "The SVG element “a” must not appear as a descendant of another SVG element “a”."
     }));
@@ -1712,7 +1712,7 @@ fn duplicate_id_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(DuplicateId::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1759,7 +1759,7 @@ fn duplicate_id_is_ignored_inside_template() {
         ],
     );
     let rules = RuleSet::new().push(DuplicateId::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -1811,7 +1811,7 @@ fn duplicate_id_in_template_does_not_affect_outside_ids() {
         ],
     );
     let rules = RuleSet::new().push(DuplicateId::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert_eq!(
         report
             .messages
@@ -1850,7 +1850,7 @@ fn duplicate_id_xhtml_requires_exact_id_attribute_name() {
         ],
     );
     let rules = RuleSet::new().push(DuplicateId::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -1871,7 +1871,7 @@ fn img_alt_required_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgAltRequired::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1903,10 +1903,10 @@ fn img_role_none_disallowed_with_non_empty_alt() {
         }],
     );
     let rules = RuleSet::new().push(ImgRoleConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.img.role.invalid_for_non_empty_alt"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -1933,7 +1933,7 @@ fn img_role_invalid_token_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgRoleConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1971,7 +1971,7 @@ fn img_role_with_empty_alt_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgRoleConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1996,9 +1996,9 @@ fn img_border_attribute_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(ImgObsoleteAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.code == "html.img.border.obsolete" && m.severity == html_inspector_core::Severity::Warning
+        m.code == "html.img.border.obsolete" && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -2018,7 +2018,7 @@ fn img_sizes_auto_requires_loading_lazy() {
         }],
     );
     let rules = RuleSet::new().push(ImgSizesAutoRequiresLazyLoading::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2055,7 +2055,7 @@ fn img_sizes_without_srcset_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgSizesConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2097,7 +2097,7 @@ fn img_sizes_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgSizesConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2129,7 +2129,7 @@ fn img_src_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2161,10 +2161,10 @@ fn img_srcset_width_descriptor_requires_sizes() {
         }],
     );
     let rules = RuleSet::new().push(ImgSrcsetSizesRequired::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.img.srcset.width_descriptor_requires_sizes"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -2206,11 +2206,11 @@ fn img_srcset_width_descriptor_without_sizes_allowed_with_lazy_and_dimensions() 
         }],
     );
     let rules = RuleSet::new().push(ImgSrcsetSizesRequired::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -2238,7 +2238,7 @@ fn img_usemap_hash_only_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(ImgUsemapConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2263,7 +2263,7 @@ fn img_usemap_missing_map_name_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgUsemapConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2288,7 +2288,7 @@ fn autocomplete_unknown_field_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AutocompleteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2320,7 +2320,7 @@ fn autocomplete_on_hidden_input_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AutocompleteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2345,7 +2345,7 @@ fn img_ismap_requires_anchor_href_ancestor() {
         }],
     );
     let rules = RuleSet::new().push(ImgIsmapAnchorAncestor::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2366,7 +2366,7 @@ fn area_requires_map_ancestor_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AreaRequiresMapAncestor::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2391,11 +2391,11 @@ fn a_href_allows_empty_port_after_colon() {
         }],
     );
     let rules = RuleSet::new().push(AHrefConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -2423,11 +2423,11 @@ fn a_href_allows_legacy_file_drive_authority_pipe() {
         }],
     );
     let rules = RuleSet::new().push(AHrefConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -2455,7 +2455,7 @@ fn a_href_rejects_non_ascii_in_userinfo() {
         }],
     );
     let rules = RuleSet::new().push(AHrefConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2480,14 +2480,10 @@ fn a_name_emits_obsolete_warning() {
         }],
     );
     let rules = RuleSet::new().push(ElementSpecificAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    assert!(
-        report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.a.name.obsolete"
-                && m.severity == html_inspector_core::Severity::Warning)
-    );
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    assert!(report.messages.iter().any(
+        |m| m.code == "html.a.name.obsolete" && m.severity == html_inspector::Severity::Warning
+    ));
 }
 
 #[test]
@@ -2506,7 +2502,7 @@ fn a_ping_without_href_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ElementSpecificAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2541,7 +2537,7 @@ fn a_transparent_model_disallows_flow_when_a_in_phrasing_context() {
         ],
     );
     let rules = RuleSet::new().push(ATransparentContentModel::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2574,7 +2570,7 @@ fn a_with_href_inside_button_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(AHrefButtonDescendant::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2613,7 +2609,7 @@ fn a_with_href_inside_button_inside_template_is_ignored() {
         ],
     );
     let rules = RuleSet::new().push(AHrefButtonDescendant::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -2642,7 +2638,7 @@ fn address_must_not_be_descendant_of_address() {
         ],
     );
     let rules = RuleSet::new().push(AddressConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2663,7 +2659,7 @@ fn obsolete_acronym_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ObsoleteElements::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2684,7 +2680,7 @@ fn obsolete_frameset_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ObsoleteElements::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2705,7 +2701,7 @@ fn obsolete_keygen_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ObsoleteElements::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2726,7 +2722,7 @@ fn obsolete_marquee_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ObsoleteElements::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2761,7 +2757,7 @@ fn implied_p_end_tag_with_open_elements_emits_parse_error() {
         ],
     );
     let rules = RuleSet::new().push(ImpliedPEndTag::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2786,11 +2782,11 @@ fn area_download_without_coords_or_shape_does_not_require_href() {
         }],
     );
     let rules = RuleSet::new().push(ADownloadConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -2825,7 +2821,7 @@ fn area_download_with_coords_requires_href() {
         }],
     );
     let rules = RuleSet::new().push(ADownloadConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2857,7 +2853,7 @@ fn area_shape_default_disallows_coords() {
         }],
     );
     let rules = RuleSet::new().push(AreaCoordsConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -2884,13 +2880,13 @@ fn article_without_h2_h6_emits_warning() {
         ],
     );
     let rules = RuleSet::new().push(ArticleHeadingWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.article.lacks_heading"
-                && m.severity == html_inspector_core::Severity::Warning)
+                && m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -2912,13 +2908,13 @@ fn empty_heading_emits_warning() {
         ],
     );
     let rules = RuleSet::new().push(EmptyHeadingWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.heading.empty"
-                && m.severity == html_inspector_core::Severity::Warning)
+                && m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -2946,7 +2942,7 @@ fn empty_heading_warns_for_unclosed_nested_headings() {
         ],
     );
     let rules = RuleSet::new().push(EmptyHeadingWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert_eq!(
         report
             .messages
@@ -2975,7 +2971,7 @@ fn empty_heading_matches_tag_name_case_insensitively_in_html() {
         ],
     );
     let rules = RuleSet::new().push(EmptyHeadingWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3002,7 +2998,7 @@ fn empty_heading_matches_tag_name_case_sensitively_in_xhtml() {
         ],
     );
     let rules = RuleSet::new().push(EmptyHeadingWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -3033,11 +3029,11 @@ fn non_empty_heading_does_not_warn() {
         ],
     );
     let rules = RuleSet::new().push(EmptyHeadingWarning::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -3075,7 +3071,7 @@ fn audio_transparent_model_disallows_flow_when_in_phrasing_context() {
         ],
     );
     let rules = RuleSet::new().push(AudioTransparentContentModel::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3100,7 +3096,7 @@ fn audio_src_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AudioSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3125,7 +3121,7 @@ fn audio_src_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AudioSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3150,7 +3146,7 @@ fn audio_src_attr_name_matching_is_case_insensitive_in_html() {
         }],
     );
     let rules = RuleSet::new().push(AudioSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3175,7 +3171,7 @@ fn audio_src_attr_name_matching_is_case_sensitive_in_xhtml() {
         }],
     );
     let rules = RuleSet::new().push(AudioSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -3195,7 +3191,7 @@ fn autonomous_custom_element_must_not_have_is_attribute() {
         }],
     );
     let rules = RuleSet::new().push(IsAttributeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3220,7 +3216,7 @@ fn base_href_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(BaseHrefConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3241,7 +3237,7 @@ fn base_missing_href_and_target_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(BaseElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3278,7 +3274,7 @@ fn base_after_link_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(BaseElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3303,7 +3299,7 @@ fn blockquote_cite_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(BlockquoteCiteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3322,7 +3318,7 @@ fn void_element_end_tag_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(VoidElementEndTag::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3342,7 +3338,7 @@ fn void_element_end_tag_emits_error_on_parse_error_event() {
         }],
     );
     let rules = RuleSet::new().push(TokenizerParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3355,7 +3351,7 @@ fn void_element_end_tag_emits_error_on_parse_error_event() {
 fn void_element_end_tag_detected_with_html5ever_backend() {
     let src = HtmlEventSource::from_str("t", InputFormat::Html, "</br>").unwrap();
     let rules = RuleSet::new().push(TokenizerParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3404,7 +3400,7 @@ fn button_formaction_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ButtonFormactionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3429,7 +3425,7 @@ fn button_formaction_matches_case_insensitively_in_html() {
         }],
     );
     let rules = RuleSet::new().push(ButtonFormactionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3454,7 +3450,7 @@ fn button_formaction_is_case_sensitive_in_xhtml() {
         }],
     );
     let rules = RuleSet::new().push(ButtonFormactionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -3474,7 +3470,7 @@ fn button_formaction_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ButtonFormactionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3509,7 +3505,7 @@ fn canvas_transparent_model_disallows_flow_when_in_phrasing_context() {
         ],
     );
     let rules = RuleSet::new().push(CanvasTransparentContentModel::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3542,7 +3538,7 @@ fn colgroup_span_exceeds_max_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(super::table_constraints::TableConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3581,7 +3577,7 @@ fn colgroup_with_span_and_col_child_warns_span_ignored() {
         ],
     );
     let rules = RuleSet::new().push(super::table_constraints::TableConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3606,7 +3602,7 @@ fn del_cite_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(DelCiteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3631,7 +3627,7 @@ fn ins_cite_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InsCiteConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3656,9 +3652,9 @@ fn del_datetime_out_of_range_year_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(DelDatetimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.code == "html.del.datetime.warn" && m.severity == html_inspector_core::Severity::Warning
+        m.code == "html.del.datetime.warn" && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -3678,7 +3674,7 @@ fn del_datetime_invalid_date_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(DelDatetimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3703,7 +3699,7 @@ fn del_datetime_accepts_global_datetime_with_z() {
         }],
     );
     let rules = RuleSet::new().push(DelDatetimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -3723,13 +3719,13 @@ fn del_datetime_timezone_minutes_15_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(DelDatetimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.del.datetime.warn"
-                && m.severity == html_inspector_core::Severity::Warning)
+                && m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -3749,7 +3745,7 @@ fn del_datetime_leading_whitespace_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(DelDatetimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3788,7 +3784,7 @@ fn details_disallows_multiple_summary_children() {
         ],
     );
     let rules = RuleSet::new().push(DetailsSummaryConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3821,7 +3817,7 @@ fn details_requires_summary_as_first_child() {
         ],
     );
     let rules = RuleSet::new().push(DetailsSummaryConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3850,7 +3846,7 @@ fn dialog_disallows_dt_as_child() {
         ],
     );
     let rules = RuleSet::new().push(DialogConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3879,7 +3875,7 @@ fn dt_disallows_article_descendants() {
         ],
     );
     let rules = RuleSet::new().push(DtDescendantConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3928,7 +3924,7 @@ fn dl_requires_dd_even_if_dd_only_in_template() {
         ],
     );
     let rules = RuleSet::new().push(DlStructureConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3955,7 +3951,7 @@ fn dl_disallows_text_nodes() {
         ],
     );
     let rules = RuleSet::new().push(DlStructureConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -3984,7 +3980,7 @@ fn dl_disallows_nested_dl_at_dl_level() {
         ],
     );
     let rules = RuleSet::new().push(DlStructureConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4017,7 +4013,7 @@ fn p_end_tag_after_implicit_close_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PEndTagScope::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4050,7 +4046,7 @@ fn p_end_tag_after_implicit_close_by_ul_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PEndTagScope::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4075,7 +4071,7 @@ fn ol_start_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(OlStartConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4102,7 +4098,7 @@ fn option_without_label_must_not_be_empty() {
         ],
     );
     let rules = RuleSet::new().push(OptionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4127,7 +4123,7 @@ fn option_label_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(OptionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4181,7 +4177,7 @@ fn picture_source_media_all_with_following_source_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PictureSourceMediaAllConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4231,7 +4227,7 @@ fn picture_source_media_all_without_following_source_is_allowed() {
         ],
     );
     let rules = RuleSet::new().push(PictureSourceMediaAllConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -4266,7 +4262,7 @@ fn picture_source_media_empty_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PictureSourceSelectionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4309,7 +4305,7 @@ fn picture_source_always_matching_without_media_or_type_emits_error_when_followe
         ],
     );
     let rules = RuleSet::new().push(PictureSourceSelectionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4330,7 +4326,7 @@ fn non_void_self_closing_syntax_emits_parse_error() {
         }],
     );
     let rules = RuleSet::new().push(NonVoidSelfClosingSyntax::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4350,7 +4346,7 @@ fn non_void_self_closing_syntax_emits_parse_error_on_parse_error_event() {
         }],
     );
     let rules = RuleSet::new().push(TokenizerParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4363,7 +4359,7 @@ fn non_void_self_closing_syntax_emits_parse_error_on_parse_error_event() {
 fn non_void_self_closing_syntax_detected_with_html5ever_backend() {
     let src = HtmlEventSource::from_str("t", InputFormat::Html, "<div/>").unwrap();
     let rules = RuleSet::new().push(TokenizerParseErrors::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4384,7 +4380,7 @@ fn picture_unclosed_at_eof_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(PictureUnclosedEndOfFile::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4409,7 +4405,7 @@ fn audio_srcset_disallowed_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ElementSpecificAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4430,7 +4426,7 @@ fn img_missing_src_and_srcset_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4462,7 +4458,7 @@ fn img_srcset_without_descriptor_with_sizes_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ImgSrcsetConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4487,7 +4483,7 @@ fn img_type_attribute_disallowed_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ElementSpecificAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4512,7 +4508,7 @@ fn input_srcset_attribute_disallowed_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputAttributeDisallowedByType::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4545,7 +4541,7 @@ fn picture_disallows_br_child() {
         ],
     );
     let rules = RuleSet::new().push(PictureContentModelConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.message
             .contains("Element “br” not allowed as child of “picture”")
@@ -4570,7 +4566,7 @@ fn picture_disallows_non_whitespace_text_child() {
         ],
     );
     let rules = RuleSet::new().push(PictureContentModelConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4599,7 +4595,7 @@ fn picture_disallows_picture_child() {
         ],
     );
     let rules = RuleSet::new().push(PictureContentModelConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4624,7 +4620,7 @@ fn link_srcset_attribute_disallowed_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ElementSpecificAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4649,7 +4645,7 @@ fn object_srcset_attribute_disallowed_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ElementSpecificAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4678,7 +4674,7 @@ fn picture_disallowed_in_hgroup_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PictureParentConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4707,7 +4703,7 @@ fn picture_disallowed_in_rp_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PictureParentConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4736,7 +4732,7 @@ fn picture_in_noscript_in_head_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PictureParentConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4761,7 +4757,7 @@ fn picture_disallowed_attribute_align_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(PictureAttributeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4790,7 +4786,7 @@ fn picture_disallowed_in_ul_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PictureParentConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4811,7 +4807,7 @@ fn param_element_is_obsolete() {
         }],
     );
     let rules = RuleSet::new().push(ObsoleteElements::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4844,7 +4840,7 @@ fn dl_div_child_role_must_be_presentation_or_none() {
         ],
     );
     let rules = RuleSet::new().push(DlDivGroupConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4883,7 +4879,7 @@ fn dl_div_group_requires_dt_and_dd() {
         ],
     );
     let rules = RuleSet::new().push(DlDivGroupConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -4940,7 +4936,7 @@ fn dl_div_group_constraints_are_ignored_inside_template() {
         ],
     );
     let rules = RuleSet::new().push(DlDivGroupConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -4976,7 +4972,7 @@ fn dl_div_group_disallows_dt_after_dd() {
         ],
     );
     let rules = RuleSet::new().push(DlDivGroupConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5037,10 +5033,9 @@ fn dl_duplicate_dt_name_emits_warning() {
         ],
     );
     let rules = RuleSet::new().push(DlDuplicateDtName::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.code == "html.dl.duplicate_dt_name"
-            && m.severity == html_inspector_core::Severity::Warning
+        m.code == "html.dl.duplicate_dt_name" && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -5106,10 +5101,9 @@ fn dl_duplicate_dt_name_emits_warning_inside_template() {
         ],
     );
     let rules = RuleSet::new().push(DlDuplicateDtName::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.code == "html.dl.duplicate_dt_name"
-            && m.severity == html_inspector_core::Severity::Warning
+        m.code == "html.dl.duplicate_dt_name" && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -5129,7 +5123,7 @@ fn embed_height_percent_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(EmbedConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5154,7 +5148,7 @@ fn embed_src_empty_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(EmbedConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5179,7 +5173,7 @@ fn embed_src_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(EmbedConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5204,7 +5198,7 @@ fn embed_width_percent_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(EmbedConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5229,7 +5223,7 @@ fn embed_type_without_slash_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(EmbedConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5262,7 +5256,7 @@ fn figure_with_role_img_and_figcaption_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(FigureFigcaption::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5295,11 +5289,11 @@ fn figure_with_role_doc_example_and_figcaption_does_not_emit_error() {
         ],
     );
     let rules = RuleSet::new().push(FigureFigcaption::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -5335,11 +5329,11 @@ fn figure_with_role_doc_example_case_insensitive_and_figcaption_does_not_emit_er
         ],
     );
     let rules = RuleSet::new().push(FigureFigcaption::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -5375,11 +5369,11 @@ fn figure_with_role_figure_case_insensitive_and_figcaption_does_not_emit_error()
         ],
     );
     let rules = RuleSet::new().push(FigureFigcaption::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -5431,10 +5425,10 @@ fn figure_table_caption_prefers_figcaption_emits_warning() {
         ],
     );
     let rules = RuleSet::new().push(FigureTableCaptionWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.figure.table_caption.prefers_figcaption"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -5464,7 +5458,7 @@ fn footer_disallows_footer_and_header_descendants() {
         ],
     );
     let rules = RuleSet::new().push(FooterConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5505,7 +5499,7 @@ fn header_disallows_footer_and_header_descendants() {
         ],
     );
     let rules = RuleSet::new().push(HeaderConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5536,7 +5530,7 @@ fn form_accept_charset_only_allows_utf8() {
         }],
     );
     let rules = RuleSet::new().push(FormActionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5561,7 +5555,7 @@ fn form_action_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(FormActionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5586,7 +5580,7 @@ fn form_action_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(FormActionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5615,7 +5609,7 @@ fn base_in_body_emits_error_after_body_content() {
         ],
     );
     let rules = RuleSet::new().push(BaseInBody::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5636,7 +5630,7 @@ fn bdo_dir_missing_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(BdoDir::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5675,7 +5669,7 @@ fn figure_multiple_figcaption_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(FigureFigcaption::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5726,7 +5720,7 @@ fn input_type_constraints_emits_errors() {
         ],
     );
     let rules = RuleSet::new().push(InputTypeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5764,7 +5758,7 @@ fn microdata_itemid_requires_itemtype() {
         }],
     );
     let rules = RuleSet::new().push(MicrodataConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5793,7 +5787,7 @@ fn dl_child_content_rejects_p() {
         ],
     );
     let rules = RuleSet::new().push(DlChildContent::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5836,7 +5830,7 @@ fn label_multiple_controls_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(LabelControlCount::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5873,10 +5867,10 @@ fn label_aria_hidden_with_labelable_descendant_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(LabelForConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.label.aria_hidden.with_labelable_descendant"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -5908,7 +5902,7 @@ fn label_for_requires_descendant_input_id_match() {
         ],
     );
     let rules = RuleSet::new().push(LabelForConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5933,7 +5927,7 @@ fn label_for_must_reference_non_hidden_form_control() {
         }],
     );
     let rules = RuleSet::new().push(LabelForConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5970,7 +5964,7 @@ fn role_button_disallows_input_descendant() {
         ],
     );
     let rules = RuleSet::new().push(LabelForConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -5999,7 +5993,7 @@ fn li_outside_list_parent_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(LiParentConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6032,7 +6026,7 @@ fn li_value_disallowed_outside_ol() {
         ],
     );
     let rules = RuleSet::new().push(LiValueConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6065,7 +6059,7 @@ fn li_value_invalid_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(LiValueConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6090,7 +6084,7 @@ fn link_missing_href_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(LinkConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6127,7 +6121,7 @@ fn link_as_requires_preload_or_modulepreload() {
         }],
     );
     let rules = RuleSet::new().push(LinkConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6159,7 +6153,7 @@ fn link_alternate_stylesheet_requires_title() {
         }],
     );
     let rules = RuleSet::new().push(LinkConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6196,7 +6190,7 @@ fn link_blocking_requires_rel_stylesheet_only() {
         }],
     );
     let rules = RuleSet::new().push(LinkConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6221,7 +6215,7 @@ fn link_href_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(LinkHrefConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6250,7 +6244,7 @@ fn main_disallowed_descendant_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(MainConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6283,7 +6277,7 @@ fn multiple_visible_main_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(MainConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6315,7 +6309,7 @@ fn map_id_name_mismatch_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(MapConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6340,10 +6334,9 @@ fn math_role_attribute_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(MathRoleWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.code == "html.math.role.unnecessary"
-            && m.severity == html_inspector_core::Severity::Warning
+        m.code == "html.math.role.unnecessary" && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -6370,7 +6363,7 @@ fn meter_value_exceeds_max_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(MeterConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6402,7 +6395,7 @@ fn script_importmap_src_disallowed() {
         }],
     );
     let rules = RuleSet::new().push(ScriptConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6462,7 +6455,7 @@ fn script_type_matching_is_ascii_case_insensitive() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6503,7 +6496,7 @@ fn script_charset_requires_src() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6539,7 +6532,7 @@ fn script_charset_must_be_utf8_when_src_present() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6568,7 +6561,7 @@ fn script_language_is_obsolete() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6604,7 +6597,7 @@ fn script_language_javascript_with_non_javascript_type_emits_mismatch_error() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6639,7 +6632,7 @@ fn script_type_is_unnecessary_for_javascript_mime_types() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6675,7 +6668,7 @@ fn script_module_defer_is_disallowed() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6711,7 +6704,7 @@ fn script_module_with_nomodule_is_disallowed() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6747,7 +6740,7 @@ fn script_speculationrules_disallows_async() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6776,7 +6769,7 @@ fn inline_classic_script_disallows_async_and_defer() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6802,7 +6795,7 @@ fn inline_classic_script_disallows_async_and_defer() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6838,7 +6831,7 @@ fn script_data_block_disallows_async_and_src() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6871,7 +6864,7 @@ fn script_data_block_disallows_async_and_src() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptConstraints::default()),
         Config::default(),
@@ -6919,7 +6912,7 @@ fn select_without_multiple_rejects_two_selected() {
         ],
     );
     let rules = RuleSet::new().push(SelectConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6944,7 +6937,7 @@ fn track_empty_label_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(TrackConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6969,7 +6962,7 @@ fn accesskey_duplicate_tokens_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AccesskeyConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -6994,7 +6987,7 @@ fn accesskey_multi_character_token_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AccesskeyConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7037,7 +7030,7 @@ fn autofocus_multiple_in_dialog_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(AutofocusConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7062,7 +7055,7 @@ fn commandfor_missing_id_emits_error_on_finish() {
         }],
     );
     let rules = RuleSet::new().push(CommandforConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7087,7 +7080,7 @@ fn data_attribute_invalid_suffix_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(DataAttributeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7112,7 +7105,7 @@ fn div_name_attribute_disallowed_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ElementSpecificAttributes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7137,7 +7130,7 @@ fn enterkeyhint_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(EnterkeyhintConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7162,7 +7155,7 @@ fn enterkeyhint_missing_value_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(EnterkeyhintConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7199,7 +7192,7 @@ fn form_attribute_must_refer_to_form() {
         ],
     );
     let rules = RuleSet::new().push(FormAttributeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7224,7 +7217,7 @@ fn headingoffset_out_of_range_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(HeadingoffsetConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7249,7 +7242,7 @@ fn is_attribute_requires_hyphen_and_lowercase() {
         }],
     );
     let rules = RuleSet::new().push(IsAttributeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7274,7 +7267,7 @@ fn popover_invalid_value_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(PopoverConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7299,12 +7292,12 @@ fn rel_typo_emits_info() {
         }],
     );
     let rules = RuleSet::new().push(RelTypoConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
-            .any(|m| m.severity == html_inspector_core::Severity::Info)
+            .any(|m| m.severity == html_inspector::Severity::Info)
     );
 }
 
@@ -7324,7 +7317,7 @@ fn spellcheck_bad_value_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(SpellcheckConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7349,7 +7342,7 @@ fn spellcheck_missing_value_is_ok() {
         }],
     );
     let rules = RuleSet::new().push(SpellcheckConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -7369,7 +7362,7 @@ fn target_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(TargetBrowsingContextConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7394,7 +7387,7 @@ fn target_reserved_names_allowed_case_insensitively() {
         }],
     );
     let rules = RuleSet::new().push(TargetBrowsingContextConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -7414,7 +7407,7 @@ fn target_underscore_names_reject_unknown_token_case_insensitively() {
         }],
     );
     let rules = RuleSet::new().push(TargetBrowsingContextConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7446,7 +7439,7 @@ fn input_color_invalid_value_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputColorConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7478,7 +7471,7 @@ fn input_date_invalid_min_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputDateConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7510,7 +7503,7 @@ fn input_datetime_local_invalid_min_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputDatetimeLocalConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7535,7 +7528,7 @@ fn time_datetime_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(TimeDatetimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7572,7 +7565,7 @@ fn time_datetime_accepts_common_valid_formats() {
 
     let src = VecSource::new(InputFormat::Html, events);
     let rules = RuleSet::new().push(TimeDatetimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert_eq!(report.messages.len(), 0);
 }
 
@@ -7592,7 +7585,7 @@ fn id_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(IdDatatypeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| m.code == "html.id.invalid"));
 }
 
@@ -7612,7 +7605,7 @@ fn size_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputSizeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7637,7 +7630,7 @@ fn size_zero_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputSizeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7669,7 +7662,7 @@ fn size_allowed_for_mixed_case_text_type() {
         }],
     );
     let rules = RuleSet::new().push(InputSizeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -7696,7 +7689,7 @@ fn size_disallowed_for_number_type() {
         }],
     );
     let rules = RuleSet::new().push(InputSizeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7728,7 +7721,7 @@ fn input_readonly_disallowed_for_button_type() {
         }],
     );
     let rules = RuleSet::new().push(InputAttributeAllowedTypes::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7760,10 +7753,10 @@ fn checkbox_role_button_requires_aria_pressed() {
         }],
     );
     let rules = RuleSet::new().push(InputCheckboxRoleButtonAriaPressed::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.input.checkbox.role_button.missing_aria_pressed"
-            && m.severity == html_inspector_core::Severity::Error
+            && m.severity == html_inspector::Severity::Error
     }));
 }
 
@@ -7790,7 +7783,7 @@ fn input_image_requires_alt() {
         }],
     );
     let rules = RuleSet::new().push(InputTypeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7822,7 +7815,7 @@ fn input_list_disallowed_for_checkbox_type() {
         }],
     );
     let rules = RuleSet::new().push(InputListConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7866,7 +7859,7 @@ fn input_list_must_refer_to_datalist() {
         ],
     );
     let rules = RuleSet::new().push(InputListConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7891,7 +7884,7 @@ fn input_name_isindex_disallowed() {
         }],
     );
     let rules = RuleSet::new().push(InputNameConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7923,7 +7916,7 @@ fn input_number_invalid_value_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputNumberConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7955,7 +7948,7 @@ fn input_number_multiple_disallowed() {
         }],
     );
     let rules = RuleSet::new().push(InputNumberConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -7987,7 +7980,7 @@ fn input_range_invalid_min_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputRangeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8029,7 +8022,7 @@ fn input_tel_disallows_max_min_step() {
         }],
     );
     let rules = RuleSet::new().push(InputAttributeDisallowedByType::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8093,7 +8086,7 @@ fn input_text_disallows_accept_checked_src_width_height() {
         }],
     );
     let rules = RuleSet::new().push(InputAttributeDisallowedByType::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8154,7 +8147,7 @@ fn input_hidden_disallows_aria_and_placeholder() {
         }],
     );
     let rules = RuleSet::new().push(InputAttributeDisallowedByType::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8192,7 +8185,7 @@ fn input_image_formaction_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputFormactionConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8224,7 +8217,7 @@ fn input_image_src_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputImageSrcConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8256,7 +8249,7 @@ fn input_url_value_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputUrlValueConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8281,7 +8274,7 @@ fn step_non_number_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputStepConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8306,7 +8299,7 @@ fn progress_max_negative_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ProgressConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8331,7 +8324,7 @@ fn textarea_rows_zero_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(TextareaConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8356,7 +8349,7 @@ fn script_integrity_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ScriptIntegrityConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8381,7 +8374,7 @@ fn object_type_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ObjectMimetypeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8443,7 +8436,7 @@ fn link_type_invalid_mime_type_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(LinkMimetypeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8468,7 +8461,7 @@ fn object_data_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ObjectDataConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8500,7 +8493,7 @@ fn input_month_invalid_min_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputMonthConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8525,7 +8518,7 @@ fn input_name_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputNameConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8557,7 +8550,7 @@ fn meta_refresh_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(MetaRefreshConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8589,7 +8582,7 @@ fn meta_refresh_valid_accepts_url_after_semicolon_with_whitespace() {
         }],
     );
     let rules = RuleSet::new().push(MetaRefreshConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -8616,7 +8609,7 @@ fn meta_refresh_missing_whitespace_after_semicolon_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(MetaRefreshConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8648,7 +8641,7 @@ fn meta_refresh_quoted_url_is_invalid() {
         }],
     );
     let rules = RuleSet::new().push(MetaRefreshConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8680,7 +8673,7 @@ fn meta_charset_with_content_disallowed() {
         }],
     );
     let rules = RuleSet::new().push(MetaElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8717,7 +8710,7 @@ fn meta_charset_and_content_type_disallowed() {
         ],
     );
     let rules = RuleSet::new().push(MetaElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8768,21 +8761,17 @@ fn meta_csp_invalid_directive_warns_and_invalid_keyword_errors() {
         ],
     );
     let rules = RuleSet::new().push(MetaElementConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.meta.csp.invalid"
-                && m.severity == html_inspector_core::Severity::Warning)
+                && m.severity == html_inspector::Severity::Warning)
     );
-    assert!(
-        report
-            .messages
-            .iter()
-            .any(|m| m.code == "html.meta.csp.invalid"
-                && m.severity == html_inspector_core::Severity::Error)
-    );
+    assert!(report.messages.iter().any(
+        |m| m.code == "html.meta.csp.invalid" && m.severity == html_inspector::Severity::Error
+    ));
 }
 
 #[test]
@@ -8801,13 +8790,13 @@ fn iframe_sandbox_duplicate_token_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(IFrameSandboxConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.iframe.sandbox.duplicate_token"
-                && m.severity == html_inspector_core::Severity::Info)
+                && m.severity == html_inspector::Severity::Info)
     );
 }
 
@@ -8827,13 +8816,13 @@ fn iframe_sandbox_invalid_token_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(IFrameSandboxConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.iframe.sandbox.invalid_token"
-                && m.severity == html_inspector_core::Severity::Error)
+                && m.severity == html_inspector::Severity::Error)
     );
 }
 
@@ -8853,13 +8842,13 @@ fn iframe_sandbox_scripts_and_same_origin_warns() {
         }],
     );
     let rules = RuleSet::new().push(IFrameSandboxConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.iframe.sandbox.scripts_and_same_origin"
-                && m.severity == html_inspector_core::Severity::Warning)
+                && m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -8886,7 +8875,7 @@ fn iframe_disallows_allowpaymentrequest_and_seamless() {
         }],
     );
     let rules = RuleSet::new().push(IframeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8917,13 +8906,13 @@ fn iframe_src_invalid_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(IframeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "html.iframe.src.invalid"
-                && m.severity == html_inspector_core::Severity::Warning)
+                && m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -8943,7 +8932,7 @@ fn iframe_src_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(IframeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -8968,7 +8957,7 @@ fn placeholder_with_linebreak_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(PlaceholderConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9000,7 +8989,7 @@ fn input_time_invalid_min_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputTimeConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9032,7 +9021,7 @@ fn input_week_invalid_min_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(InputWeekConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9057,7 +9046,7 @@ fn link_href_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(UrlConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| m.code == "html.url.empty"));
 }
 
@@ -9077,7 +9066,7 @@ fn a_download_without_href_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(ADownloadConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9102,7 +9091,7 @@ fn a_href_invalid_host_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(AHrefConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9127,7 +9116,7 @@ fn microdata_itemtype_requires_itemscope() {
         }],
     );
     let rules = RuleSet::new().push(MicrodataConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9152,13 +9141,13 @@ fn attribute_href_on_div_emits_not_allowed_warning() {
         }],
     );
     let rules = RuleSet::new().push(AttributeNotAllowedConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     let msg = report
         .messages
         .iter()
         .find(|m| m.code == "html.attr.href.not_allowed")
         .expect("expected not-allowed message");
-    assert_eq!(msg.severity, html_inspector_core::Severity::Warning);
+    assert_eq!(msg.severity, html_inspector::Severity::Warning);
 }
 
 #[test]
@@ -9181,7 +9170,7 @@ fn p_as_child_of_strong_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(PDisallowedParentConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9210,7 +9199,7 @@ fn mathml_html_tag_in_math_emits_error() {
         ],
     );
     let rules = RuleSet::new().push(MathmlConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "html.mathml.html_start_tag_in_foreign_namespace"
             && m.message == "HTML start tag “div” in a foreign namespace context."
@@ -9247,11 +9236,11 @@ fn mathml_annotation_xml_allows_html_children() {
         ],
     );
     let rules = RuleSet::new().push(MathmlConstraints::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -9283,17 +9272,17 @@ fn html_tag_name_matching_is_case_insensitive_but_xhtml_is_case_sensitive() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AreaRequiresMapAncestor::default()),
         Config::default(),
     )
     .unwrap();
     let mut report = report;
-    report.messages.push(html_inspector_core::Message::new(
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -9322,7 +9311,7 @@ fn html_tag_name_matching_is_case_insensitive_but_xhtml_is_case_sensitive() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AreaRequiresMapAncestor::default()),
         Config::default(),
@@ -9352,17 +9341,17 @@ fn html_attribute_name_matching_is_case_insensitive_but_xhtml_is_case_sensitive(
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ImgAltRequired::default()),
         Config::default(),
     )
     .unwrap();
     let mut report = report;
-    report.messages.push(html_inspector_core::Message::new(
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -9387,7 +9376,7 @@ fn html_attribute_name_matching_is_case_insensitive_but_xhtml_is_case_sensitive(
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ImgAltRequired::default()),
         Config::default(),
@@ -9439,7 +9428,7 @@ fn duplicate_id_trims_whitespace_and_ignores_empty_ids() {
         ],
     );
     let rules = RuleSet::new().push(DuplicateId::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9479,7 +9468,7 @@ fn img_alt_required_allows_aria_label_as_accessible_name() {
         }],
     );
     let rules = RuleSet::new().push(ImgAltRequired::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -9522,11 +9511,11 @@ fn duplicate_id_is_case_sensitive() {
         ],
     );
     let rules = RuleSet::new().push(DuplicateId::default());
-    let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
-    report.messages.push(html_inspector_core::Message::new(
+    let mut report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -9566,7 +9555,7 @@ fn duplicate_id_xhtml_attribute_name_is_case_sensitive() {
         ],
     );
     let rules = RuleSet::new().push(DuplicateId::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -9591,7 +9580,7 @@ fn img_alt_required_emits_accessible_name_missing_when_aria_attrs_present_withou
         }],
     );
     let rules = RuleSet::new().push(ImgAltRequired::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -9619,7 +9608,7 @@ fn style_in_body_emits_not_allowed_here_error() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(StyleConstraints::default()),
         Config::default(),
@@ -9656,7 +9645,7 @@ fn style_scoped_is_disallowed_in_head() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(StyleConstraints::default()),
         Config::default(),
@@ -9693,7 +9682,7 @@ fn style_type_text_css_emits_unnecessary_warning() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(StyleConstraints::default()),
         Config::default(),
@@ -9730,7 +9719,7 @@ fn style_type_other_than_text_css_emits_error() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(StyleConstraints::default()),
         Config::default(),
@@ -9775,17 +9764,17 @@ fn style_inside_svg_desc_integration_point_is_allowed_in_body() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(StyleConstraints::default()),
         Config::default(),
     )
     .unwrap();
     let mut report = report;
-    report.messages.push(html_inspector_core::Message::new(
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -9822,7 +9811,7 @@ fn script_importmap_requires_valid_json() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -9861,7 +9850,7 @@ fn script_importmap_requires_top_level_object() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -9900,7 +9889,7 @@ fn script_importmap_disallows_unknown_top_level_properties() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -9939,7 +9928,7 @@ fn script_importmap_imports_requires_object() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -9978,7 +9967,7 @@ fn script_importmap_imports_keys_must_be_non_empty() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -10017,7 +10006,7 @@ fn script_importmap_imports_values_must_be_strings() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -10056,7 +10045,7 @@ fn script_importmap_imports_requires_trailing_slash_match() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -10095,7 +10084,7 @@ fn script_importmap_scopes_keys_must_be_valid_urls() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -10135,7 +10124,7 @@ fn script_importmap_scopes_values_must_be_url_strings() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptImportmapConstraints::default()),
         Config::default(),
@@ -10168,7 +10157,7 @@ fn obj_is_not_allowed_in_p() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ObjElementConstraints::default()),
         Config::default(),
@@ -10200,7 +10189,7 @@ fn xhtml_xml_stylesheet_pi_must_appear_before_elements() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(XmlStylesheetProcessingInstruction::default()),
         Config::default(),
@@ -10224,7 +10213,7 @@ fn xhtml_xml_stylesheet_pi_requires_href() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(XmlStylesheetProcessingInstruction::default()),
         Config::default(),
@@ -10248,7 +10237,7 @@ fn xhtml_xml_stylesheet_pi_alternate_yes_requires_non_empty_title() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(XmlStylesheetProcessingInstruction::default()),
         Config::default(),
@@ -10272,7 +10261,7 @@ fn xhtml_xml_stylesheet_pi_charset_utf8_emits_warning() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(XmlStylesheetProcessingInstruction::default()),
         Config::default(),
@@ -10280,7 +10269,7 @@ fn xhtml_xml_stylesheet_pi_charset_utf8_emits_warning() {
     .unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "xhtml.xml_stylesheet.charset.ignored_warning"
-            && m.severity == html_inspector_core::Severity::Warning
+            && m.severity == html_inspector::Severity::Warning
     }));
 }
 
@@ -10294,7 +10283,7 @@ fn xhtml_xml_stylesheet_pi_type_with_invalid_mime_emits_error() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(XmlStylesheetProcessingInstruction::default()),
         Config::default(),
@@ -10333,7 +10322,7 @@ fn speculationrules_requires_valid_json_and_object() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
         Config::default(),
@@ -10369,7 +10358,7 @@ fn speculationrules_requires_valid_json_and_object() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
         Config::default(),
@@ -10408,7 +10397,7 @@ fn speculationrules_requires_prefetch_or_prerender_and_disallows_unknown_props()
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
         Config::default(),
@@ -10444,7 +10433,7 @@ fn speculationrules_requires_prefetch_or_prerender_and_disallows_unknown_props()
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
         Config::default(),
@@ -10483,7 +10472,7 @@ fn speculationrules_prefetch_must_be_array_of_rules_with_valid_urls() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
         Config::default(),
@@ -10519,7 +10508,7 @@ fn speculationrules_prefetch_must_be_array_of_rules_with_valid_urls() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
         Config::default(),
@@ -10558,7 +10547,7 @@ fn speculationrules_document_rules_validate_where_predicates() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
         Config::default(),
@@ -10587,7 +10576,7 @@ fn html_attr_src_is_not_allowed_on_a() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AttributeNotAllowedConstraints::default()),
         Config::default(),
@@ -10616,7 +10605,7 @@ fn html_attr_xml_base_is_not_allowed_on_html() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AttributeNotAllowedConstraints::default()),
         Config::default(),
@@ -10645,7 +10634,7 @@ fn html_attr_prefix_value_is_validated() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AttributeNotAllowedConstraints::default()),
         Config::default(),
@@ -10666,7 +10655,7 @@ fn html_attr_prefix_value_is_validated() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AttributeNotAllowedConstraints::default()),
         Config::default(),
@@ -10695,7 +10684,7 @@ fn html_attr_xmlns_prefix_is_not_allowed() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(AttributeNotAllowedConstraints::default()),
         Config::default(),
@@ -10724,7 +10713,7 @@ fn q_cite_invalid_value_emits_message() {
             span: None,
         }],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(QCiteConstraints::default()),
         Config::default(),
@@ -10755,7 +10744,7 @@ fn ruby_requires_rt_and_rp_children() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(RubyConstraints::default()),
         Config::default(),
@@ -10793,7 +10782,7 @@ fn ruby_requires_rt_and_rp_children() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(RubyConstraints::default()),
         Config::default(),
@@ -10838,17 +10827,17 @@ fn ruby_rt_with_non_whitespace_content_satisfies_constraint() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(RubyConstraints::default()),
         Config::default(),
     )
     .unwrap();
     let mut report = report;
-    report.messages.push(html_inspector_core::Message::new(
+    report.messages.push(html_inspector::Message::new(
         "test.dummy",
-        html_inspector_core::Severity::Info,
-        html_inspector_core::Category::Html,
+        html_inspector::Severity::Info,
+        html_inspector::Category::Html,
         "x".to_string(),
         None,
     ));
@@ -10864,7 +10853,7 @@ fn ruby_rt_with_non_whitespace_content_satisfies_constraint() {
 fn img_sizes_requires_srcset_when_sizes_present() {
     let src = HtmlEventSource::from_str("t", InputFormat::Html, "<img sizes=\"100vw\">").unwrap();
     let rules = RuleSet::new().push(ImgSizesConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -10882,7 +10871,7 @@ fn img_sizes_auto_requires_lazy_loading() {
     )
     .unwrap();
     let rules = RuleSet::new().push(ImgSizesConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -10914,7 +10903,7 @@ fn img_sizes_source_size_list_validation_covers_edge_cases() {
         let html = format!("<img srcset=\"a 1x\" sizes=\"{sizes}\" loading=\"lazy\">");
         let src = HtmlEventSource::from_str("t", InputFormat::Html, &html).unwrap();
         let rules = RuleSet::new().push(ImgSizesConstraints::default());
-        let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+        let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
         let ok = !report
             .messages
             .iter()
@@ -10960,7 +10949,7 @@ fn table_constraints_reports_headers_missing_th() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(super::table_constraints::TableConstraints::default()),
         Config::default(),
@@ -11033,7 +11022,7 @@ fn table_constraints_detects_overlaps_missing_starts_and_rowgroup_span() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(super::table_constraints::TableConstraints::default()),
         Config::default(),
@@ -11134,7 +11123,7 @@ fn table_constraints_enforces_limits_and_col_markup_mismatch() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(super::table_constraints::TableConstraints::default()),
         Config::default(),
@@ -11174,7 +11163,7 @@ fn table_constraints_xhtml_disallows_col_direct_child_of_table() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(super::table_constraints::TableConstraints::default()),
         Config::default(),
@@ -11263,7 +11252,7 @@ fn table_constraints_reports_overlap_and_spans_past_row_group() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(super::table_constraints::TableConstraints::default()),
         Config::default(),
@@ -11309,7 +11298,7 @@ fn link_constraints_cover_common_attribute_interactions() {
 </html>
 "##;
     let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(LinkConstraints::default()),
         Config::default(),
@@ -11360,7 +11349,7 @@ fn svg_suite_constraints_cover_more_branches() {
 </svg>
 "#;
     let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(super::svg_suite_constraints::SvgSuiteConstraints::default()),
         Config::default(),
@@ -11401,7 +11390,7 @@ fn mathml_constraints_validate_math_attributes_and_missing_children() {
 </math>
 "#;
     let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(MathmlConstraints::default()),
         Config::default(),
@@ -11423,7 +11412,7 @@ fn mathml_constraints_validate_math_attributes_and_missing_children() {
 fn mathml_constraints_rejects_html_start_tags_in_math_namespace() {
     let src =
         HtmlEventSource::from_str("t", InputFormat::Html, "<math><div></div></math>").unwrap();
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(MathmlConstraints::default()),
         Config::default(),
@@ -11442,7 +11431,7 @@ fn mathml_constraints_reports_unknown_mathml_elements_in_math_namespace() {
     let src =
         HtmlEventSource::from_str("t", InputFormat::Html, "<math><munknown></munknown></math>")
             .unwrap();
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(MathmlConstraints::default()),
         Config::default(),
@@ -11464,7 +11453,7 @@ fn mathml_constraints_enforces_context_sensitive_suite_rules() {
         "<math><annotation></annotation><mprescripts></mprescripts><mtr></mtr><mtd></mtd></math>",
     )
     .unwrap();
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(MathmlConstraints::default()),
         Config::default(),
@@ -11486,7 +11475,7 @@ fn mathml_constraints_enforces_context_sensitive_suite_rules() {
 #[test]
 fn mathml_constraints_reports_mathml_elements_outside_math() {
     let src = HtmlEventSource::from_str("t", InputFormat::Html, "<mrow></mrow>").unwrap();
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(MathmlConstraints::default()),
         Config::default(),
@@ -11657,7 +11646,7 @@ fn obsolete_elements_reports_expected_messages() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(ObsoleteElements::default()),
         Config::default(),
@@ -11764,7 +11753,7 @@ fn script_constraints_cover_more_combinations() {
 
     for (html, code) in cases {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptConstraints::default()),
             Config::default(),
@@ -11856,7 +11845,7 @@ fn speculationrules_script_json_validation_exercises_more_paths() {
 
     for (html, code) in cases {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
             Config::default(),
@@ -11960,7 +11949,7 @@ fn script_constraints_cover_more_disallowed_attributes() {
 
     for (html, code) in cases {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptConstraints::default()),
             Config::default(),
@@ -12008,7 +11997,7 @@ fn speculationrules_script_json_validation_covers_more_rule_shapes() {
 
     for (html, code) in cases {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ScriptSpeculationrulesConstraints::default()),
             Config::default(),
@@ -12217,7 +12206,7 @@ fn meta_element_constraints_cover_common_document_level_rules() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(MetaElementConstraints::default()),
         Config::default(),
@@ -12322,7 +12311,7 @@ fn select_constraints_cover_required_placeholder_and_autocomplete() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(SelectConstraints::default()),
         Config::default(),
@@ -12378,7 +12367,7 @@ fn xhtml_xml_stylesheet_pseudo_attribute_syntax_errors_are_reported() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(XmlStylesheetProcessingInstruction::default()),
         Config::default(),
@@ -12528,7 +12517,7 @@ fn label_for_constraints_cover_descendant_and_association_checks() {
             },
         ],
     );
-    let report = html_inspector_core::validate_events(
+    let report = html_inspector::validate_events(
         src,
         RuleSet::new().push(LabelForConstraints::default()),
         Config::default(),
@@ -12602,7 +12591,7 @@ fn progress_constraints_cover_value_validation_paths() {
                 span: None,
             }],
         );
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(ProgressConstraints::default()),
             Config::default(),

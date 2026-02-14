@@ -1,4 +1,4 @@
-use html_inspector_core::{Category, Message, MessageSink, Severity, Span};
+use html_inspector::{Category, Message, MessageSink, Severity, Span};
 
 use super::state::TableState;
 
@@ -6,7 +6,7 @@ pub(super) fn validate_table(
     state: &TableState,
     out: &mut dyn MessageSink,
     table_span: Option<Span>,
-    format: html_inspector_core::InputFormat,
+    format: html_inspector::InputFormat,
 ) {
     let col_markup = state.has_col_markup.then_some(state.col_markup_count);
     let mut pending_warnings = Vec::new();
@@ -98,11 +98,11 @@ pub(super) fn validate_table(
                     Severity::Error,
                     Category::Html,
                     match format {
-                        html_inspector_core::InputFormat::Xhtml => format!(
+                        html_inspector::InputFormat::Xhtml => format!(
                             "Row {} of an implicit row group has no cells beginning on it.",
                             row_index + 1
                         ),
-                        html_inspector_core::InputFormat::Html => format!(
+                        html_inspector::InputFormat::Html => format!(
                             "Row {} of a row group established by a “tbody” element has no cells beginning on it.",
                             row_index + 1
                         ),

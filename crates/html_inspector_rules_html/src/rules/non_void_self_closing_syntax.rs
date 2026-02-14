@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -20,7 +20,7 @@ impl Rule for NonVoidSelfClosingSyntax {
         ctx: &mut ValidationContext,
         out: &mut dyn MessageSink,
     ) {
-        if ctx.format != html_inspector_core::InputFormat::Html {
+        if ctx.format != html_inspector::InputFormat::Html {
             return;
         }
         let ParseEvent::StartTag {
@@ -35,7 +35,7 @@ impl Rule for NonVoidSelfClosingSyntax {
         if !*self_closing {
             return;
         }
-        if html_inspector_core::is_void_html_element(name) {
+        if html_inspector::is_void_html_element(name) {
             return;
         }
 
@@ -53,19 +53,18 @@ impl Rule for NonVoidSelfClosingSyntax {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
     #[test]
     fn rule_ignores_non_start_tag_events() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
 
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
         let mut rule = NonVoidSelfClosingSyntax::default();
         rule.on_event(
@@ -77,12 +76,12 @@ mod tests {
             &mut sink,
         );
         assert!(sink.0.is_empty());
-        html_inspector_core::MessageSink::push(
+        html_inspector::MessageSink::push(
             &mut sink,
-            html_inspector_core::Message::new(
+            html_inspector::Message::new(
                 "test.dummy",
-                html_inspector_core::Severity::Info,
-                html_inspector_core::Category::Html,
+                html_inspector::Severity::Info,
+                html_inspector::Category::Html,
                 "x".to_string(),
                 None,
             ),
@@ -92,15 +91,14 @@ mod tests {
 
     #[test]
     fn emits_error_for_non_void_self_closing_syntax_but_not_for_void_elements() {
-        struct Sink(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Sink {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Sink(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Sink {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }
 
-        let mut ctx =
-            html_inspector_core::ValidationContext::new(Config::default(), InputFormat::Html);
+        let mut ctx = html_inspector::ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
         let mut rule = NonVoidSelfClosingSyntax::default();
 

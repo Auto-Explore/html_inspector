@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -12,7 +12,7 @@ struct DivGroupState {
     has_dt: bool,
     has_dd: bool,
     seen_dd: bool,
-    span: Option<html_inspector_core::Span>,
+    span: Option<html_inspector::Span>,
 }
 
 impl Rule for DlDivGroupConstraints {

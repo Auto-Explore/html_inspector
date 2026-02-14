@@ -6,7 +6,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core" }
+html_inspector = { path = "../html_inspector" }
 html_inspector_html = { path = "../html_inspector_html" }
 html_inspector_rules_aria = { path = "../html_inspector_rules_aria" }
 html_inspector_rules_css = { path = "../html_inspector_rules_css" }

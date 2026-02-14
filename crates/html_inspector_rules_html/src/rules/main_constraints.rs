@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -68,11 +68,11 @@ impl Rule for MainConstraints {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -87,7 +87,7 @@ mod tests {
             rule.on_event(
                 &ParseEvent::StartTag {
                     name: "main".to_string(),
-                    attrs: vec![html_inspector_core::Attribute {
+                    attrs: vec![html_inspector::Attribute {
                         name: "id".to_string(),
                         value: Some("x".to_string()),
                         span: None,
@@ -116,7 +116,7 @@ mod tests {
         rule.on_event(
             &ParseEvent::StartTag {
                 name: "MAIN".to_string(),
-                attrs: vec![html_inspector_core::Attribute {
+                attrs: vec![html_inspector::Attribute {
                     name: "HIDDEN".to_string(),
                     value: None,
                     span: None,
@@ -157,7 +157,7 @@ mod tests {
             rule.on_event(
                 &ParseEvent::StartTag {
                     name: "main".to_string(),
-                    attrs: vec![html_inspector_core::Attribute {
+                    attrs: vec![html_inspector::Attribute {
                         name: "HIDDEN".to_string(),
                         value: None,
                         span: None,

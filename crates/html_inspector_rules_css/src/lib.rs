@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Attribute, Category, Interest, Message, MessageSink, ParseEvent, Rule, RuleSet, Severity, Span,
     ValidationContext,
 };
@@ -282,7 +282,7 @@ impl Rule for StyleElementCssRule {
 
 #[cfg(test)]
 mod tests {
-    use html_inspector_core::{
+    use html_inspector::{
         Attribute, Category, Config, EventSource, InputFormat, Message, MessageOrder, MessageSink,
         ParseEvent, RuleSet, Span, validate_events,
     };
@@ -323,7 +323,7 @@ mod tests {
 
         fn next_event(
             &mut self,
-        ) -> Result<Option<ParseEvent>, html_inspector_core::ValidatorError> {
+        ) -> Result<Option<ParseEvent>, html_inspector::ValidatorError> {
             Ok(self.events.next())
         }
     }
@@ -333,8 +333,8 @@ mod tests {
             ignore_missing_lang: true,
             message_order: MessageOrder::Emit,
             also_check_css: true,
-            severity_profile: html_inspector_core::SeverityProfile::Risk,
-            min_severity: html_inspector_core::Severity::Info,
+            severity_profile: html_inspector::SeverityProfile::Risk,
+            min_severity: html_inspector::Severity::Info,
             base_uri: None,
             css_profile: None,
             css_medium: None,
@@ -451,7 +451,7 @@ mod tests {
         let report = validate_events(src, pack_css_checks(), default_test_config()).unwrap();
         assert!(report.messages.iter().any(|m| {
             m.code == "html.css.error"
-                && m.severity == html_inspector_core::Severity::Error
+                && m.severity == html_inspector::Severity::Error
                 && m.category == Category::Html
         }));
     }
@@ -941,9 +941,9 @@ mod tests {
 
     #[test]
     fn emit_css_errors_prefixes_message_and_filters_warnings() {
-        struct Collect(Vec<html_inspector_core::Message>);
-        impl html_inspector_core::MessageSink for Collect {
-            fn push(&mut self, msg: html_inspector_core::Message) {
+        struct Collect(Vec<html_inspector::Message>);
+        impl html_inspector::MessageSink for Collect {
+            fn push(&mut self, msg: html_inspector::Message) {
                 self.0.push(msg);
             }
         }

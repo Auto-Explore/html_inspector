@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 use std::sync::Arc;
 use std::sync::OnceLock;
 
-use html_inspector_core::{Attribute, EventSource, InputFormat, ParseEvent, Span, ValidatorError};
+use html_inspector::{Attribute, EventSource, InputFormat, ParseEvent, Span, ValidatorError};
 use rustc_hash::FxHashMap;
 
 #[cfg(feature = "html5ever")]
@@ -755,7 +755,7 @@ impl SimpleHtmlEventSource {
         let pushes = match self.format {
             InputFormat::Html => {
                 if ns == HtmlNamespace::Html {
-                    !html_inspector_core::is_void_html_element(&name)
+                    !html_inspector::is_void_html_element(&name)
                 } else {
                     !self_closing
                 }
@@ -2070,7 +2070,7 @@ mod entity_map_tests {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use html_inspector_core::EventSource;
+    use html_inspector::EventSource;
 
     fn collect(mut src: SimpleHtmlEventSource) -> Vec<ParseEvent> {
         let mut out = Vec::new();
@@ -2275,7 +2275,7 @@ mod tests {
         );
     }
 
-    fn as_start_tag(ev: &ParseEvent) -> Option<(&str, &[html_inspector_core::Attribute])> {
+    fn as_start_tag(ev: &ParseEvent) -> Option<(&str, &[html_inspector::Attribute])> {
         match ev {
             ParseEvent::StartTag { name, attrs, .. } => Some((name, attrs.as_slice())),
             _ => None,

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Attribute, Config, EventSource, InputFormat, ParseEvent, RuleSet, ValidatorError,
 };
 
@@ -54,7 +54,7 @@ fn xml_lang_requires_lang() {
         }],
     );
     let rules = RuleSet::new().push(XmlLangConsistency);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -79,7 +79,7 @@ fn xml_lang_consistency_is_not_checked_for_xhtml() {
         }],
     );
     let rules = RuleSet::new().push(XmlLangConsistency);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -113,7 +113,7 @@ fn xml_lang_consistency_is_not_checked_in_foreign_content() {
         ],
     );
     let rules = RuleSet::new().push(XmlLangConsistency);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -153,7 +153,7 @@ fn xml_lang_consistency_is_checked_inside_svg_foreignobject_children() {
         ],
     );
     let rules = RuleSet::new().push(XmlLangConsistency);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -185,7 +185,7 @@ fn xml_lang_mismatch_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(XmlLangConsistency);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -210,13 +210,13 @@ fn meta_charset_non_utf8_emits_warning_in_risk_profile() {
         }],
     );
     let rules = RuleSet::new().push(MetaCharsetUtf8::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
             .any(|m| m.code == "i18n.meta.charset.mismatch"
-                && m.severity == html_inspector_core::Severity::Warning)
+                && m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -248,7 +248,7 @@ fn meta_charset_multiple_emits_error_on_second() {
         ],
     );
     let rules = RuleSet::new().push(MetaCharsetUtf8::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -274,7 +274,7 @@ fn xhtml_meta_charset_is_case_sensitive_for_tag_and_attribute_names() {
         }],
     );
     let rules = RuleSet::new().push(MetaCharsetUtf8::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 
     // Attribute name is case-sensitive in XHTML: "CHARSET" should not match.
@@ -292,7 +292,7 @@ fn xhtml_meta_charset_is_case_sensitive_for_tag_and_attribute_names() {
         }],
     );
     let rules = RuleSet::new().push(MetaCharsetUtf8::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -312,12 +312,12 @@ fn lang_double_hyphen_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(LangConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
-            .any(|m| m.severity == html_inspector_core::Severity::Error)
+            .any(|m| m.severity == html_inspector::Severity::Error)
     );
 }
 
@@ -337,7 +337,7 @@ fn xhtml_lang_is_case_sensitive_on_html_element() {
         }],
     );
     let rules = RuleSet::new().push(LangConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -356,9 +356,9 @@ fn normalization_warning_emits_for_greek_extended_eta_with_oxia() {
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.severity == html_inspector_core::Severity::Warning
+        m.severity == html_inspector::Severity::Warning
             && m.message
                 == "Text run is not in Unicode Normalization Form C. Should instead be “ή”. (Copy and paste that into your source document to replace the un-normalized text.)"
     }));
@@ -374,9 +374,9 @@ fn normalization_warning_emits_for_vietnamese_decomposed_text() {
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.severity == html_inspector_core::Severity::Warning
+        m.severity == html_inspector::Severity::Warning
             && m.message
                 == "Text run is not in Unicode Normalization Form C. Should instead be “Tại sao họ không thể chỉ nói tiếng Việt ”. (Copy and paste that into your source document to replace the un-normalized text.)"
     }));
@@ -392,9 +392,9 @@ fn normalization_warning_suggests_normalized_prefix_excluding_last_non_composing
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.severity == html_inspector_core::Severity::Warning
+        m.severity == html_inspector::Severity::Warning
             && m.message
                 == "Text run is not in Unicode Normalization Form C. Should instead be “é”. (Copy and paste that into your source document to replace the un-normalized text.)"
     }));
@@ -410,9 +410,9 @@ fn normalization_warning_on_finish_includes_trailing_combining_sequence() {
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
-        m.severity == html_inspector_core::Severity::Warning
+        m.severity == html_inspector::Severity::Warning
             && m.message
                 == "Text run is not in Unicode Normalization Form C. Should instead be “á”. (Copy and paste that into your source document to replace the un-normalized text.)"
     }));
@@ -428,7 +428,7 @@ fn normalization_warns_when_text_run_starts_with_composing_character() {
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -459,7 +459,7 @@ fn normalization_warns_when_text_run_starts_with_nfc_qc_maybe_character() {
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -484,7 +484,7 @@ fn normalization_warns_for_non_nfc_attribute_values() {
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.message
             == "The value of attribute “data-x” on element “p” is not in Unicode Normalization Form C."
@@ -507,7 +507,7 @@ fn normalization_warns_for_attribute_values_that_start_with_composing_character(
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.message
             == "The value of attribute “data-x” on element “p” starts with a composing character."
@@ -525,7 +525,7 @@ fn normalization_warns_for_non_nfc_processing_instruction_data() {
         }],
     );
     let rules = RuleSet::new().push(UnicodeNormalizationNfcWarning::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.message == "Processing instruction data in not in Unicode Normalization Form C."
     }));
@@ -547,12 +547,12 @@ fn lang_deprecated_mo_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(LangConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
-            .any(|m| m.severity == html_inspector_core::Severity::Warning)
+            .any(|m| m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -564,10 +564,13 @@ fn missing_lang_emits_warning_when_not_ignored() {
         ..Default::default()
     };
     let rules = RuleSet::new().push(LangConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, cfg).unwrap();
+    let report = html_inspector::validate_events(src, rules, cfg).unwrap();
     assert!(
-        report.messages.iter().any(|m| m.code == "i18n.lang.missing"
-            && m.severity == html_inspector_core::Severity::Warning)
+        report
+            .messages
+            .iter()
+            .any(|m| m.code == "i18n.lang.missing"
+                && m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -587,12 +590,12 @@ fn lang_default_script_emits_warning() {
         }],
     );
     let rules = RuleSet::new().push(LangConstraints::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
             .iter()
-            .any(|m| m.severity == html_inspector_core::Severity::Warning)
+            .any(|m| m.severity == html_inspector::Severity::Warning)
     );
 }
 
@@ -619,7 +622,7 @@ fn http_equiv_charset_empty_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -651,7 +654,7 @@ fn http_equiv_charset_empty_with_trailing_params_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -683,7 +686,7 @@ fn http_equiv_charset_parsing_is_case_insensitive_for_charset_and_value() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -721,7 +724,7 @@ fn http_equiv_charset_strips_leading_quote_in_label() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -753,7 +756,7 @@ fn http_equiv_charset_ignores_parameters_after_semicolon() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -791,7 +794,7 @@ fn http_equiv_charset_unsupported_emits_error() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -824,7 +827,7 @@ fn xhtml_http_equiv_charset_is_case_sensitive_for_tag_and_attribute_names() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 
     // Attribute name is case-sensitive in XHTML: "HTTP-EQUIV" should not match.
@@ -849,7 +852,7 @@ fn xhtml_http_equiv_charset_is_case_sensitive_for_tag_and_attribute_names() {
         }],
     );
     let rules = RuleSet::new().push(MetaHttpEquivCharset);
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }
 
@@ -894,7 +897,7 @@ fn lang_detect_warns_for_zh_hant_when_lang_is_en() {
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -931,7 +934,7 @@ fn lang_detect_does_not_warn_for_zh_hant_when_lang_has_zh_hant_prefix_case_insen
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -981,7 +984,7 @@ fn lang_detect_warns_for_hebrew_dir_when_lang_he_dir_ltr() {
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1025,7 +1028,7 @@ fn lang_detect_prefers_lang_mismatch_over_dir_warning_for_hebrew() {
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1068,7 +1071,7 @@ fn lang_detect_does_not_warn_for_hebrew_when_lang_has_he_prefix_case_insensitive
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -1112,7 +1115,7 @@ fn lang_detect_warns_for_arabic_lang_mismatch() {
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages
@@ -1162,7 +1165,7 @@ fn lang_detect_warns_for_arabic_dir_when_lang_ar_dir_ltr() {
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -1205,7 +1208,7 @@ fn lang_detect_does_not_warn_for_arabic_when_lang_has_ar_prefix_case_insensitive
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -1249,7 +1252,7 @@ fn lang_detect_in_xhtml_does_not_treat_uppercase_html_tag_name_as_html() {
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         !report
             .messages
@@ -1293,7 +1296,7 @@ fn lang_detect_in_xhtml_warns_on_hebrew_lang_mismatch() {
         ],
     );
     let rules = RuleSet::new().push(LangDetectWarnings::default());
-    let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
     assert!(
         report
             .messages

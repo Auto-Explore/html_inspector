@@ -1,10 +1,10 @@
 use std::borrow::Cow;
 
-use html_inspector_core::{InputFormat, ValidationContext};
+use html_inspector::{InputFormat, ValidationContext};
 
 pub(crate) fn tag_name_for_message<'a>(ctx: &ValidationContext, name: &'a str) -> Cow<'a, str> {
     match ctx.format {
-        InputFormat::Html => html_inspector_core::ascii_lowercase_cow_if_needed(name),
+        InputFormat::Html => html_inspector::ascii_lowercase_cow_if_needed(name),
         InputFormat::Xhtml => Cow::Borrowed(name),
     }
 }
@@ -12,7 +12,7 @@ pub(crate) fn tag_name_for_message<'a>(ctx: &ValidationContext, name: &'a str) -
 #[cfg(test)]
 mod tests {
     use super::tag_name_for_message;
-    use html_inspector_core::{Config, InputFormat, ValidationContext};
+    use html_inspector::{Config, InputFormat, ValidationContext};
 
     #[test]
     fn tag_name_for_message_preserves_case_in_xhtml() {

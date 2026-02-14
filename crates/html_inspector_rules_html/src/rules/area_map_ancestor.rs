@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -24,8 +24,8 @@ impl Rule for AreaRequiresMapAncestor {
             return;
         };
         let is_area = match ctx.format {
-            html_inspector_core::InputFormat::Html => name.eq_ignore_ascii_case("area"),
-            html_inspector_core::InputFormat::Xhtml => name == "area",
+            html_inspector::InputFormat::Html => name.eq_ignore_ascii_case("area"),
+            html_inspector::InputFormat::Xhtml => name == "area",
         };
         if !is_area {
             return;

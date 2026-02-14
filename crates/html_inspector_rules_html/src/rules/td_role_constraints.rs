@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -76,13 +76,13 @@ impl Rule for TdRoleConstraints {
 #[cfg(test)]
 mod tests {
     use super::TdRoleConstraints;
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
-    fn run(format: InputFormat, html: &str) -> html_inspector_core::Report {
+    fn run(format: InputFormat, html: &str) -> html_inspector::Report {
         let src = HtmlEventSource::from_str("t", format, html).unwrap();
         let rules = RuleSet::new().push(TdRoleConstraints::default());
-        html_inspector_core::validate_events(src, rules, Config::default()).unwrap()
+        html_inspector::validate_events(src, rules, Config::default()).unwrap()
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -39,8 +39,8 @@ impl Rule for ImgSizesAutoRequiresLazyLoading {
 
         let loading = attr_value(ctx, attrs, "loading").unwrap_or("");
         let loading_is_lazy = match ctx.format {
-            html_inspector_core::InputFormat::Html => loading.eq_ignore_ascii_case("lazy"),
-            html_inspector_core::InputFormat::Xhtml => loading == "lazy",
+            html_inspector::InputFormat::Html => loading.eq_ignore_ascii_case("lazy"),
+            html_inspector::InputFormat::Xhtml => loading == "lazy",
         };
 
         if !loading_is_lazy {
@@ -69,21 +69,21 @@ fn starts_with_auto(s: &str) -> bool {
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs
         .iter()
         .find(|a| match ctx.format {
-            html_inspector_core::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
-            html_inspector_core::InputFormat::Xhtml => a.name == needle,
+            html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
+            html_inspector::InputFormat::Xhtml => a.name == needle,
         })
         .and_then(|a| a.value.as_deref())
 }

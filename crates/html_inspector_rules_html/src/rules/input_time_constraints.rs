@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -76,11 +76,11 @@ fn parse_time(v: &str) -> Option<()> {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat};
+    use html_inspector::{Config, InputFormat};
 
-    struct Sink(Vec<html_inspector_core::Message>);
-    impl html_inspector_core::MessageSink for Sink {
-        fn push(&mut self, msg: html_inspector_core::Message) {
+    struct Sink(Vec<html_inspector::Message>);
+    impl html_inspector::MessageSink for Sink {
+        fn push(&mut self, msg: html_inspector::Message) {
             self.0.push(msg);
         }
     }
@@ -112,12 +112,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "input".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "type".to_string(),
                         value: Some("time".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "min".to_string(),
                         value: Some("bad".to_string()),
                         span: None,
@@ -143,12 +143,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "input".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "TYPE".to_string(),
                         value: Some("time".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "MIN".to_string(),
                         value: Some("bad".to_string()),
                         span: None,
@@ -174,12 +174,12 @@ mod tests {
             &ParseEvent::StartTag {
                 name: "input".to_string(),
                 attrs: vec![
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "TYPE".to_string(),
                         value: Some("time".to_string()),
                         span: None,
                     },
-                    html_inspector_core::Attribute {
+                    html_inspector::Attribute {
                         name: "MIN".to_string(),
                         value: Some("bad".to_string()),
                         span: None,

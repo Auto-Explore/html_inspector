@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -85,7 +85,7 @@ impl Rule for SvgXmlnsConstraints {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use html_inspector_core::{Attribute, Config, InputFormat, Message, MessageSink};
+    use html_inspector::{Attribute, Config, InputFormat, Message, MessageSink};
 
     #[derive(Default)]
     struct Sink(Vec<Message>);

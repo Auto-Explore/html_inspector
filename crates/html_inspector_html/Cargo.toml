@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 homepage.workspace = true
+publish = false
 description = "HTML/XHTML parsing backends for html_inspector."
 keywords = ["html", "parser", "validator", "web"]
 categories = ["parser-implementations", "web-programming"]
@@ -18,7 +19,7 @@ simple = []
 html5ever = ["dep:html5ever", "dep:markup5ever", "dep:tendril"]
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
+html_inspector = { path = "../html_inspector", version = "0.1.0" }
 thiserror.workspace = true
 rustc-hash.workspace = true
 html5ever = { version = "0.38", optional = true }

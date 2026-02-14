@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -142,14 +142,14 @@ impl Rule for PictureContentModelConstraints {
 
 fn normalize_name(ctx: &ValidationContext, name: &str) -> String {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => name.to_ascii_lowercase(),
-        html_inspector_core::InputFormat::Xhtml => name.to_string(),
+        html_inspector::InputFormat::Html => name.to_ascii_lowercase(),
+        html_inspector::InputFormat::Xhtml => name.to_string(),
     }
 }
 
 fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     match ctx.format {
-        html_inspector_core::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
-        html_inspector_core::InputFormat::Xhtml => actual == expected,
+        html_inspector::InputFormat::Html => actual.eq_ignore_ascii_case(expected),
+        html_inspector::InputFormat::Xhtml => actual == expected,
     }
 }

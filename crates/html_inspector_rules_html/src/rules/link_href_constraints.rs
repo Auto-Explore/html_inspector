@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, ValidationContext,
 };
 
@@ -39,7 +39,7 @@ impl Rule for LinkHrefConstraints {
             // Covered by UrlConstraints too, but keep a dedicated code for link/href tests.
             out.push(Message::new(
                 "html.link.href.empty",
-                html_inspector_core::Severity::Error,
+                html_inspector::Severity::Error,
                 Category::Html,
                 "Bad value “” for attribute “href” on element “link”.",
                 *span,

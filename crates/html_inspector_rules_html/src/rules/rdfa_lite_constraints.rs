@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -31,7 +31,7 @@ impl Rule for RdfaLiteConstraints {
             return;
         };
 
-        if ctx.format != html_inspector_core::InputFormat::Html {
+        if ctx.format != html_inspector::InputFormat::Html {
             return;
         }
 
@@ -86,7 +86,7 @@ impl Rule for RdfaLiteConstraints {
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     #[test]
@@ -97,7 +97,7 @@ mod tests {
             "<div datatype=\"x\" about=\"y\" inlist=\"z\" rev=\"q\"></div>",
         )
         .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(RdfaLiteConstraints::default()),
             Config::default(),
@@ -117,7 +117,7 @@ mod tests {
     fn rdfa_lite_content_only_allowed_on_meta() {
         let src =
             HtmlEventSource::from_str("t", InputFormat::Html, "<div content=\"x\"></div>").unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(RdfaLiteConstraints::default()),
             Config::default(),
@@ -135,7 +135,7 @@ mod tests {
     fn rdfa_lite_rel_only_allowed_on_a_area_link() {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, "<span rel=\"next\"></span>")
             .unwrap();
-        let report = html_inspector_core::validate_events(
+        let report = html_inspector::validate_events(
             src,
             RuleSet::new().push(RdfaLiteConstraints::default()),
             Config::default(),

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -101,16 +101,16 @@ fn has_prefix(ctx: &ValidationContext, name: &str, prefix: &str) -> bool {
         return false;
     };
     match ctx.format {
-        html_inspector_core::InputFormat::Html => p.eq_ignore_ascii_case(prefix),
-        html_inspector_core::InputFormat::Xhtml => p == prefix,
+        html_inspector::InputFormat::Html => p.eq_ignore_ascii_case(prefix),
+        html_inspector::InputFormat::Xhtml => p == prefix,
     }
 }
 
 fn is_svg_element(ctx: &ValidationContext, name: &str) -> bool {
     if let Some((_, local)) = name.split_once(':') {
         match ctx.format {
-            html_inspector_core::InputFormat::Html => local.eq_ignore_ascii_case("svg"),
-            html_inspector_core::InputFormat::Xhtml => local == "svg",
+            html_inspector::InputFormat::Html => local.eq_ignore_ascii_case("svg"),
+            html_inspector::InputFormat::Xhtml => local == "svg",
         }
     } else {
         ctx.name_is(name, "svg")
@@ -119,7 +119,7 @@ fn is_svg_element(ctx: &ValidationContext, name: &str) -> bool {
 
 fn attr_value<'a>(
     ctx: &ValidationContext,
-    attrs: &'a [html_inspector_core::Attribute],
+    attrs: &'a [html_inspector::Attribute],
     needle: &str,
 ) -> Option<&'a str> {
     attrs
@@ -132,12 +132,12 @@ fn attr_value<'a>(
 mod tests {
     use super::*;
 
-    use html_inspector_core::{Config, InputFormat, RuleSet};
+    use html_inspector::{Config, InputFormat, RuleSet};
     use html_inspector_html::HtmlEventSource;
 
     fn codes(html: &str) -> Vec<String> {
         let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
-        html_inspector_core::validate_events(
+        html_inspector::validate_events(
             src,
             RuleSet::new().push(UncheckedSubtreeWarnings::default()),
             Config::default(),

@@ -1,4 +1,4 @@
-use html_inspector_core::{
+use html_inspector::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
 
@@ -44,7 +44,7 @@ impl Rule for DoctypeRequired {
     }
 
     fn on_finish(&mut self, ctx: &mut ValidationContext, out: &mut dyn MessageSink) {
-        if ctx.format == html_inspector_core::InputFormat::Html
+        if ctx.format == html_inspector::InputFormat::Html
             && !self.saw_doctype
             && !self.parser_reported_missing_doctype
         {
