@@ -11,5 +11,5 @@ keywords = ["css", "validator", "lint", "web"]
 categories = ["web-programming"]
 
 [dependencies]
-html_inspector = { path = "../html_inspector", version = "0.1.0" }
+html_inspector = { path = "../html_inspector", version = "0.2.0" }
 css_inspector.workspace = true

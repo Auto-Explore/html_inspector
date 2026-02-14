@@ -13,12 +13,12 @@ keywords = ["html", "validator", "lint", "web"]
 categories = ["command-line-utilities", "web-programming"]
 
 [dependencies]
-html_inspector = { path = "../html_inspector", version = "0.1.0" }
-html_inspector_html = { path = "../html_inspector_html", version = "0.1.0", features = ["html5ever"] }
-html_inspector_rules_html = { path = "../html_inspector_rules_html", version = "0.1.0" }
-html_inspector_rules_aria = { path = "../html_inspector_rules_aria", version = "0.1.0" }
-html_inspector_rules_i18n = { path = "../html_inspector_rules_i18n", version = "0.1.0" }
-html_inspector_rules_css = { path = "../html_inspector_rules_css", version = "0.1.0" }
+html_inspector = { path = "../html_inspector", version = "0.2.0" }
+html_inspector_html = { path = "../html_inspector_html", version = "0.2.0", features = ["html5ever"] }
+html_inspector_rules_html = { path = "../html_inspector_rules_html", version = "0.2.0" }
+html_inspector_rules_aria = { path = "../html_inspector_rules_aria", version = "0.2.0" }
+html_inspector_rules_i18n = { path = "../html_inspector_rules_i18n", version = "0.2.0" }
+html_inspector_rules_css = { path = "../html_inspector_rules_css", version = "0.2.0" }
 css_inspector.workspace = true
 serde.workspace = true
 serde_json.workspace = true

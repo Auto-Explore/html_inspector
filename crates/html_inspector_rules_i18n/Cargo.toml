@@ -11,5 +11,5 @@ keywords = ["html", "i18n", "validator", "lint"]
 categories = ["web-programming"]
 
 [dependencies]
-html_inspector = { path = "../html_inspector", version = "0.1.0" }
+html_inspector = { path = "../html_inspector", version = "0.2.0" }
 unicode-normalization = "0.1"
