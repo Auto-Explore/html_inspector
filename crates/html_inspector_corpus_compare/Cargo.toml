@@ -3,6 +3,7 @@ name = "html_inspector_corpus_compare"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+publish = false
 
 [dependencies]
 html_inspector_core = { path = "../html_inspector_core" }
@@ -14,4 +15,3 @@ html_inspector_rules_css = { path = "../html_inspector_rules_css" }
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
-

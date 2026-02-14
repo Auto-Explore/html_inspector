@@ -8,7 +8,8 @@ use html5ever::{parse_document, ParseOpts};
 use html_inspector_core::{Attribute, EventSource, InputFormat, ParseEvent, ValidatorError};
 use markup5ever::ns;
 use markup5ever::TokenizerResult;
-use markup5ever_rcdom::{Handle, NodeData, RcDom};
+
+use crate::html5ever_rcdom::{Handle, NodeData, RcDom};
 
 #[inline]
 fn normalize_double_xmlns_prefix(attr_name: &mut String) {

@@ -241,10 +241,7 @@ fn parse_duration(v: &str) -> Option<()> {
         if start == i {
             return None;
         }
-        let Some(unit) = bytes.get(i) else {
-            return None;
-        };
-        let unit = *unit as char;
+        let unit = *bytes.get(i)? as char;
         i += 1;
         match unit {
             'Y' | 'M' | 'W' | 'D' if !in_time => {}

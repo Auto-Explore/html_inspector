@@ -77,7 +77,7 @@ fn aria_checked_disallowed_on_checkbox() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaCheckedOnCheckbox::default());
+    let rules = RuleSet::new().push(AriaCheckedOnCheckbox);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_checked.disallowed_on_input_checkbox"
@@ -100,7 +100,7 @@ fn aria_hidden_true_on_body_emits_error() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaHiddenConstraints::default());
+    let rules = RuleSet::new().push(AriaHiddenConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.hidden.disallowed_on_body"
@@ -131,7 +131,7 @@ fn aria_hidden_true_conflicts_with_hidden_until_found_case_insensitively() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaHiddenConstraints::default());
+    let rules = RuleSet::new().push(AriaHiddenConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -161,7 +161,7 @@ fn aria_disabled_on_role_main_emits_warning() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaGlobalPropertiesOnMainWarning::default());
+    let rules = RuleSet::new().push(AriaGlobalPropertiesOnMainWarning);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.role.main.aria_disabled.discouraged"
@@ -194,7 +194,7 @@ fn aria_expanded_not_allowed_on_listbox_role_emits_error() {
         }],
     );
     let rules = RuleSet::new()
-        .push(super::aria_properties_supported_by_role::AriaPropertiesSupportedByRole::default());
+        .push(super::aria_properties_supported_by_role::AriaPropertiesSupportedByRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria-expanded.not_allowed"
@@ -282,7 +282,7 @@ fn aria_br_role_separator_is_disallowed() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaBrWbrConstraints::default());
+    let rules = RuleSet::new().push(AriaBrWbrConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     let msg = report
         .messages
@@ -311,7 +311,7 @@ fn aria_atomic_is_disallowed_on_wbr() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaBrWbrConstraints::default());
+    let rules = RuleSet::new().push(AriaBrWbrConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_atomic.disallowed_on_br_wbr"
@@ -346,7 +346,7 @@ fn aria_range_properties_on_input_number_with_native_min_max_emit_errors() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaPropertiesSupportedByRole::default());
+    let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -376,7 +376,7 @@ fn aria_properties_supported_by_role_progress_with_max_disallows_aria_valuemax()
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaPropertiesSupportedByRole::default());
+    let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -399,7 +399,7 @@ fn aria_properties_supported_by_role_meter_discourages_aria_valuemin() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaPropertiesSupportedByRole::default());
+    let rules = RuleSet::new().push(AriaPropertiesSupportedByRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_valuemin.meter.discouraged"
@@ -422,7 +422,7 @@ fn aria_select_role_button_is_invalid() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaSelectRoleConstraints::default());
+    let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -445,7 +445,7 @@ fn aria_select_role_button_is_invalid_case_insensitively() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaSelectRoleConstraints::default());
+    let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -468,7 +468,7 @@ fn aria_select_role_combobox_requires_aria_expanded() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaSelectRoleConstraints::default());
+    let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -491,7 +491,7 @@ fn aria_select_role_combobox_requires_aria_expanded_case_insensitively() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaSelectRoleConstraints::default());
+    let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -621,7 +621,7 @@ fn aria_select_role_listbox_requires_multiple_or_size_gt_one() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaSelectRoleConstraints::default());
+    let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -648,7 +648,7 @@ fn aria_select_role_listbox_requires_multiple_or_size_gt_one() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaSelectRoleConstraints::default());
+    let rules = RuleSet::new().push(AriaSelectRoleConstraints);
     let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
@@ -811,7 +811,7 @@ fn aria_haspopup_on_datalist_text_input_emits_warning() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaHaspopupOnDatalistInputWarning::default());
+    let rules = RuleSet::new().push(AriaHaspopupOnDatalistInputWarning);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.haspopup.datalist_input"
@@ -846,7 +846,7 @@ fn aria_haspopup_on_datalist_input_does_not_warn_for_non_text_types() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaHaspopupOnDatalistInputWarning::default());
+    let rules = RuleSet::new().push(AriaHaspopupOnDatalistInputWarning);
     let mut report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     report.messages.push(Message::new(
         "test.dummy",
@@ -885,7 +885,7 @@ fn aria_disabled_is_unnecessary_on_disabled_elements() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaDisabledUnnecessaryOnDisabledWarning::default()),
+        RuleSet::new().push(AriaDisabledUnnecessaryOnDisabledWarning),
         Config::default(),
     )
     .unwrap();
@@ -916,7 +916,7 @@ fn aria_disabled_is_unnecessary_on_disabled_elements() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaDisabledUnnecessaryOnDisabledWarning::default()),
+        RuleSet::new().push(AriaDisabledUnnecessaryOnDisabledWarning),
         Config::default(),
     )
     .unwrap();
@@ -951,7 +951,7 @@ fn aria_checked_allowed_role_rejects_elements_without_checked_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaCheckedAllowedRole::default()),
+        RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
     )
     .unwrap();
@@ -985,7 +985,7 @@ fn aria_checked_allowed_role_allows_role_checkbox() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaCheckedAllowedRole::default()),
+        RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
     )
     .unwrap();
@@ -1027,7 +1027,7 @@ fn aria_checked_allowed_role_allows_role_checkbox_case_insensitive() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaCheckedAllowedRole::default()),
+        RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
     )
     .unwrap();
@@ -1069,7 +1069,7 @@ fn aria_checked_allowed_role_skips_native_checkbox_inputs() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaCheckedAllowedRole::default()),
+        RuleSet::new().push(AriaCheckedAllowedRole),
         Config::default(),
     )
     .unwrap();
@@ -1104,7 +1104,7 @@ fn aria_naming_prohibited_by_computed_role_emits_errors() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1136,7 +1136,7 @@ fn aria_naming_prohibited_by_computed_role_emits_errors() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1172,7 +1172,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1204,7 +1204,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1247,7 +1247,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1272,7 +1272,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1300,7 +1300,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1329,7 +1329,7 @@ fn aria_naming_prohibited_by_role_covers_other_attributes_and_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -1353,7 +1353,7 @@ fn aria_readonly_requires_context_covers_xhtml_and_non_start_tag_branch() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaReadonlyRequiresContext::default()),
+        RuleSet::new().push(AriaReadonlyRequiresContext),
         Config::default(),
     )
     .unwrap();
@@ -1371,7 +1371,7 @@ fn aria_readonly_requires_context_covers_xhtml_and_non_start_tag_branch() {
 
     let mut ctx = ValidationContext::new(Config::default(), InputFormat::Html);
     let mut sink = Sink(Vec::new());
-    let mut rule = AriaReadonlyRequiresContext::default();
+    let mut rule = AriaReadonlyRequiresContext;
     rule.on_event(
         &ParseEvent::Text {
             text: "x".to_string(),
@@ -1408,7 +1408,7 @@ fn aria_hidden_disallowed_on_meta_and_conflicts_with_hidden_until_found() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaHiddenConstraints::default()),
+        RuleSet::new().push(AriaHiddenConstraints),
         Config::default(),
     )
     .unwrap();
@@ -1439,7 +1439,7 @@ fn aria_hidden_disallowed_on_meta_and_conflicts_with_hidden_until_found() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaHiddenConstraints::default()),
+        RuleSet::new().push(AriaHiddenConstraints),
         Config::default(),
     )
     .unwrap();
@@ -1586,7 +1586,7 @@ fn aria_placeholder_disallowed_with_placeholder() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaPlaceholderWithPlaceholder::default());
+    let rules = RuleSet::new().push(AriaPlaceholderWithPlaceholder);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_placeholder.disallowed_with_placeholder"
@@ -1609,7 +1609,7 @@ fn aria_readonly_requires_role_or_state() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaReadonlyRequiresContext::default());
+    let rules = RuleSet::new().push(AriaReadonlyRequiresContext);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -1632,7 +1632,7 @@ fn aria_selected_discouraged_on_option_emits_warning() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaSelectedOnOption::default());
+    let rules = RuleSet::new().push(AriaSelectedOnOption);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.iter().any(|m| {
         m.code == "aria.aria_selected.option.discouraged"
@@ -1655,7 +1655,7 @@ fn aria_pressed_on_output_without_role_emits_error() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaPressedRequiresRole::default());
+    let rules = RuleSet::new().push(AriaPressedRequiresRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -1678,7 +1678,7 @@ fn aria_pressed_on_summary_without_role_is_allowed() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaPressedRequiresRole::default());
+    let rules = RuleSet::new().push(AriaPressedRequiresRole);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(!report
         .messages
@@ -1701,7 +1701,7 @@ fn aria_dropeffect_emits_warning() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaDeprecatedAttributes::default());
+    let rules = RuleSet::new().push(AriaDeprecatedAttributes);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -1731,7 +1731,7 @@ fn aria_expanded_disallowed_with_command() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaExpandedWithCommand::default());
+    let rules = RuleSet::new().push(AriaExpandedWithCommand);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -1761,7 +1761,7 @@ fn aria_expanded_disallowed_with_popovertarget() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(AriaExpandedWithPopoverTarget::default());
+    let rules = RuleSet::new().push(AriaExpandedWithPopoverTarget);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -2244,7 +2244,7 @@ fn aria_properties_supported_by_role_emits_not_allowed_and_exercises_exceptions(
 
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaPropertiesSupportedByRole::default()),
+        RuleSet::new().push(AriaPropertiesSupportedByRole),
         Config::default(),
     )
     .unwrap();
@@ -2333,7 +2333,7 @@ fn aria_naming_prohibited_by_role_emits_for_implicit_and_explicit_prohibited_rol
 
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();
@@ -2424,7 +2424,7 @@ fn aria_naming_prohibited_by_role_covers_more_implicit_prohibited_roles() {
     );
     let report = html_inspector_core::validate_events(
         src,
-        RuleSet::new().push(AriaNamingProhibitedByRole::default()),
+        RuleSet::new().push(AriaNamingProhibitedByRole),
         Config::default(),
     )
     .unwrap();

@@ -12,10 +12,10 @@ mod util;
 
 fn parse_css_cli_options<I: Iterator<Item = String>>(
     args: &mut I,
-) -> Result<(bool, html_inspector_css::Config), Box<dyn std::error::Error>> {
+) -> Result<(bool, css_inspector::Config), Box<dyn std::error::Error>> {
     let mut allow_network = false;
     // Match vnu.jar defaults (Assertions.java): css3svg, medium=all, warningLevel=-1.
-    let mut config = html_inspector_css::Config {
+    let mut config = css_inspector::Config {
         profile: Some("css3svg".to_string()),
         medium: Some("all".to_string()),
         warning: Some("-1".to_string()),
@@ -34,18 +34,18 @@ fn parse_css_cli_options<I: Iterator<Item = String>>(
 
 fn validate_css_path_or_uri(
     path_or_uri: &str,
-    config: &html_inspector_css::Config,
+    config: &css_inspector::Config,
     allow_network: bool,
-) -> Result<html_inspector_css::Report, Box<dyn std::error::Error>> {
+) -> Result<css_inspector::Report, Box<dyn std::error::Error>> {
     let report = if path_or_uri.contains("://") {
-        let fetcher = html_inspector_css::StdFetcher {
+        let fetcher = css_inspector::StdFetcher {
             allow_network,
-            ..html_inspector_css::StdFetcher::default()
+            ..css_inspector::StdFetcher::default()
         };
-        html_inspector_css::validate_css_uri_with_fetcher(path_or_uri, config, &fetcher)?
+        css_inspector::validate_css_uri_with_fetcher(path_or_uri, config, &fetcher)?
     } else {
         let css = std::fs::read_to_string(path_or_uri)?;
-        html_inspector_css::validate_css_text(&css, config)?
+        css_inspector::validate_css_text(&css, config)?
     };
     Ok(report)
 }
@@ -94,17 +94,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 if matches!(min_severity, Severity::Error) {
                     report
                         .messages
-                        .retain(|m| matches!(m.severity, html_inspector_css::Severity::Error));
+                        .retain(|m| matches!(m.severity, css_inspector::Severity::Error));
                 }
                 report.errors = report
                     .messages
                     .iter()
-                    .filter(|m| matches!(m.severity, html_inspector_css::Severity::Error))
+                    .filter(|m| matches!(m.severity, css_inspector::Severity::Error))
                     .count();
                 report.warnings = report
                     .messages
                     .iter()
-                    .filter(|m| matches!(m.severity, html_inspector_css::Severity::Warning))
+                    .filter(|m| matches!(m.severity, css_inspector::Severity::Warning))
                     .count();
                 println!("{}", serde_json::to_string_pretty(&report)?);
                 Ok(())
@@ -207,17 +207,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if matches!(min_severity, Severity::Error) {
                 report
                     .messages
-                    .retain(|m| matches!(m.severity, html_inspector_css::Severity::Error));
+                    .retain(|m| matches!(m.severity, css_inspector::Severity::Error));
             }
             report.errors = report
                 .messages
                 .iter()
-                .filter(|m| matches!(m.severity, html_inspector_css::Severity::Error))
+                .filter(|m| matches!(m.severity, css_inspector::Severity::Error))
                 .count();
             report.warnings = report
                 .messages
                 .iter()
-                .filter(|m| matches!(m.severity, html_inspector_css::Severity::Warning))
+                .filter(|m| matches!(m.severity, css_inspector::Severity::Warning))
                 .count();
             println!("{}", serde_json::to_string_pretty(&report)?);
             Ok(())
@@ -338,7 +338,7 @@ mod tests {
         ));
         std::fs::write(&path, b"body { color: red }").unwrap();
 
-        let cfg = html_inspector_css::Config::default();
+        let cfg = css_inspector::Config::default();
         let report =
             validate_css_path_or_uri(path.to_string_lossy().as_ref(), &cfg, false).unwrap();
         let _ = std::fs::remove_file(&path);

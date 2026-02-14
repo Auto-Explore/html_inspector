@@ -53,7 +53,7 @@ fn xml_lang_requires_lang() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(XmlLangConsistency::default());
+    let rules = RuleSet::new().push(XmlLangConsistency);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -76,7 +76,7 @@ fn xml_lang_consistency_is_not_checked_for_xhtml() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(XmlLangConsistency::default());
+    let rules = RuleSet::new().push(XmlLangConsistency);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(!report
         .messages
@@ -108,7 +108,7 @@ fn xml_lang_consistency_is_not_checked_in_foreign_content() {
             },
         ],
     );
-    let rules = RuleSet::new().push(XmlLangConsistency::default());
+    let rules = RuleSet::new().push(XmlLangConsistency);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(!report
         .messages
@@ -146,7 +146,7 @@ fn xml_lang_consistency_is_checked_inside_svg_foreignobject_children() {
             },
         ],
     );
-    let rules = RuleSet::new().push(XmlLangConsistency::default());
+    let rules = RuleSet::new().push(XmlLangConsistency);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -176,7 +176,7 @@ fn xml_lang_mismatch_emits_error() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(XmlLangConsistency::default());
+    let rules = RuleSet::new().push(XmlLangConsistency);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -369,7 +369,7 @@ fn normalization_warning_suggests_normalized_prefix_excluding_last_non_composing
     let src = VecSource::new(
         InputFormat::Html,
         vec![ParseEvent::Text {
-            text: format!("e\u{301}x"),
+            text: "e\u{301}x".to_string(),
             span: None,
         }],
     );
@@ -387,7 +387,7 @@ fn normalization_warning_on_finish_includes_trailing_combining_sequence() {
     let src = VecSource::new(
         InputFormat::Html,
         vec![ParseEvent::Text {
-            text: format!("a\u{301}"),
+            text: "a\u{301}".to_string(),
             span: None,
         }],
     );
@@ -405,7 +405,7 @@ fn normalization_warns_when_text_run_starts_with_composing_character() {
     let src = VecSource::new(
         InputFormat::Html,
         vec![ParseEvent::Text {
-            text: format!("\u{0301}a"),
+            text: "\u{0301}a".to_string(),
             span: None,
         }],
     );
@@ -498,7 +498,7 @@ fn normalization_warns_for_non_nfc_processing_instruction_data() {
         InputFormat::Html,
         vec![ParseEvent::ProcessingInstruction {
             target: "xml-stylesheet".to_string(),
-            data: format!("e\u{301}"),
+            data: "e\u{301}".to_string(),
             span: None,
         }],
     );
@@ -535,8 +535,10 @@ fn lang_deprecated_mo_emits_warning() {
 #[test]
 fn missing_lang_emits_warning_when_not_ignored() {
     let src = VecSource::new(InputFormat::Html, vec![]);
-    let mut cfg = Config::default();
-    cfg.ignore_missing_lang = false;
+    let cfg = Config {
+        ignore_missing_lang: false,
+        ..Default::default()
+    };
     let rules = RuleSet::new().push(LangConstraints::default());
     let report = html_inspector_core::validate_events(src, rules, cfg).unwrap();
     assert!(report
@@ -591,7 +593,7 @@ fn http_equiv_charset_empty_emits_error() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -621,7 +623,7 @@ fn http_equiv_charset_empty_with_trailing_params_emits_error() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -651,7 +653,7 @@ fn http_equiv_charset_parsing_is_case_insensitive_for_charset_and_value() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(!report
         .messages
@@ -685,7 +687,7 @@ fn http_equiv_charset_strips_leading_quote_in_label() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(!report
         .messages
@@ -715,7 +717,7 @@ fn http_equiv_charset_ignores_parameters_after_semicolon() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(!report
         .messages
@@ -749,7 +751,7 @@ fn http_equiv_charset_unsupported_emits_error() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report
         .messages
@@ -780,7 +782,7 @@ fn xhtml_http_equiv_charset_is_case_sensitive_for_tag_and_attribute_names() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 
@@ -805,7 +807,7 @@ fn xhtml_http_equiv_charset_is_case_sensitive_for_tag_and_attribute_names() {
             span: None,
         }],
     );
-    let rules = RuleSet::new().push(MetaHttpEquivCharset::default());
+    let rules = RuleSet::new().push(MetaHttpEquivCharset);
     let report = html_inspector_core::validate_events(src, rules, Config::default()).unwrap();
     assert!(report.messages.is_empty());
 }

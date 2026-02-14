@@ -10,8 +10,8 @@ fn attr_value_ci<'a>(attrs: &'a [Attribute], name: &str) -> Option<&'a str> {
     })
 }
 
-fn css_config_from_ctx(ctx: &ValidationContext) -> html_inspector_css::Config {
-    html_inspector_css::Config {
+fn css_config_from_ctx(ctx: &ValidationContext) -> css_inspector::Config {
+    css_inspector::Config {
         // Match vnu.jar defaults (Assertions.java): css3svg, medium=all, warningLevel=-1.
         profile: ctx
             .config
@@ -46,12 +46,12 @@ fn line_col_at_byte(s: &str, byte: usize) -> (u32, u32) {
 }
 
 fn emit_css_errors(
-    report: &html_inspector_css::Report,
+    report: &css_inspector::Report,
     span: Option<Span>,
     out: &mut dyn MessageSink,
 ) {
     for m in &report.messages {
-        if m.severity != html_inspector_css::Severity::Error {
+        if m.severity != css_inspector::Severity::Error {
             continue;
         }
         out.push(Message::new(
@@ -65,14 +65,14 @@ fn emit_css_errors(
 }
 
 fn emit_css_errors_in_style_text(
-    report: &html_inspector_css::Report,
+    report: &css_inspector::Report,
     style_span: Option<Span>,
     text_span: Option<Span>,
     css: &str,
     out: &mut dyn MessageSink,
 ) {
     for m in &report.messages {
-        if m.severity != html_inspector_css::Severity::Error {
+        if m.severity != css_inspector::Severity::Error {
             continue;
         }
 
@@ -144,14 +144,14 @@ fn find_substring_ascii_ci(haystack: &str, needle: &str) -> Option<usize> {
         })
 }
 
-fn report_from_err(e: html_inspector_css::ValidatorError) -> html_inspector_css::Report {
-    html_inspector_css::Report {
+fn report_from_err(e: css_inspector::ValidatorError) -> css_inspector::Report {
+    css_inspector::Report {
         errors: 1,
-        messages: vec![html_inspector_css::Message {
-            severity: html_inspector_css::Severity::Error,
+        messages: vec![css_inspector::Message {
+            severity: css_inspector::Severity::Error,
             message: e.to_string(),
         }],
-        ..html_inspector_css::Report::default()
+        ..css_inspector::Report::default()
     }
 }
 
@@ -163,7 +163,7 @@ pub fn pack_css_checks() -> RuleSet {
 
 #[derive(Default)]
 struct StyleAttributeCssRule {
-    css_config: Option<html_inspector_css::Config>,
+    css_config: Option<css_inspector::Config>,
 }
 
 impl Rule for StyleAttributeCssRule {
@@ -203,7 +203,7 @@ impl Rule for StyleAttributeCssRule {
             .get_or_insert_with(|| css_config_from_ctx(ctx));
 
         // A style attribute is a declaration list, not a full stylesheet.
-        let report = html_inspector_css::validate_css_declarations_text(style_contents, css_config)
+        let report = css_inspector::validate_css_declarations_text(style_contents, css_config)
             .unwrap_or_else(report_from_err);
         emit_css_errors(&report, *span, out);
     }
@@ -215,7 +215,7 @@ struct StyleElementCssRule {
     buf: String,
     style_span: Option<Span>,
     text_span: Option<Span>,
-    css_config: Option<html_inspector_css::Config>,
+    css_config: Option<css_inspector::Config>,
 }
 
 impl Rule for StyleElementCssRule {
@@ -274,7 +274,7 @@ impl Rule for StyleElementCssRule {
                 // Keep inline stylesheet validation self-contained (do not attempt network
                 // fetching for @import), matching the service behavior and avoiding
                 // spurious errors when network is disabled.
-                let report = html_inspector_css::validate_css_text(css, css_config)
+                let report = css_inspector::validate_css_text(css, css_config)
                     .unwrap_or_else(report_from_err);
 
                 emit_css_errors_in_style_text(&report, self.style_span, self.text_span, css, out);
@@ -403,29 +403,29 @@ mod tests {
 
     #[test]
     fn starts_with_ascii_ci_is_case_insensitive_and_safe_on_short_inputs() {
-        assert!(html_inspector_css::starts_with_ascii_ci(
+        assert!(css_inspector::starts_with_ascii_ci(
             "FILE://x", "file://"
         ));
-        assert!(html_inspector_css::starts_with_ascii_ci(
+        assert!(css_inspector::starts_with_ascii_ci(
             "file://x", "FILE://"
         ));
-        assert!(!html_inspector_css::starts_with_ascii_ci("fi", "file://"));
-        assert!(html_inspector_css::starts_with_ascii_ci("", ""));
-        assert!(html_inspector_css::starts_with_ascii_ci("❤H", "❤h"));
+        assert!(!css_inspector::starts_with_ascii_ci("fi", "file://"));
+        assert!(css_inspector::starts_with_ascii_ci("", ""));
+        assert!(css_inspector::starts_with_ascii_ci("❤H", "❤h"));
     }
 
     #[test]
     fn emit_css_errors_emits_only_errors() {
-        let report = html_inspector_css::Report {
+        let report = css_inspector::Report {
             errors: 1,
             warnings: 1,
             messages: vec![
-                html_inspector_css::Message {
-                    severity: html_inspector_css::Severity::Warning,
+                css_inspector::Message {
+                    severity: css_inspector::Severity::Warning,
                     message: "w".to_string(),
                 },
-                html_inspector_css::Message {
-                    severity: html_inspector_css::Severity::Error,
+                css_inspector::Message {
+                    severity: css_inspector::Severity::Error,
                     message: "e".to_string(),
                 },
             ],
@@ -935,16 +935,16 @@ mod tests {
 
     #[test]
     fn starts_with_ascii_ci_compares_bytes_case_insensitively() {
-        assert!(html_inspector_css::starts_with_ascii_ci(
+        assert!(css_inspector::starts_with_ascii_ci(
             "FILE:///tmp/a.css",
             "file://"
         ));
-        assert!(!html_inspector_css::starts_with_ascii_ci(
+        assert!(!css_inspector::starts_with_ascii_ci(
             "ftp://example.com/a.css",
             "file://"
         ));
-        assert!(!html_inspector_css::starts_with_ascii_ci("", "file://"));
-        assert!(!html_inspector_css::starts_with_ascii_ci("❤", "h"));
+        assert!(!css_inspector::starts_with_ascii_ci("", "file://"));
+        assert!(!css_inspector::starts_with_ascii_ci("❤", "h"));
     }
 
     #[test]
@@ -956,16 +956,16 @@ mod tests {
             }
         }
 
-        let report = html_inspector_css::Report {
+        let report = css_inspector::Report {
             errors: 1,
             warnings: 1,
             messages: vec![
-                html_inspector_css::Message {
-                    severity: html_inspector_css::Severity::Warning,
+                css_inspector::Message {
+                    severity: css_inspector::Severity::Warning,
                     message: "w".to_string(),
                 },
-                html_inspector_css::Message {
-                    severity: html_inspector_css::Severity::Error,
+                css_inspector::Message {
+                    severity: css_inspector::Severity::Error,
                     message: "bad".to_string(),
                 },
             ],

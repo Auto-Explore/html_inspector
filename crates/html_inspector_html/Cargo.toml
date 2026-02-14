@@ -3,17 +3,23 @@ name = "html_inspector_html"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "HTML/XHTML parsing backends for html_inspector."
+keywords = ["html", "parser", "validator", "web"]
+categories = ["parser-implementations", "web-programming"]
 
 [features]
 # Default to the lightweight built-in scanner.
 default = ["simple"]
 simple = []
 # Production-grade HTML5 parsing backend (tokenizer + tree builder).
-html5ever = ["dep:html5ever", "dep:markup5ever", "dep:markup5ever_rcdom"]
+html5ever = ["dep:html5ever", "dep:markup5ever", "dep:tendril"]
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core" }
+html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
 thiserror.workspace = true
 html5ever = { version = "0.38", optional = true }
 markup5ever = { version = "0.38", optional = true }
-markup5ever_rcdom = { version = "0.36", optional = true }
+tendril = { version = "0.5", optional = true }

@@ -2,9 +2,21 @@
 
 Rust HTML validator focused on runtime risk (DOM correctness + interaction stability), not strict spec conformance.
 
+MSRV: Rust 1.93 (Edition 2021).
+
 - VNU test suite inputs: `tests/`
 - VNU manifest (fixtures metadata): `tests/manifest.jsonl` (regenerate with `python3 scripts/generate_vnu_manifest.py`)
-- CSS validation backend (external for now): `css_inspector` (via workspace dependency; will be published later)
+- CSS validation backend: `css_inspector` (crates.io dependency)
+
+## Install
+
+From crates.io:
+
+`cargo install html_inspector_cli`
+
+From a git checkout:
+
+`cargo install --path crates/html_inspector_cli`
 
 ## Project goal
 

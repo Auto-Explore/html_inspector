@@ -8,8 +8,6 @@ Most commands are intended to be run from the repo root.
 
 ## Requirements
 
-- Rust toolchain (`cargo`)
-- Java 11+ (only needed for Java parity/compare workflows)
 - Python 3 (only needed for updating datasets/resources)
 
 ## Commands

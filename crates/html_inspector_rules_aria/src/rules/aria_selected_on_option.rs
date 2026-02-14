@@ -61,7 +61,7 @@ mod tests {
 
     #[test]
     fn rule_ignores_non_start_tag_events() {
-        let mut rule = AriaSelectedOnOption::default();
+        let mut rule = AriaSelectedOnOption;
         let mut ctx = ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
 
@@ -79,7 +79,7 @@ mod tests {
 
     #[test]
     fn xhtml_option_with_aria_selected_emits_warning() {
-        let mut rule = AriaSelectedOnOption::default();
+        let mut rule = AriaSelectedOnOption;
         let mut ctx = ValidationContext::new(Config::default(), InputFormat::Xhtml);
         let mut sink = Sink(Vec::new());
 

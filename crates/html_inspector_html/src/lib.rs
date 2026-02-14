@@ -6,6 +6,8 @@ use std::sync::OnceLock;
 use html_inspector_core::{Attribute, EventSource, InputFormat, ParseEvent, Span, ValidatorError};
 
 #[cfg(feature = "html5ever")]
+mod html5ever_rcdom;
+#[cfg(feature = "html5ever")]
 mod html5ever_source;
 mod named_entities;
 #[cfg(feature = "html5ever")]

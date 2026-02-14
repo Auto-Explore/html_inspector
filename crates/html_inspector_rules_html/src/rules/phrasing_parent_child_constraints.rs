@@ -35,9 +35,7 @@ impl Rule for PhrasingParentChildConstraints {
             return;
         };
 
-        let disallowed = if ctx.name_is(parent, "label") {
-            ctx.name_is(name, "div")
-        } else if ctx.name_is(parent, "button") {
+        let disallowed = if ctx.name_is(parent, "label") || ctx.name_is(parent, "button") {
             ctx.name_is(name, "div")
         } else if ctx.name_is(parent, "span") {
             ctx.name_is(name, "div") || ctx.name_is(name, "form") || ctx.name_is(name, "section")

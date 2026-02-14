@@ -408,17 +408,16 @@ mod tests {
         let report = validate(
             r#"<meta http-equiv="content-security-policy" content="script-src 'unsafe-hashes'">"#,
         );
-        assert!(!report.messages.iter().any(|m| m.code == "html.meta.csp.invalid"));
+        assert!(!report
+            .messages
+            .iter()
+            .any(|m| m.code == "html.meta.csp.invalid"));
     }
 }
 
 fn is_valid_csp_keyword_or_nonce_or_hash(token: &str) -> bool {
     match token {
-        "'self'"
-        | "'none'"
-        | "'unsafe-inline'"
-        | "'unsafe-eval'"
-        | "'unsafe-hashes'"
+        "'self'" | "'none'" | "'unsafe-inline'" | "'unsafe-eval'" | "'unsafe-hashes'"
         | "'strict-dynamic'" => return true,
         _ => {}
     }

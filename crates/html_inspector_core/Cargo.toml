@@ -3,6 +3,13 @@ name = "html_inspector_core"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Core data types and configuration for html_inspector."
+readme = "README.md"
+keywords = ["html", "validator", "lint", "web"]
+categories = ["web-programming"]
 
 [dependencies]
 serde.workspace = true

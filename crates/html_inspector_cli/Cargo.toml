@@ -3,15 +3,22 @@ name = "html_inspector_cli"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Rust HTML validator CLI focused on runtime risk (DOM correctness + interaction stability)."
+readme = "README.md"
+keywords = ["html", "validator", "lint", "web"]
+categories = ["command-line-utilities", "web-programming"]
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core" }
-html_inspector_html = { path = "../html_inspector_html", features = ["html5ever"] }
-html_inspector_rules_html = { path = "../html_inspector_rules_html" }
-html_inspector_rules_aria = { path = "../html_inspector_rules_aria" }
-html_inspector_rules_i18n = { path = "../html_inspector_rules_i18n" }
-html_inspector_rules_css = { path = "../html_inspector_rules_css" }
-html_inspector_css = { path = "../html_inspector_css" }
+html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
+html_inspector_html = { path = "../html_inspector_html", version = "0.1.0", features = ["html5ever"] }
+html_inspector_rules_html = { path = "../html_inspector_rules_html", version = "0.1.0" }
+html_inspector_rules_aria = { path = "../html_inspector_rules_aria", version = "0.1.0" }
+html_inspector_rules_i18n = { path = "../html_inspector_rules_i18n", version = "0.1.0" }
+html_inspector_rules_css = { path = "../html_inspector_rules_css", version = "0.1.0" }
+css_inspector.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 base64.workspace = true

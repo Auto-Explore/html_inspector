@@ -3,7 +3,13 @@ name = "html_inspector_rules_css"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "CSS rule pack for html_inspector."
+keywords = ["css", "validator", "lint", "web"]
+categories = ["web-programming"]
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core" }
-html_inspector_css = { path = "../html_inspector_css" }
+html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
+css_inspector.workspace = true

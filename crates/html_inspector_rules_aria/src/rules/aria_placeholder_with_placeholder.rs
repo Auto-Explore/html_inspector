@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn rule_ignores_non_start_tag_events() {
-        let mut rule = AriaPlaceholderWithPlaceholder::default();
+        let mut rule = AriaPlaceholderWithPlaceholder;
         let mut ctx = ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink(Vec::new());
 
@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn xhtml_placeholder_conflict_emits_error() {
-        let mut rule = AriaPlaceholderWithPlaceholder::default();
+        let mut rule = AriaPlaceholderWithPlaceholder;
         let mut ctx = ValidationContext::new(Config::default(), InputFormat::Xhtml);
         let mut sink = Sink(Vec::new());
 

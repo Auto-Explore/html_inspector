@@ -513,7 +513,7 @@ fn parse_query(query: &str) -> impl Iterator<Item = (String, String)> + '_ {
 }
 
 fn percent_decode(s: &str) -> Result<String, ()> {
-    html_inspector_css::url_decode_plus(s).map_err(|_| ())
+    css_inspector::url_decode_plus(s).map_err(|_| ())
 }
 
 fn detect_input_format_and_name(params: &Params, content_type: &str) -> (InputFormat, String) {
@@ -730,7 +730,8 @@ fn handle_ui_compare(
         .java_base_url
         .as_deref()
         .map(str::trim)
-        .filter(|s| !s.is_empty()).map(|base| call_java_validator(base, &ui));
+        .filter(|s| !s.is_empty())
+        .map(|base| call_java_validator(base, &ui));
 
     let diff = diff_reports(
         &rust_resp.report,
@@ -748,13 +749,14 @@ fn validate_with_params(
     ui: &UiRequest,
     default_min_severity: Severity,
 ) -> Result<(Report, String), String> {
-    let mut params = Params::default();
-    params.out = Some("json".to_string());
-    params.level = ui.level.clone();
-    params.parser = ui.parser.clone();
-    params.doc = ui.doc.clone();
-    params.also_check_css = ui.also_check_css;
-    params.csp_header = ui.csp_header.clone().filter(|s| !s.trim().is_empty());
+    let params = Params {
+        out: Some("json".to_string()),
+        level: ui.level.clone(),
+        parser: ui.parser.clone(),
+        doc: ui.doc.clone(),
+        also_check_css: ui.also_check_css,
+        csp_header: ui.csp_header.clone().filter(|s| !s.trim().is_empty()),
+    };
 
     let content_type = ui.document_content_type.as_deref().unwrap_or("");
     let (format, doc_name) = detect_input_format_and_name(&params, content_type);
@@ -1535,10 +1537,11 @@ mod tests {
 
     #[test]
     fn detect_input_format_and_name_prefers_parser_and_content_type_over_doc_name() {
-        let mut p = Params::default();
-        p.doc = Some("INDEX.HTML".to_string());
-
-        p.parser = Some("xml".to_string());
+        let mut p = Params {
+            doc: Some("INDEX.HTML".to_string()),
+            parser: Some("xml".to_string()),
+            ..Default::default()
+        };
         let (format, name) = detect_input_format_and_name(&p, "");
         assert_eq!(format, InputFormat::Xhtml);
         assert_eq!(name, "INDEX.HTML");

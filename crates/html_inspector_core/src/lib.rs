@@ -39,8 +39,7 @@ impl Span {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-#[derive(Default)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Default)]
 pub enum Severity {
     Error,
     Warning,
@@ -48,8 +47,7 @@ pub enum Severity {
     Info,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[derive(Default)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub enum SeverityProfile {
     /// Use severities exactly as emitted by rule packs.
     Conformance,
@@ -57,8 +55,6 @@ pub enum SeverityProfile {
     #[default]
     Risk,
 }
-
-
 
 impl Severity {
     fn rank(self) -> u8 {
@@ -1285,7 +1281,7 @@ mod tests {
         let mut m4 = Message::new("d", Severity::Error, Category::Internal, "m4", None);
         m4.order = 3;
 
-        let mut msgs = vec![m1, m2, m3, m4];
+        let mut msgs = [m1, m2, m3, m4];
         msgs.sort_unstable_by(compare_messages);
 
         let codes: Vec<&str> = msgs.iter().map(|m| m.code.as_str()).collect();
@@ -1312,7 +1308,7 @@ mod tests {
         );
         late.order = 1;
 
-        let mut msgs = vec![late, early];
+        let mut msgs = [late, early];
         msgs.sort_unstable_by(compare_messages);
         let orders: Vec<u64> = msgs.iter().map(|m| m.order).collect();
         assert_eq!(orders, vec![0, 1]);
@@ -1338,7 +1334,7 @@ mod tests {
         );
         a.order = 0;
 
-        let mut msgs = vec![b, a];
+        let mut msgs = [b, a];
         msgs.sort_unstable_by(compare_messages);
         let codes: Vec<&str> = msgs.iter().map(|m| m.code.as_str()).collect();
         assert_eq!(codes, vec!["a", "b"]);
@@ -1355,7 +1351,7 @@ mod tests {
         let mut i0 = Message::new("i0", Severity::Info, Category::Internal, "i0", None);
         i0.order = 3;
 
-        let mut msgs = vec![w0, e1, i0, e0];
+        let mut msgs = [w0, e1, i0, e0];
         msgs.sort_unstable_by(compare_messages_vnu);
 
         let codes: Vec<&str> = msgs.iter().map(|m| m.code.as_str()).collect();
@@ -1369,7 +1365,7 @@ mod tests {
         let mut late = Message::new("same", Severity::Warning, Category::Internal, "late", None);
         late.order = 1;
 
-        let mut msgs = vec![late, early];
+        let mut msgs = [late, early];
         msgs.sort_unstable_by(compare_messages_vnu);
         let orders: Vec<u64> = msgs.iter().map(|m| m.order).collect();
         assert_eq!(orders, vec![0, 1]);
@@ -1382,7 +1378,7 @@ mod tests {
         let mut a = Message::new("a", Severity::Warning, Category::Internal, "a", None);
         a.order = 0;
 
-        let mut msgs = vec![b, a];
+        let mut msgs = [b, a];
         msgs.sort_unstable_by(compare_messages_vnu);
         let codes: Vec<&str> = msgs.iter().map(|m| m.code.as_str()).collect();
         assert_eq!(codes, vec!["a", "b"]);
@@ -2935,7 +2931,7 @@ mod tests {
         let mut m_nospan = Message::new("nospan", Severity::Error, Category::Internal, "n", None);
         m_nospan.order = 0;
 
-        let mut messages = vec![
+        let mut messages = [
             m_span5_warn_b,
             m_nospan,
             m_span1_info,
@@ -3847,7 +3843,7 @@ mod tests {
 
         let report = validate_events(
             VecSource::new(InputFormat::Html, events),
-            RuleSet::new().push(EmitOnFinish::default()),
+            RuleSet::new().push(EmitOnFinish),
             Config::default(),
         )?;
 

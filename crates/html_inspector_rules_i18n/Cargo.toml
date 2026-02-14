@@ -3,7 +3,13 @@ name = "html_inspector_rules_i18n"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Internationalization rule pack for html_inspector."
+keywords = ["html", "i18n", "validator", "lint"]
+categories = ["web-programming"]
 
 [dependencies]
-html_inspector_core = { path = "../html_inspector_core" }
+html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
 unicode-normalization = "0.1"

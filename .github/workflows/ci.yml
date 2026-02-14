@@ -1,0 +1,28 @@
+name: HTML Inspector CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: ["1.93.0", "stable"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: cargo build
+      - name: Run tests
+        run: cargo test
