@@ -6,7 +6,6 @@ license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 homepage.workspace = true
-publish = false
 description = "ARIA/a11y rule pack for html_inspector."
 keywords = ["html", "aria", "a11y", "validator"]
 categories = ["web-programming"]

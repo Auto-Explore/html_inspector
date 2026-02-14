@@ -6,7 +6,6 @@ license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 homepage.workspace = true
-publish = false
 description = "HTML rule pack for html_inspector."
 keywords = ["html", "validator", "lint", "web"]
 categories = ["web-programming"]
