@@ -6,7 +6,6 @@ license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 homepage.workspace = true
-publish = false
 description = "HTML/XHTML parsing backends for html_inspector."
 keywords = ["html", "parser", "validator", "web"]
 categories = ["parser-implementations", "web-programming"]
