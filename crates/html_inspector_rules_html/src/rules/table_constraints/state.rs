@@ -1,6 +1,5 @@
-use std::collections::HashSet;
-
 use html_inspector_core::Span;
+use rustc_hash::FxHashSet;
 
 #[derive(Default)]
 pub(super) struct TableState {
@@ -11,7 +10,7 @@ pub(super) struct TableState {
     pub(super) current_group_index: Option<usize>,
     pub(super) groups: Vec<RowGroup>,
     pub(super) current_row: Option<RowState>,
-    pub(super) th_ids: HashSet<String>,
+    pub(super) th_ids: FxHashSet<String>,
     pub(super) headers_checks: Vec<(Vec<String>, Option<Span>)>,
 }
 

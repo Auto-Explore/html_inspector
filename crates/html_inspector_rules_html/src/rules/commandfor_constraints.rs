@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
@@ -6,7 +6,7 @@ use html_inspector_core::{
 
 #[derive(Default)]
 pub struct CommandforConstraints {
-    ids: HashSet<String>,
+    ids: FxHashSet<String>,
     refs: Vec<(String, Option<html_inspector_core::Span>)>,
 }
 

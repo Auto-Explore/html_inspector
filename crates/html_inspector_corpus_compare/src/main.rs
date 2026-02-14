@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -8,13 +7,14 @@ use html_inspector_rules_aria::pack_aria;
 use html_inspector_rules_css::pack_css_checks;
 use html_inspector_rules_html::pack_html_conformance;
 use html_inspector_rules_i18n::pack_i18n;
+use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 type CompareCounts = (
-    HashMap<String, Counts>,
-    HashMap<(String, String), u64>,
-    HashMap<(String, String), u64>,
+    FxHashMap<String, Counts>,
+    FxHashMap<(String, String), u64>,
+    FxHashMap<(String, String), u64>,
 );
 
 #[derive(Debug, Error)]
@@ -107,14 +107,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let corpus = collect_html_files(&root, limit)?;
     eprintln!("corpus: root={} files={}", root.display(), corpus.len());
 
-    let (vnu_counts, vnu_freq_html, vnu_freq_css) = run_vnu_jar_on_dir(&vnu_jar, &root)?;
+    let (vnu_counts, vnu_freq_html, vnu_freq_css) =
+        run_vnu_jar_on_dir(&vnu_jar, &root, corpus.len())?;
     eprintln!("vnu.jar: files-with-messages={}", vnu_counts.len());
 
     let (rust_counts, rust_freq_html, rust_freq_css) = run_rust_on_files(&corpus)?;
     eprintln!("rust: files-validated={}", rust_counts.len());
 
-    let mut mismatches_full = Vec::new();
-    let mut mismatches_html_only = Vec::new();
+    let mut mismatches_full = Vec::with_capacity(corpus.len());
+    let mut mismatches_html_only = Vec::with_capacity(corpus.len());
 
     let mut totals_vnu_full = Counts::default();
     let mut totals_rust_full = Counts::default();
@@ -197,7 +198,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn collect_html_files(root: &Path, limit: Option<usize>) -> Result<Vec<PathBuf>, CompareError> {
-    let mut out = Vec::new();
+    let mut out = limit.map_or_else(Vec::new, Vec::with_capacity);
     let mut stack = vec![root.to_path_buf()];
     while let Some(dir) = stack.pop() {
         for entry in std::fs::read_dir(&dir)? {
@@ -230,7 +231,11 @@ fn collect_html_files(root: &Path, limit: Option<usize>) -> Result<Vec<PathBuf>,
     Ok(out)
 }
 
-fn run_vnu_jar_on_dir(jar: &Path, root: &Path) -> Result<CompareCounts, CompareError> {
+fn run_vnu_jar_on_dir(
+    jar: &Path,
+    root: &Path,
+    estimated_files: usize,
+) -> Result<CompareCounts, CompareError> {
     let out = Command::new("java")
         .arg("-jar")
         .arg(jar)
@@ -251,9 +256,10 @@ fn run_vnu_jar_on_dir(jar: &Path, root: &Path) -> Result<CompareCounts, CompareE
         ))
     })?;
 
-    let mut map: HashMap<String, Counts> = HashMap::new();
-    let mut freq_html: HashMap<(String, String), u64> = HashMap::new();
-    let mut freq_css: HashMap<(String, String), u64> = HashMap::new();
+    let mut map: FxHashMap<String, Counts> =
+        FxHashMap::with_capacity_and_hasher(estimated_files, Default::default());
+    let mut freq_html: FxHashMap<(String, String), u64> = FxHashMap::default();
+    let mut freq_css: FxHashMap<(String, String), u64> = FxHashMap::default();
     for m in parsed.messages {
         let Some(url) = m.url.as_deref() else {
             continue;
@@ -327,9 +333,10 @@ fn url_to_path(url: &str) -> Option<PathBuf> {
 }
 
 fn run_rust_on_files(files: &[PathBuf]) -> Result<CompareCounts, CompareError> {
-    let mut out: HashMap<String, Counts> = HashMap::new();
-    let mut freq_html: HashMap<(String, String), u64> = HashMap::new();
-    let mut freq_css: HashMap<(String, String), u64> = HashMap::new();
+    let mut out: FxHashMap<String, Counts> =
+        FxHashMap::with_capacity_and_hasher(files.len(), Default::default());
+    let mut freq_html: FxHashMap<(String, String), u64> = FxHashMap::default();
+    let mut freq_css: FxHashMap<(String, String), u64> = FxHashMap::default();
     for p in files {
         let bytes = std::fs::read(p)?;
         let ext = p
@@ -407,7 +414,7 @@ fn repo_root() -> PathBuf {
         .to_path_buf()
 }
 
-fn top_messages(freq: &HashMap<(String, String), u64>, limit: usize) -> Vec<TopMessage> {
+fn top_messages(freq: &FxHashMap<(String, String), u64>, limit: usize) -> Vec<TopMessage> {
     let mut v: Vec<TopMessage> = freq
         .iter()
         .map(|((sev, msg), count)| TopMessage {

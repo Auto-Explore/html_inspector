@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::env;
 use std::fs;
 use std::io::Write;
@@ -14,6 +13,7 @@ use html_inspector_rules_aria::pack_aria;
 use html_inspector_rules_css::pack_css_checks;
 use html_inspector_rules_html::pack_html_conformance;
 use html_inspector_rules_i18n::pack_i18n;
+use rustc_hash::FxHashSet;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use thiserror::Error;
@@ -333,10 +333,11 @@ pub fn write_wpt_html_results_tree(
     }
 
     // Track existing result files so we can remove stale ones after writing.
-    let mut existing_results_files: HashSet<PathBuf> = HashSet::new();
+    let mut existing_results_files: FxHashSet<PathBuf> = FxHashSet::default();
     if results_root.is_dir() {
         let mut md_files: Vec<PathBuf> = Vec::new();
         collect_markdown_files_rec(results_root, &mut md_files)?;
+        existing_results_files.reserve(md_files.len());
         existing_results_files.extend(md_files);
     }
     let meta_path = wpt_html_results_meta_path(results_root);
@@ -344,11 +345,13 @@ pub fn write_wpt_html_results_tree(
     let mut files: Vec<(String, PathBuf)> = Vec::new();
     collect_wpt_html_files(wpt_root, &mut files)?;
     files.sort_by(|a, b| a.0.cmp(&b.0));
+    let files_len = files.len();
 
     let mut totals = WptHtmlResultsTotals::default();
     let mut summary = WptHtmlWriteSummary::default();
 
-    let mut written_results_files: HashSet<PathBuf> = HashSet::new();
+    let mut written_results_files: FxHashSet<PathBuf> =
+        FxHashSet::with_capacity_and_hasher(files_len, Default::default());
 
     for (rel, path) in files {
         let bytes = fs::read(&path)?;
@@ -435,15 +438,17 @@ pub fn check_wpt_html_results_tree(
     let mut files: Vec<(String, PathBuf)> = Vec::new();
     collect_wpt_html_files(wpt_root, &mut files)?;
     files.sort_by(|a, b| a.0.cmp(&b.0));
+    let files_len = files.len();
 
     let max_failures = options
         .max_failures
         .filter(|&n| n != 0)
         .unwrap_or(usize::MAX);
 
-    let mut expected_results: HashSet<PathBuf> = HashSet::new();
+    let mut expected_results: FxHashSet<PathBuf> =
+        FxHashSet::with_capacity_and_hasher(files_len, Default::default());
     let mut summary = WptHtmlCheckSummary::default();
-    let mut failures: Vec<WptHtmlFailure> = Vec::new();
+    let mut failures: Vec<WptHtmlFailure> = Vec::with_capacity(files_len.min(max_failures));
 
     for (rel, path) in files {
         if failures.len() >= max_failures {

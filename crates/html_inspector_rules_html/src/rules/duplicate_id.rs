@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
@@ -6,7 +6,7 @@ use html_inspector_core::{
 
 #[derive(Default)]
 pub struct DuplicateId {
-    first: HashMap<String, Option<html_inspector_core::Span>>,
+    first: FxHashMap<String, Option<html_inspector_core::Span>>,
 }
 
 impl Rule for DuplicateId {

@@ -1,12 +1,12 @@
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Default)]
 pub struct AriaRoleHierarchyConstraints {
     role_stack: Vec<RoleEntry>,
-    owned_by_roles: HashMap<String, Vec<String>>,
+    owned_by_roles: FxHashMap<String, Vec<String>>,
     implicit_list_stack: Vec<String>,
 }
 

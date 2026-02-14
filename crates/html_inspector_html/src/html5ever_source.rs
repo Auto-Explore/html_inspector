@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 use std::sync::Arc;
 
 use html5ever::tendril::StrTendril;
@@ -8,6 +8,7 @@ use html5ever::{parse_document, ParseOpts};
 use html_inspector_core::{Attribute, EventSource, InputFormat, ParseEvent, ValidatorError};
 use markup5ever::ns;
 use markup5ever::TokenizerResult;
+use rustc_hash::FxHashMap;
 
 use crate::html5ever_rcdom::{Handle, NodeData, RcDom};
 
@@ -109,8 +110,8 @@ pub struct Html5EverEventSource {
     root: Option<Handle>,
     walk_stack: Vec<WalkFrame>,
     staged: Option<StagedEvent>,
-    start_tag_spans: HashMap<String, VecDeque<html_inspector_core::Span>>,
-    end_tag_spans: HashMap<String, VecDeque<html_inspector_core::Span>>,
+    start_tag_spans: FxHashMap<String, VecDeque<html_inspector_core::Span>>,
+    end_tag_spans: FxHashMap<String, VecDeque<html_inspector_core::Span>>,
     syntax_errors: VecDeque<ParseEvent>,
 }
 
@@ -126,8 +127,8 @@ impl Html5EverEventSource {
             root: None,
             walk_stack: Vec::new(),
             staged: None,
-            start_tag_spans: HashMap::new(),
-            end_tag_spans: HashMap::new(),
+            start_tag_spans: FxHashMap::default(),
+            end_tag_spans: FxHashMap::default(),
             syntax_errors: VecDeque::new(),
         }
     }
@@ -187,7 +188,7 @@ impl Html5EverEventSource {
     }
 
     fn pop_span_for_tag(
-        spans: &mut HashMap<String, VecDeque<html_inspector_core::Span>>,
+        spans: &mut FxHashMap<String, VecDeque<html_inspector_core::Span>>,
         tag: &str,
     ) -> Option<html_inspector_core::Span> {
         if let Some(span) = spans.get_mut(tag).and_then(VecDeque::pop_front) {
@@ -202,7 +203,7 @@ impl Html5EverEventSource {
 
     #[inline]
     fn push_span_for_tag(
-        spans: &mut HashMap<String, VecDeque<html_inspector_core::Span>>,
+        spans: &mut FxHashMap<String, VecDeque<html_inspector_core::Span>>,
         tag: &str,
         span: html_inspector_core::Span,
     ) {
@@ -1225,7 +1226,7 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_falls_back_to_ascii_lowercase() {
-        let mut spans = HashMap::new();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> = FxHashMap::default();
         spans.insert(
             "foreignobject".to_string(),
             VecDeque::from([html_inspector_core::Span::new(1, 2, 1, 1)]),
@@ -1238,7 +1239,7 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_falls_back_to_ascii_lowercase_with_utf8_prefix() {
-        let mut spans = HashMap::new();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> = FxHashMap::default();
         spans.insert(
             "🦀a".to_string(),
             VecDeque::from([html_inspector_core::Span::new(1, 2, 1, 1)]),
@@ -1250,7 +1251,7 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_prefers_exact_key_then_falls_back_to_ascii_lowercase() {
-        let mut spans: HashMap<String, VecDeque<html_inspector_core::Span>> = HashMap::new();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> = FxHashMap::default();
         Html5EverEventSource::push_span_for_tag(
             &mut spans,
             "DIV",
@@ -1272,7 +1273,7 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_falls_back_when_exact_queue_is_empty() {
-        let mut spans: HashMap<String, VecDeque<html_inspector_core::Span>> = HashMap::new();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> = FxHashMap::default();
         spans.insert("DIV".to_string(), VecDeque::new());
         spans.insert(
             "div".to_string(),
@@ -1285,7 +1286,7 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_does_not_fallback_when_tag_is_already_lowercase() {
-        let mut spans = HashMap::new();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> = FxHashMap::default();
         spans.insert(
             "DIV".to_string(),
             VecDeque::from([html_inspector_core::Span::new(1, 2, 1, 1)]),
@@ -1296,7 +1297,7 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_returns_none_when_exact_queue_empty_and_no_fallback_key() {
-        let mut spans: HashMap<String, VecDeque<html_inspector_core::Span>> = HashMap::new();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> = FxHashMap::default();
         spans.insert("DIV".to_string(), VecDeque::new());
         assert!(Html5EverEventSource::pop_span_for_tag(&mut spans, "DIV").is_none());
         assert!(spans.contains_key("DIV"));
@@ -1773,9 +1774,8 @@ mod tests {
 
     #[test]
     fn pop_span_for_tag_falls_back_to_lowercase_when_needed() {
-        let mut spans: HashMap<String, std::collections::VecDeque<html_inspector_core::Span>> =
-            HashMap::new();
-        let mut q = std::collections::VecDeque::new();
+        let mut spans: FxHashMap<String, VecDeque<html_inspector_core::Span>> = FxHashMap::default();
+        let mut q = VecDeque::new();
         q.push_back(html_inspector_core::Span::new(1, 2, 3, 4));
         spans.insert("div".to_string(), q);
 

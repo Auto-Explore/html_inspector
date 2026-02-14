@@ -1,17 +1,18 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::VecDeque;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
 };
+use rustc_hash::{FxHashMap, FxHashSet};
 
 use super::foreign_content::{namespace_for_next_start_tag, Namespace};
 
 #[derive(Default)]
 pub struct MicrodataItemrefConstraints {
     nodes: Vec<Node>,
-    id_to_node: HashMap<String, usize>,
+    id_to_node: FxHashMap<String, usize>,
     items: Vec<usize>,
-    properties: HashSet<usize>,
+    properties: FxHashSet<usize>,
     open_relevant: Vec<OpenFrame>,
 }
 
@@ -130,7 +131,7 @@ impl Rule for MicrodataItemrefConstraints {
     }
 
     fn on_finish(&mut self, _ctx: &mut ValidationContext, out: &mut dyn MessageSink) {
-        let mut parents = Vec::new();
+        let mut parents = Vec::with_capacity(self.items.len());
         let items = self.items.clone();
         for item in items {
             self.check_item(item, &mut parents, out);
@@ -154,8 +155,11 @@ impl Rule for MicrodataItemrefConstraints {
 
 impl MicrodataItemrefConstraints {
     fn check_item(&mut self, root: usize, parents: &mut Vec<usize>, out: &mut dyn MessageSink) {
-        let mut pending: VecDeque<usize> = VecDeque::new();
-        let mut memory: HashSet<usize> = HashSet::new();
+        let initial_capacity = self.nodes.get(root).map_or(0, |node| {
+            node.children.len() + node.item_ref.as_ref().map_or(0, |v| v.len())
+        });
+        let mut pending: VecDeque<usize> = VecDeque::with_capacity(initial_capacity);
+        let mut memory: FxHashSet<usize> = FxHashSet::default();
         memory.insert(root);
 
         if let Some(node) = self.nodes.get(root) {

@@ -43,7 +43,6 @@
 
 use std::borrow::Cow;
 use std::cell::{Cell, RefCell};
-use std::collections::HashSet;
 use std::fmt;
 use std::mem;
 use std::rc::{Rc, Weak};
@@ -55,6 +54,7 @@ use markup5ever::ns;
 use markup5ever::Attribute;
 use markup5ever::ExpandedName;
 use markup5ever::QualName;
+use rustc_hash::FxHashSet;
 
 /// The different kinds of nodes in the DOM.
 #[derive(Debug)]
@@ -383,10 +383,9 @@ impl TreeSink for RcDom {
             panic!("not an element")
         };
 
-        let existing_names = existing
-            .iter()
-            .map(|e| e.name.clone())
-            .collect::<HashSet<_>>();
+        let mut existing_names =
+            FxHashSet::with_capacity_and_hasher(existing.len(), Default::default());
+        existing_names.extend(existing.iter().map(|e| e.name.clone()));
         existing.extend(
             new_attrs
                 .into_iter()

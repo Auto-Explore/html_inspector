@@ -20,6 +20,7 @@ html5ever = ["dep:html5ever", "dep:markup5ever", "dep:tendril"]
 [dependencies]
 html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
 thiserror.workspace = true
+rustc-hash.workspace = true
 html5ever = { version = "0.38", optional = true }
 markup5ever = { version = "0.38", optional = true }
 tendril = { version = "0.5", optional = true }

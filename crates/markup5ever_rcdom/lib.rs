@@ -41,13 +41,14 @@ extern crate tendril;
 
 use std::borrow::Cow;
 use std::cell::{Cell, RefCell};
-use std::collections::{HashSet, VecDeque};
+use std::collections::VecDeque;
 use std::default::Default;
 use std::fmt;
 use std::io;
 use std::mem;
 use std::rc::{Rc, Weak};
 
+use rustc_hash::FxHashSet;
 use tendril::StrTendril;
 
 use markup5ever::interface::tree_builder;
@@ -385,10 +386,9 @@ impl TreeSink for RcDom {
             panic!("not an element")
         };
 
-        let existing_names = existing
-            .iter()
-            .map(|e| e.name.clone())
-            .collect::<HashSet<_>>();
+        let mut existing_names =
+            FxHashSet::with_capacity_and_hasher(existing.len(), Default::default());
+        existing_names.extend(existing.iter().map(|e| e.name.clone()));
         existing.extend(
             attrs
                 .into_iter()

@@ -12,3 +12,4 @@ categories = ["web-programming"]
 
 [dependencies]
 html_inspector_core = { path = "../html_inspector_core", version = "0.1.0" }
+rustc-hash.workspace = true

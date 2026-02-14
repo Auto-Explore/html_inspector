@@ -15,3 +15,4 @@ html_inspector_rules_css = { path = "../html_inspector_rules_css" }
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
+rustc-hash.workspace = true

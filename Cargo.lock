@@ -50,10 +50,11 @@ dependencies = [
 
 [[package]]
 name = "css_inspector"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0a3ad482dfffed4c0b5e90fea3e53c71a2c763f66d9b0dac6560bf529a170ec"
+checksum = "a26a5ec7bd16f40c7bb20a4d681e39e23e14eb5bcba9b3fecd24bc749c8459de"
 dependencies = [
+ "rustc-hash",
  "serde",
  "thiserror",
 ]
@@ -126,6 +127,7 @@ dependencies = [
  "html_inspector_rules_css",
  "html_inspector_rules_html",
  "html_inspector_rules_i18n",
+ "rustc-hash",
  "serde",
  "serde_json",
 ]
@@ -148,6 +150,7 @@ dependencies = [
  "html_inspector_rules_css",
  "html_inspector_rules_html",
  "html_inspector_rules_i18n",
+ "rustc-hash",
  "serde",
  "serde_json",
  "thiserror",
@@ -160,6 +163,7 @@ dependencies = [
  "html5ever",
  "html_inspector_core",
  "markup5ever",
+ "rustc-hash",
  "tendril",
  "thiserror",
 ]
@@ -188,6 +192,7 @@ name = "html_inspector_rules_aria"
 version = "0.1.0"
 dependencies = [
  "html_inspector_core",
+ "rustc-hash",
 ]
 
 [[package]]
@@ -205,6 +210,7 @@ dependencies = [
  "base64",
  "html_inspector_core",
  "html_inspector_html",
+ "rustc-hash",
  "serde_json",
  "sha2",
  "url",
@@ -228,6 +234,7 @@ dependencies = [
  "html_inspector_rules_css",
  "html_inspector_rules_html",
  "html_inspector_rules_i18n",
+ "rustc-hash",
  "serde",
  "serde_json",
  "thiserror",
@@ -500,6 +507,12 @@ checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
 dependencies = [
  "bitflags",
 ]
+
+[[package]]
+name = "rustc-hash"
+version = "2.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "357703d41365b4b27c590e3ed91eabb1b663f07c4c084095e60cbed4362dff0d"
 
 [[package]]
 name = "scopeguard"

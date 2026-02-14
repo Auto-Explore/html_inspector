@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use base64::Engine;
 use html_inspector_core::ValidationContext;
+use rustc_hash::FxHashMap;
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use url::Url;
 
@@ -25,7 +24,7 @@ pub(crate) enum CspExternalKind {
 
 #[derive(Clone, Debug, Default)]
 pub(crate) struct CspPolicy {
-    pub(crate) directives: HashMap<String, Vec<String>>,
+    pub(crate) directives: FxHashMap<String, Vec<String>>,
 }
 
 impl CspPolicy {
@@ -109,9 +108,13 @@ impl CspPolicy {
 }
 
 pub(crate) fn parse_csp_policies(content: &str) -> Vec<CspPolicy> {
-    let mut out = Vec::new();
+    let mut out =
+        Vec::with_capacity(1 + content.as_bytes().iter().filter(|&&b| b == b',').count());
     for policy in content.split(',').map(str::trim).filter(|p| !p.is_empty()) {
-        let mut directives = HashMap::new();
+        let directive_capacity =
+            1 + policy.as_bytes().iter().filter(|&&b| b == b';').count();
+        let mut directives: FxHashMap<String, Vec<String>> =
+            FxHashMap::with_capacity_and_hasher(directive_capacity, Default::default());
         for directive in policy.split(';').map(str::trim).filter(|d| !d.is_empty()) {
             let mut parts = directive.split_ascii_whitespace();
             let Some(name) = parts.next() else { continue };
@@ -194,11 +197,9 @@ pub(crate) fn external_url_allowed_by_sources(
         return true;
     }
 
-    let sources = sources
-        .iter()
-        .map(|s| s.trim())
-        .filter(|s| !s.is_empty())
-        .collect::<Vec<_>>();
+    let mut sources_trimmed = Vec::with_capacity(sources.len());
+    sources_trimmed.extend(sources.iter().map(|s| s.trim()).filter(|s| !s.is_empty()));
+    let sources = sources_trimmed;
 
     if sources.iter().any(|t| t.eq_ignore_ascii_case("*")) {
         return true;

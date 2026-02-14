@@ -1,9 +1,10 @@
 use std::borrow::Cow;
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 use std::sync::Arc;
 use std::sync::OnceLock;
 
 use html_inspector_core::{Attribute, EventSource, InputFormat, ParseEvent, Span, ValidatorError};
+use rustc_hash::FxHashMap;
 
 #[cfg(feature = "html5ever")]
 mod html5ever_rcdom;
@@ -2033,10 +2034,13 @@ fn find_subslice(haystack: &[u8], from: usize, needle: &[u8]) -> Option<usize> {
         .map(|off| from + off)
 }
 
-fn html_named_entity_map() -> &'static HashMap<&'static str, &'static str> {
-    static MAP: OnceLock<HashMap<&'static str, &'static str>> = OnceLock::new();
+fn html_named_entity_map() -> &'static FxHashMap<&'static str, &'static str> {
+    static MAP: OnceLock<FxHashMap<&'static str, &'static str>> = OnceLock::new();
     MAP.get_or_init(|| {
-        let mut map = HashMap::with_capacity(named_entities::HTML_NAMED_ENTITIES.len());
+        let mut map = FxHashMap::with_capacity_and_hasher(
+            named_entities::HTML_NAMED_ENTITIES.len(),
+            Default::default(),
+        );
         map.extend(named_entities::HTML_NAMED_ENTITIES.iter().copied());
         map
     })

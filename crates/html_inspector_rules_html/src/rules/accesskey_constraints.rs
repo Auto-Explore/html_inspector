@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
@@ -39,7 +39,7 @@ impl Rule for AccesskeyConstraints {
 
         let Some(raw) = raw else { return };
 
-        let mut seen = HashSet::<&str>::new();
+        let mut seen: FxHashSet<&str> = FxHashSet::default();
         let mut dup = false;
         let mut bad_len = false;
         for token in raw.split_ascii_whitespace() {

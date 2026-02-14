@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
@@ -6,7 +6,7 @@ use html_inspector_core::{
 
 #[derive(Default)]
 pub struct FormAttributeConstraints {
-    form_ids: HashSet<String>,
+    form_ids: FxHashSet<String>,
     form_refs: Vec<(String, Option<html_inspector_core::Span>)>,
 }
 

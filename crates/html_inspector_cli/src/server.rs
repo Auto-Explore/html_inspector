@@ -1,9 +1,9 @@
-use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{IpAddr, SocketAddr, TcpListener, TcpStream};
 use std::thread;
 
 use base64::Engine as _;
+use rustc_hash::FxHashMap;
 
 use html_inspector_core::{Config, InputFormat, MessageOrder, Report, Severity};
 use html_inspector_html::HtmlEventSource;
@@ -80,8 +80,8 @@ struct NormalizedMessage {
 
 #[derive(Default, serde::Serialize)]
 struct DiffSummary {
-    rust_counts: HashMap<String, usize>,
-    java_counts: HashMap<String, usize>,
+    rust_counts: FxHashMap<String, usize>,
+    java_counts: FxHashMap<String, usize>,
     only_in_rust: Vec<NormalizedMessage>,
     only_in_java: Vec<NormalizedMessage>,
 }
@@ -259,14 +259,14 @@ fn handle_connection(
 struct HttpRequest {
     method: String,
     target: String,
-    headers: HashMap<String, String>,
+    headers: FxHashMap<String, String>,
     body: Vec<u8>,
 }
 
 struct HttpRequestHead {
     method: String,
     target: String,
-    headers: HashMap<String, String>,
+    headers: FxHashMap<String, String>,
     expect_continue: bool,
 }
 
@@ -320,7 +320,7 @@ fn read_request_head<R: BufRead>(reader: &mut R) -> Result<HttpRequestHead, Stri
     let target = parts.next().ok_or("missing request target")?.to_string();
     let _http_version = parts.next().ok_or("missing http version")?;
 
-    let mut headers = HashMap::new();
+    let mut headers: FxHashMap<String, String> = FxHashMap::default();
     let mut header_bytes = first.len() + 2;
     let mut line = String::new();
     loop {
@@ -359,7 +359,7 @@ fn read_request_head<R: BufRead>(reader: &mut R) -> Result<HttpRequestHead, Stri
 
 fn read_request_body<R: BufRead>(
     reader: &mut R,
-    headers: &HashMap<String, String>,
+    headers: &FxHashMap<String, String>,
     max_body_bytes: usize,
 ) -> Result<Vec<u8>, String> {
     let is_chunked = transfer_encoding_is_chunked(headers);
@@ -384,7 +384,7 @@ fn read_request_body<R: BufRead>(
 }
 
 #[inline]
-fn transfer_encoding_is_chunked(headers: &HashMap<String, String>) -> bool {
+fn transfer_encoding_is_chunked(headers: &FxHashMap<String, String>) -> bool {
     headers
         .get("transfer-encoding")
         .is_some_and(|v| v.eq_ignore_ascii_case("chunked"))
@@ -487,7 +487,7 @@ impl Params {
         p
     }
 
-    fn from_query_and_headers(query: &str, headers: &HashMap<String, String>) -> Self {
+    fn from_query_and_headers(query: &str, headers: &FxHashMap<String, String>) -> Self {
         let mut p = Self::parse(query);
         if p.csp_header.is_none() {
             p.csp_header = headers.get("content-security-policy").cloned();
@@ -1016,7 +1016,7 @@ fn parse_http_base_url(s: &str) -> Result<(String, u16, String), String> {
 
 struct HttpResponse {
     status: u16,
-    headers: HashMap<String, String>,
+    headers: FxHashMap<String, String>,
     body: Vec<u8>,
 }
 
@@ -1090,7 +1090,7 @@ fn read_response<R: BufRead>(
         .parse::<u16>()
         .map_err(|_| "invalid status code".to_string())?;
 
-    let mut headers = HashMap::new();
+    let mut headers: FxHashMap<String, String> = FxHashMap::default();
     let mut header_bytes = status_line.len() + 2;
     let mut line = String::new();
     loop {
@@ -1125,7 +1125,7 @@ fn read_response<R: BufRead>(
 
 fn read_response_body<R: BufRead>(
     reader: &mut R,
-    headers: &HashMap<String, String>,
+    headers: &FxHashMap<String, String>,
     max_body_bytes: usize,
 ) -> Result<Vec<u8>, String> {
     let is_chunked = transfer_encoding_is_chunked_response(headers);
@@ -1160,7 +1160,7 @@ fn read_response_body<R: BufRead>(
 }
 
 #[inline]
-fn transfer_encoding_is_chunked_response(headers: &HashMap<String, String>) -> bool {
+fn transfer_encoding_is_chunked_response(headers: &FxHashMap<String, String>) -> bool {
     headers.get("transfer-encoding").is_some_and(|v| {
         v.split(',')
             .any(|t| t.trim().eq_ignore_ascii_case("chunked"))
@@ -1331,7 +1331,7 @@ mod tests {
 
     #[test]
     fn params_from_query_and_headers_prefers_query_over_request_header() {
-        let mut headers = HashMap::new();
+        let mut headers: FxHashMap<String, String> = FxHashMap::default();
         headers.insert(
             "content-security-policy".to_string(),
             "script-src 'self'".to_string(),
@@ -1342,7 +1342,7 @@ mod tests {
 
     #[test]
     fn params_from_query_and_headers_uses_request_header_when_query_absent() {
-        let mut headers = HashMap::new();
+        let mut headers: FxHashMap<String, String> = FxHashMap::default();
         headers.insert(
             "content-security-policy".to_string(),
             "script-src 'none'".to_string(),
@@ -1353,7 +1353,7 @@ mod tests {
 
     #[test]
     fn server_accepts_csp_from_http_header_when_query_param_absent() {
-        let mut headers = HashMap::new();
+        let mut headers: FxHashMap<String, String> = FxHashMap::default();
         headers.insert(
             "content-security-policy".to_string(),
             "script-src 'none'".to_string(),
@@ -1670,7 +1670,7 @@ body",
 
     #[test]
     fn transfer_encoding_chunked_matches_exact_value_case_insensitively() {
-        let mut headers = HashMap::new();
+        let mut headers: FxHashMap<String, String> = FxHashMap::default();
         assert!(!transfer_encoding_is_chunked(&headers));
 
         headers.insert("transfer-encoding".to_string(), "chunked".to_string());
@@ -1686,7 +1686,7 @@ body",
     #[test]
     fn read_request_body_enforces_max_content_length() {
         let mut reader = BufReader::new(Cursor::new(b"1234"));
-        let mut headers = HashMap::new();
+        let mut headers: FxHashMap<String, String> = FxHashMap::default();
         headers.insert("content-length".to_string(), "4".to_string());
         let err = read_request_body(&mut reader, &headers, 3).unwrap_err();
         assert_eq!(err, "body too large");
@@ -1695,7 +1695,7 @@ body",
     #[test]
     fn read_request_body_prefers_chunked_over_content_length() {
         let mut reader = BufReader::new(Cursor::new(b"4\r\nWiki\r\n0\r\n\r\n"));
-        let mut headers = HashMap::new();
+        let mut headers: FxHashMap<String, String> = FxHashMap::default();
         headers.insert("transfer-encoding".to_string(), "chunked".to_string());
         headers.insert("content-length".to_string(), "999".to_string());
         let body = read_request_body(&mut reader, &headers, 1024).unwrap();

@@ -13,3 +13,4 @@ path = "lib.rs"
 [dependencies]
 markup5ever = "0.38.0"
 tendril = "0.5.0"
+rustc-hash = "2"

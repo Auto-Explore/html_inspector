@@ -1,9 +1,9 @@
 use std::borrow::Cow;
-use std::collections::HashSet;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, ValidationContext,
 };
+use rustc_hash::FxHashSet;
 
 const ALLOWED_SANDBOX_TOKENS: [&str; 12] = [
     "allow-downloads",
@@ -52,7 +52,8 @@ impl Rule for IFrameSandboxConstraints {
             return;
         };
 
-        let mut seen = HashSet::<Cow<'_, str>>::new();
+        let mut seen: FxHashSet<Cow<'_, str>> =
+            FxHashSet::with_capacity_and_hasher(ALLOWED_SANDBOX_TOKENS.len(), Default::default());
         let mut has_scripts = false;
         let mut has_same_origin = false;
 

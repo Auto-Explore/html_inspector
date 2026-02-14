@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SrcsetMode {
@@ -28,8 +28,11 @@ fn validate_srcset(srcset: &str, sizes_present: bool) -> Result<SrcsetMode, ()> 
     let mut saw_density = false;
     let mut saw_omitted = false;
 
-    let mut widths: HashSet<u32> = HashSet::new();
-    let mut densities: HashSet<u64> = HashSet::new();
+    let max_candidates = 1 + s.as_bytes().iter().filter(|&&b| b == b',').count();
+    let mut widths: FxHashSet<u32> =
+        FxHashSet::with_capacity_and_hasher(max_candidates, Default::default());
+    let mut densities: FxHashSet<u64> =
+        FxHashSet::with_capacity_and_hasher(max_candidates, Default::default());
 
     for candidate in s.split(',') {
         let candidate = candidate.trim();

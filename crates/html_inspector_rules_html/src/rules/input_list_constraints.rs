@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
@@ -6,7 +6,7 @@ use html_inspector_core::{
 
 #[derive(Default)]
 pub struct InputListConstraints {
-    datalist_ids: HashSet<String>,
+    datalist_ids: FxHashSet<String>,
     pending_lists: Vec<(String, Option<Span>)>,
 }
 

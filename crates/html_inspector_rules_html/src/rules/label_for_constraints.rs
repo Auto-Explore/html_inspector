@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 use html_inspector_core::{
     Category, Interest, Message, MessageSink, ParseEvent, Rule, Severity, Span, ValidationContext,
@@ -8,7 +8,7 @@ use html_inspector_core::{
 pub struct LabelForConstraints {
     label_stack: Vec<LabelState>,
     role_button_stack: Vec<String>,
-    labelable_ids: HashSet<String>,
+    labelable_ids: FxHashSet<String>,
     label_for_refs: Vec<(String, Option<Span>)>,
     label_assoc_checks: Vec<LabelAssocCheck>,
 }
