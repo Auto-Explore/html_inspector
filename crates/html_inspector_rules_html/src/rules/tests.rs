@@ -3385,6 +3385,29 @@ fn foreign_object_start_tag_span_matches_input_bytes_with_html5ever_backend() {
 }
 
 #[test]
+fn multiline_html_parse_error_span_points_to_the_right_location_with_html5ever_backend() {
+    let html = "<!doctype html>\n<html>\n<head><title>x</title></head>\n<body>\n  <p>a &copy=1</p>\n</body>\n</html>";
+    let amp = html.find('&').expect("expected '&' in HTML");
+    let expected_line = html[..amp].bytes().filter(|&b| b == b'\n').count() + 1;
+    let last_nl = html[..amp].rfind('\n').map(|i| i + 1).unwrap_or(0);
+    let expected_col = amp - last_nl + 1;
+
+    let src = HtmlEventSource::from_str("t", InputFormat::Html, html).unwrap();
+    let rules = RuleSet::new().push(TokenizerParseErrors::default());
+    let report = html_inspector::validate_events(src, rules, Config::default()).unwrap();
+    let span = report
+        .messages
+        .iter()
+        .find_map(|m| (m.code == "html.tokenizer.named_charref_no_semicolon").then_some(m.span?))
+        .expect("expected named_charref_no_semicolon in report");
+
+    assert_eq!(span.byte_start, amp);
+    assert_eq!(span.byte_end, amp + 1);
+    assert_eq!(span.line, expected_line as u32);
+    assert_eq!(span.col, expected_col as u32);
+}
+
+#[test]
 fn button_formaction_invalid_emits_error() {
     let src = VecSource::new(
         InputFormat::Html,

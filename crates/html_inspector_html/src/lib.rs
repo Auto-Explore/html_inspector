@@ -545,12 +545,19 @@ impl SimpleHtmlEventSource {
             && let Some(off) = text.find("<!--")
         {
             let err_start = comment_start + off;
+            let (line, col) = line_col_at_byte_offset(
+                self.bytes.as_ref(),
+                start,
+                start_line,
+                start_col,
+                err_start,
+            );
             self.pending.push_back(ParseEvent::ParseError {
                 code: "html.tokenizer.nested_comment".to_string(),
                 message:
                     "Saw “<!--” within a comment. Probable cause: Nested comment (not allowed)."
                         .to_string(),
-                span: Some(self.current_span(err_start, err_start + 4, start_line, start_col)),
+                span: Some(Span::new(err_start, err_start + 4, line, col)),
             });
         }
         let close_end = end + 3;
@@ -781,31 +788,10 @@ impl SimpleHtmlEventSource {
         start_line: u32,
         start_col: u32,
     ) -> Result<(), ValidatorError> {
-        fn line_col_at(
-            bytes: &[u8],
-            start: usize,
-            start_line: u32,
-            start_col: u32,
-            target: usize,
-        ) -> (u32, u32) {
-            let mut line = start_line;
-            let mut col = start_col;
-            let mut i = start;
-            while i < target && i < bytes.len() {
-                if bytes[i] == b'\n' {
-                    line += 1;
-                    col = 1;
-                } else {
-                    col += 1;
-                }
-                i += 1;
-            }
-            (line, col)
-        }
-
         let all_bytes: &[u8] = &self.bytes;
         let mk_span = |byte_start: usize, byte_end: usize| {
-            let (line, col) = line_col_at(all_bytes, start, start_line, start_col, byte_start);
+            let (line, col) =
+                line_col_at_byte_offset(all_bytes, start, start_line, start_col, byte_start);
             Span::new(byte_start, byte_end, line, col)
         };
 
@@ -1208,6 +1194,33 @@ fn bytes_to_string_lossy(bytes: &[u8]) -> String {
     str_from_bytes_lossy(bytes).into_owned()
 }
 
+fn line_col_at_byte_offset(
+    bytes: &[u8],
+    base_start: usize,
+    base_line: u32,
+    base_col: u32,
+    target: usize,
+) -> (u32, u32) {
+    let mut line = base_line;
+    let mut col = base_col;
+    if base_start >= bytes.len() || target <= base_start {
+        return (line, col);
+    }
+    let end = target.min(bytes.len());
+    if end <= base_start {
+        return (line, col);
+    }
+    for &b in &bytes[base_start..end] {
+        if b == b'\n' {
+            line += 1;
+            col = 1;
+        } else {
+            col += 1;
+        }
+    }
+    (line, col)
+}
+
 fn parse_start_tag(
     src: &SimpleHtmlEventSource,
     inside: &str,
@@ -1239,6 +1252,18 @@ fn parse_start_tag(
 
     let bytes = inside.as_bytes();
     let mut i = 0usize;
+
+    let inside_base_start = tag_start.saturating_add(1);
+    let has_gt = tag_end > 0
+        && tag_end <= src.bytes.len()
+        && src.bytes.get(tag_end - 1).copied() == Some(b'>');
+    let inside_base_end = if has_gt {
+        tag_end.saturating_sub(1)
+    } else {
+        tag_end
+    };
+    let can_map_to_source_bytes = inside_base_end <= src.bytes.len()
+        && inside_base_end.saturating_sub(inside_base_start) == bytes.len();
 
     // Tag name.
     skip_ws(bytes, &mut i);
@@ -1351,8 +1376,26 @@ fn parse_start_tag(
                     i += 1;
                 }
                 let raw = &inside[value_start..i];
+                let (base_start, base_line, base_col) = if can_map_to_source_bytes {
+                    let base_start = inside_base_start + value_start;
+                    let (base_line, base_col) = line_col_at_byte_offset(
+                        src.bytes.as_ref(),
+                        tag_start,
+                        tag_line,
+                        tag_col,
+                        base_start,
+                    );
+                    (base_start, base_line, base_col)
+                } else {
+                    (tag_start, tag_line, tag_col)
+                };
                 let (decoded, decoded_errs) = decode_char_refs_with_errors(
-                    src.format, raw, true, tag_start, tag_line, tag_col,
+                    src.format,
+                    raw,
+                    true,
+                    base_start,
+                    base_line,
+                    base_col,
                 );
                 errs.extend(decoded_errs);
                 value = Some(decoded);
@@ -1420,16 +1463,46 @@ fn parse_start_tag(
                         "“\"” in an unquoted attribute value. Probable causes: Attributes running together or a URL query string in an unquoted attribute value.",
                     );
                 }
+                let (base_start, base_line, base_col) = if can_map_to_source_bytes {
+                    let base_start = inside_base_start + value_start;
+                    let (base_line, base_col) = line_col_at_byte_offset(
+                        src.bytes.as_ref(),
+                        tag_start,
+                        tag_line,
+                        tag_col,
+                        base_start,
+                    );
+                    (base_start, base_line, base_col)
+                } else {
+                    (tag_start, tag_line, tag_col)
+                };
                 let (decoded, decoded_errs) = decode_char_refs_with_errors(
-                    src.format, raw, true, tag_start, tag_line, tag_col,
+                    src.format,
+                    raw,
+                    true,
+                    base_start,
+                    base_line,
+                    base_col,
                 );
                 errs.extend(decoded_errs);
                 value = Some(decoded);
             }
         }
 
-        // Best-effort span: tie to the tag start since we don't map attr offsets to source bytes yet.
-        let span = Some(Span::new(tag_start, tag_start, tag_line, tag_col));
+        let span = if can_map_to_source_bytes {
+            let base_start = inside_base_start + attr_name_start;
+            let base_end = inside_base_start + i;
+            let (line, col) = line_col_at_byte_offset(
+                src.bytes.as_ref(),
+                tag_start,
+                tag_line,
+                tag_col,
+                base_start,
+            );
+            Some(Span::new(base_start, base_end, line, col))
+        } else {
+            None
+        };
         attrs.push(Attribute {
             name: attr_name,
             value,
@@ -1581,27 +1654,32 @@ fn decode_char_refs_with_errors(
         return (s.to_string(), Vec::new());
     }
     let mut errs: Vec<ParseEvent> = Vec::new();
+    let line_col_at = |byte_off: usize| {
+        line_col_at_byte_offset(s.as_bytes(), 0, base_line, base_col, byte_off)
+    };
     if let Some((byte_off, cp, byte_len)) = first_forbidden_code_point(s) {
+        let (line, col) = line_col_at(byte_off);
         errs.push(ParseEvent::ParseError {
             code: "html.tokenizer.forbidden_code_point".to_string(),
             message: format!("Forbidden code point U+{:04x}.", cp),
             span: Some(Span::new(
                 base_start + byte_off,
                 base_start + byte_off + byte_len,
-                base_line,
-                base_col,
+                line,
+                col,
             )),
         });
     }
     if let Some((byte_off, byte_len)) = first_astral_noncharacter(s) {
+        let (line, col) = line_col_at(byte_off);
         errs.push(ParseEvent::ParseError {
             code: "html.tokenizer.astral_noncharacter".to_string(),
             message: "Astral non-character.".to_string(),
             span: Some(Span::new(
                 base_start + byte_off,
                 base_start + byte_off + byte_len,
-                base_line,
-                base_col,
+                line,
+                col,
             )),
         });
     }
@@ -1646,14 +1724,15 @@ fn decode_char_refs_with_errors(
                 }
             }
             if digits_start == j {
+                let (line, col) = line_col_at(amp_off);
                 errs.push(ParseEvent::ParseError {
                     code: "html.tokenizer.charref_no_digits".to_string(),
                     message: "No digits after “”.".to_string(),
                     span: Some(Span::new(
                         base_start + amp_off,
                         base_start + amp_off + 1,
-                        base_line,
-                        base_col,
+                        line,
+                        col,
                     )),
                 });
                 out.push('&');
@@ -1668,28 +1747,30 @@ fn decode_char_refs_with_errors(
             if had_semicolon {
                 j += 1;
             } else {
+                let (line, col) = line_col_at(amp_off);
                 errs.push(ParseEvent::ParseError {
                     code: "html.tokenizer.charref_no_semicolon".to_string(),
                     message: "Character reference was not terminated by a semicolon.".to_string(),
                     span: Some(Span::new(
                         base_start + amp_off,
                         base_start + amp_off + 1,
-                        base_line,
-                        base_col,
+                        line,
+                        col,
                     )),
                 });
             }
 
             let msg = classify_numeric_charref(value);
             if let Some((code, message)) = msg {
+                let (line, col) = line_col_at(amp_off);
                 errs.push(ParseEvent::ParseError {
                     code: code.to_string(),
                     message,
                     span: Some(Span::new(
                         base_start + amp_off,
                         base_start + amp_off + 1,
-                        base_line,
-                        base_col,
+                        line,
+                        col,
                     )),
                 });
             }
@@ -1734,10 +1815,16 @@ fn decode_char_refs_with_errors(
                 }
             }
             if !matched.ends_with(';') {
+                let (line, col) = line_col_at(amp_off);
                 errs.push(ParseEvent::ParseError {
                     code: "html.tokenizer.named_charref_no_semicolon".to_string(),
                     message: "Named character reference was not terminated by a semicolon. (Or “&” should have been escaped as “&amp;”.)".to_string(),
-                    span: Some(Span::new(base_start + amp_off, base_start + amp_off + 1, base_line, base_col)),
+                    span: Some(Span::new(
+                        base_start + amp_off,
+                        base_start + amp_off + 1,
+                        line,
+                        col,
+                    )),
                 });
             }
             out.push_str(val);
@@ -2636,6 +2723,54 @@ mod tests {
     }
 
     #[test]
+    fn named_char_ref_without_semicolon_span_matches_ampersand_location_in_text() {
+        let html = "<p>a &copy=1</p>";
+        let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, html);
+        let evs = collect(src);
+        let span = evs
+            .iter()
+            .find_map(|e| match e {
+                ParseEvent::ParseError {
+                    code,
+                    span: Some(span),
+                    ..
+                } if code == "html.tokenizer.named_charref_no_semicolon" => Some(*span),
+                _ => None,
+            })
+            .expect("expected named_charref_no_semicolon parse error");
+
+        let amp = html.find('&').expect("expected '&' in HTML");
+        assert_eq!(span.byte_start, amp);
+        assert_eq!(span.byte_end, amp + 1);
+        assert_eq!(span.line, 1);
+        assert_eq!(span.col, (amp + 1) as u32);
+    }
+
+    #[test]
+    fn named_char_ref_without_semicolon_span_matches_ampersand_location_in_attribute() {
+        let html = "<p title=\"&copy.\">x</p>";
+        let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, html);
+        let evs = collect(src);
+        let span = evs
+            .iter()
+            .find_map(|e| match e {
+                ParseEvent::ParseError {
+                    code,
+                    span: Some(span),
+                    ..
+                } if code == "html.tokenizer.named_charref_no_semicolon" => Some(*span),
+                _ => None,
+            })
+            .expect("expected named_charref_no_semicolon parse error");
+
+        let amp = html.find('&').expect("expected '&' in HTML");
+        assert_eq!(span.byte_start, amp);
+        assert_eq!(span.byte_end, amp + 1);
+        assert_eq!(span.line, 1);
+        assert_eq!(span.col, (amp + 1) as u32);
+    }
+
+    #[test]
     fn named_char_ref_without_semicolon_not_decoded_in_attribute_when_followed_by_equals() {
         let src = SimpleHtmlEventSource::from_str(
             "t",
@@ -2703,12 +2838,25 @@ mod tests {
 
     #[test]
     fn nested_comment_emits_parse_error() {
-        let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, "<!-- a <!-- b -->");
+        let html = "<!-- a <!-- b -->";
+        let src = SimpleHtmlEventSource::from_str("t", InputFormat::Html, html);
         let evs = collect(src);
-        assert!(evs.iter().any(|e| matches!(
-            e,
-            ParseEvent::ParseError { code, .. } if code == "html.tokenizer.nested_comment"
-        )));
+        let span = evs
+            .iter()
+            .find_map(|e| match e {
+                ParseEvent::ParseError {
+                    code,
+                    span: Some(span),
+                    ..
+                } if code == "html.tokenizer.nested_comment" => Some(*span),
+                _ => None,
+            })
+            .expect("expected nested_comment parse error");
+        let nested = html.rfind("<!--").expect("expected nested '<!--' in HTML");
+        assert_eq!(span.byte_start, nested);
+        assert_eq!(span.byte_end, nested + "<!--".len());
+        assert_eq!(span.line, 1);
+        assert_eq!(span.col, (nested + 1) as u32);
         assert!(
             evs.iter()
                 .any(|e| matches!(e, ParseEvent::Comment { text, .. } if text.contains("a")))
