@@ -117,7 +117,8 @@ impl Rule for AriaPropertiesSupportedByRole {
                     out,
                     ctx,
                     name,
-                    span,
+                    *span,
+                    attrs,
                     "aria-multiselectable",
                     ctx.has_attr(attrs, "aria-multiselectable"),
                 );
@@ -126,7 +127,8 @@ impl Rule for AriaPropertiesSupportedByRole {
                 out,
                 ctx,
                 name,
-                span,
+                *span,
+                attrs,
                 "aria-placeholder",
                 ctx.has_attr(attrs, "aria-placeholder"),
             );
@@ -134,7 +136,8 @@ impl Rule for AriaPropertiesSupportedByRole {
                 out,
                 ctx,
                 name,
-                span,
+                *span,
+                attrs,
                 "aria-readonly",
                 ctx.has_attr(attrs, "aria-readonly"),
             );
@@ -143,7 +146,8 @@ impl Rule for AriaPropertiesSupportedByRole {
                     out,
                     ctx,
                     name,
-                    span,
+                    *span,
+                    attrs,
                     "aria-selected",
                     ctx.has_attr(attrs, "aria-selected"),
                 );
@@ -152,7 +156,8 @@ impl Rule for AriaPropertiesSupportedByRole {
                 out,
                 ctx,
                 name,
-                span,
+                *span,
+                attrs,
                 "aria-valuemin",
                 ctx.has_attr(attrs, "aria-valuemin"),
             );
@@ -160,7 +165,8 @@ impl Rule for AriaPropertiesSupportedByRole {
                 out,
                 ctx,
                 name,
-                span,
+                *span,
+                attrs,
                 "aria-valuemax",
                 ctx.has_attr(attrs, "aria-valuemax"),
             );
@@ -168,47 +174,67 @@ impl Rule for AriaPropertiesSupportedByRole {
         };
 
         if ctx.has_attr(attrs, "aria-multiselectable") && !supports_multiselectable(&role) {
-            emit_not_allowed(out, ctx, name, span, "aria-multiselectable", true);
+            emit_not_allowed(out, ctx, name, *span, attrs, "aria-multiselectable", true);
         }
         if ctx.has_attr(attrs, "aria-placeholder") && !supports_placeholder(&role) {
-            emit_not_allowed(out, ctx, name, span, "aria-placeholder", true);
+            emit_not_allowed(out, ctx, name, *span, attrs, "aria-placeholder", true);
         }
         if ctx.has_attr(attrs, "aria-readonly") && !supports_readonly(&role) {
-            emit_not_allowed(out, ctx, name, span, "aria-readonly", true);
+            emit_not_allowed(out, ctx, name, *span, attrs, "aria-readonly", true);
         }
         if ctx.has_attr(attrs, "aria-expanded") && !supports_expanded(&role) {
-            emit_not_allowed(out, ctx, name, span, "aria-expanded", true);
+            emit_not_allowed(out, ctx, name, *span, attrs, "aria-expanded", true);
         }
         if ctx.has_attr(attrs, "aria-selected") && !supports_selected(&role) {
-            emit_not_allowed(out, ctx, name, span, "aria-selected", true);
+            emit_not_allowed(out, ctx, name, *span, attrs, "aria-selected", true);
         }
         if ctx.has_attr(attrs, "aria-valuemin") && !supports_range(&role) {
-            emit_not_allowed(out, ctx, name, span, "aria-valuemin", true);
+            emit_not_allowed(out, ctx, name, *span, attrs, "aria-valuemin", true);
         }
         if ctx.has_attr(attrs, "aria-valuemax") && !supports_range(&role) {
-            emit_not_allowed(out, ctx, name, span, "aria-valuemax", true);
+            emit_not_allowed(out, ctx, name, *span, attrs, "aria-valuemax", true);
         }
     }
+}
+
+fn span_for_attr(
+    ctx: &ValidationContext,
+    attrs: &[html_inspector::Attribute],
+    needle: &str,
+    fallback: Option<html_inspector::Span>,
+) -> Option<html_inspector::Span> {
+    attrs
+        .iter()
+        .find_map(|attr| {
+            if ctx.name_is(&attr.name, needle) {
+                attr.span
+            } else {
+                None
+            }
+        })
+        .or(fallback)
 }
 
 fn emit_not_allowed(
     out: &mut dyn MessageSink,
     ctx: &ValidationContext,
     name: &str,
-    span: &Option<html_inspector::Span>,
+    tag_span: Option<html_inspector::Span>,
+    attrs: &[html_inspector::Attribute],
     attr: &str,
     present: bool,
 ) {
     if !present {
         return;
     }
+    let span = span_for_attr(ctx, attrs, attr, tag_span);
     let el = tag_name_for_message(ctx, name);
     out.push(Message::new(
         format!("aria.{attr}.not_allowed"),
         Severity::Error,
         Category::Aria,
         format!("Attribute “{attr}” not allowed on element “{el}” at this point."),
-        *span,
+        span,
     ));
 }
 

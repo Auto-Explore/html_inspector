@@ -1,0 +1,20 @@
+[
+  {
+    "code": "aria.aria-expanded.not_allowed",
+    "line": 64,
+    "col": 179,
+    "at": "aria-expanded"
+  },
+  {
+    "code": "aria.aria-expanded.not_allowed",
+    "line": 83,
+    "col": 191,
+    "at": "aria-expanded"
+  },
+  {
+    "code": "aria.idref.missing.aria-controls",
+    "line": 278,
+    "col": 82,
+    "at": "aria-controls"
+  }
+]

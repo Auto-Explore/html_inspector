@@ -1,0 +1,14 @@
+[
+  {
+    "code": "html.parser.body.already_open",
+    "line": 4,
+    "col": 3,
+    "at": "<body"
+  },
+  {
+    "code": "html.parser.cannot_recover",
+    "line": 4,
+    "col": 3,
+    "at": "<body"
+  }
+]

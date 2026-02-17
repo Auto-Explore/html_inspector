@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fi" class="is-development  default-menubar">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Tervetuloa | Example</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <link rel="stylesheet" href="/dist/default/defaultTheme.287ca522aec6ef10b5e0.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon_dev.png?1" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?1">
+    <meta name="application-name" content="Example">
+    <meta name="theme-color" content="#f9725c">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <style type="text/css">
+        .react-hot-loader-error-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+        }
+    </style>
+    <link id="beamerStyles" type="text/css" rel="stylesheet" href="https://app.getbeamer.com/styles/beamer-embed.css?v=9">
+</head>
+<body>
+<a href="#root" class="skip-to-content u-text-no-wrap u-line-height-flat">Siirry sisältöön</a>
+<div id="top-header">
+    <div>
+        <header class="c-header o-stack o-pin o-pin--fixed o-pin--top o-pin--left u-1/1 u-z-index-10 c-header--large" role="banner">
+            <a href="/home" class="c-logo u-padding-horizontal-small" style="height: inherit;">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyODIiIGhlaWdodD0iOTkiIHZpZXdCb3g9IjAgMCAyODIgOTkiPjxyZWN0IHdpZHRoPSIyODIiIGhlaWdodD0iOTkiIGZpbGw9IiNGNkZCRjgiLz48dGV4dCB4PSIxMiIgeT0iNTYiIGZvbnQtc2l6ZT0iMjgiIGZpbGw9IiM0REJENzQiPkV4YW1wbGU8L3RleHQ+PC9zdmc+" alt="Example-logo" height="36" style="margin-top: 8px; margin-left: 6px;">
+            </a>
+            <nav class="u-position-relative u-text-no-wrap">
+                <ul class="c-menu-bar o-list-bare o-stack o-stack--start u-margin-bottom-none" role="menubar" aria-label="Päävalikko">
+                    <li role="none" class="u-position-relative">
+                        <a href="/home" class="c-menu-bar__item u-padding-horizontal-small" role="menuitem">Etusivu</a>
+                    </li>
+                    <li role="none" class="u-position-relative">
+                        <a href="/home/contract" class="c-menu-bar__item u-padding-horizontal-small" role="menuitem">Sopimukset</a>
+                    </li>
+                    <li role="none" class="u-position-relative">
+                        <a href="/home/payment" class="c-menu-bar__item u-padding-horizontal-small" role="menuitem">Palkat</a>
+                    </li>
+                    <li role="none" class="u-position-relative">
+                        <a href="/home/reports" class="c-menu-bar__item u-padding-horizontal-small" role="menuitem">Raportit</a>
+                    </li>
+                    <li role="none" class="u-position-relative">
+                        <a href="/home/work-ability/" class="c-menu-bar__item u-padding-horizontal-small" role="menuitem" id="menubar-work-ability">Työkyky</a>
+                    </li>
+                </ul>
+            </nav>
+            <ul class="c-menu-bar o-list-bare o-stack o-stack--start u-margin-bottom-none" role="menubar" style="margin-left: auto;">
+                <li role="none" class="u-position-relative">
+                    <button class="c-menu-bar__item u-padding-horizontal-small" role="menuitem" aria-label="Vaihda roolia">
+                                <span class="o-flag o-flag--tiny">
+                                    <i class="swap_horiz o-flag__img u-margin-right-tiny material-icons-outlined c-md-icon--medium" title="" aria-hidden="true">swap_horiz</i>
+                                    <span class="o-flag__body">Vaihda roolia</span>
+                                </span>
+                    </button>
+                </li>
+                <li role="none" class="u-position-relative">
+                    <button class="c-menu-bar__item u-padding-horizontal-small" role="menuitem" aria-label="Ilmoitukset. Ei ilmoituksia." id="notifications" aria-haspopup="true" aria-expanded="false">
+                        <i class="material-icons-outlined" aria-hidden="true">notifications</i>
+                    </button>
+                    <div aria-hidden="true" class="u-pointer-events-none" style="position: absolute; inset: 0px auto auto 0px; z-index: -1; transform: translate(-132px, 69px);">
+                        <ul class="c-menu o-list-bare u-margin-none" role="menu" aria-labelledby="notifications" style="opacity: 0; transform: translate3d(0px, -24px, 0px); min-width: 220px; max-width: 320px; visibility: hidden;">
+                            <div style="width: 320px;">
+                                <div class="c-popover--notifications__empty-state u-muted u-text-center u-text-no-wrap o-stack o-stack--vertical o-stack--center">
+                                    <div>
+                                        <div class="u-muted">
+                                            <i class="material-icons-outlined c-md-icon--huge" aria-hidden="true">notifications_none</i>
+                                        </div>
+                                        Ei ilmoituksia
+                                    </div>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </li>
+                <li role="none" class="u-position-relative">
+                    <button class="c-menu-bar__item u-padding-horizontal-small" role="menuitem" aria-label="Käyttäjävalikko" title="Käyttäjävalikko" id="userMenu" aria-haspopup="true" aria-expanded="false">
+                        <span class="c-user u-margin-horizontal-tiny u-text-left">
+                                    <b class="c-user__name u-align-middle" style="max-width: 13em;">Testi</b>
+                                </span>
+                        <i class="c-menu-bar__item-arrow material-icons-outlined c-md-icon--small" aria-hidden="true">keyboard_arrow_down</i>
+                    </button>
+                    <div aria-hidden="true" class="u-pointer-events-none" style="position: absolute; inset: 0px auto auto 0px; z-index: -1; transform: translate(-92px, 69px);">
+                        <ul class="c-menu o-list-bare u-margin-none" role="menu" aria-labelledby="userMenu" style="opacity: 0; transform: translate3d(0px, -24px, 0px); min-width: 220px; max-width: 320px; visibility: hidden;">
+                            <li role="none">
+                                <a href="/home/userdata" id="userMenu0" role="menuitem" tabindex="-1" class="c-menu__item u-text-no-wrap">
+                                    <i class="u-margin-right-tiny material-icons-outlined c-md-icon--small" aria-hidden="true">person</i>
+                                    Omat tietoni
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a href="/home/instant-messages" id="userMenu1" role="menuitem" tabindex="-1" class="c-menu__item u-text-no-wrap">
+                                    <i class="u-margin-right-tiny material-icons-outlined c-md-icon--small" aria-hidden="true">forum</i>
+                                    Pikaviestit
+                                </a>
+                            </li>
+                            <li role="separator"></li>
+                            <li role="none">
+                                <a href="/logout" id="userMenu3" role="menuitem" tabindex="-1" class="c-menu__item u-text-no-wrap">
+                                    <i class="u-margin-right-tiny material-icons-outlined c-md-icon--small" aria-hidden="true">power_settings_new</i>
+                                    Kirjaudu ulos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </header>
+    </div>
+</div>
+<main role="main" id="root">
+    <div></div>
+    <div class="c-feedback u-padding-small  c-feedback--info o-flag o-flag--tiny ">
+                <span class="c-feedback__icon o-flag__img">
+                    <i class="material-icons u-align-middle">info</i>
+                </span>
+        <div class="o-flag__body">
+            Suosittelemme Visma Connectin käyttöönottoa kaikille. Voit ottaa sen käyttöön <a title="Visma Connect käyttöönotto" href="/home/userdata#vc_onboard">täältä</a>
+            .
+        </div>
+    </div>
+    <div id="dashboard-root">
+        <div>
+            <section>
+                <div class="c-dashboard">
+                    <div class="c-dashboard__summary j-dashboard">
+                        <div class="o-wrapper u-padding-small u-padding@large">
+                            <div class="u-text-center u-animation-zoom-in">
+                                        <span class="c-avatar u-text-center u-accessibility-speak-none c-avatar--large c-dashboard__avatar c-avatar--responsive" aria-hidden="true">
+                                            <span class="c-avatar__name u-text-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#2a0e09" width="large" height="large">
+                                                    <path fill="none" d="M0 0h24v24H0z"></path>
+                                                    <path d="dd"></path>
+                                                    <path d="cd"></path>
+                                                </svg>
+                                            </span>
+                                        </span>
+                                <div>
+                                    <h2 class="c-heading-headline u-margin-bottom-small">Huomenta Testi!</h2>
+                                </div>
+                            </div>
+                            <div class="u-animation-slide-in-up u-margin-top-small">
+                                <ul class="c-dashboard__stat-group c-stat-group o-list-bare u-margin-top-small u-1/1">
+                                    <li class="c-stat">
+                                        <a class="c-stat__content u-1/1 u-position-relative" href="/home/contract">
+                                            <span class="c-stat__title u-text-truncate">Sopimukset</span>
+                                            <span class="c-stat__value u-font-size-0">
+                                                        <span class="c-heading-stat-number">0 kpl</span>
+                                                    </span>
+                                            <i class="c-stat__link-indicator u-muted material-icons-outlined c-md-icon--small" aria-hidden="true">keyboard_arrow_right</i>
+                                        </a>
+                                    </li>
+                                    <li class="c-stat">
+                                                <span class="c-stat__content u-1/1 u-position-relative">
+                                                    <span class="c-stat__title u-text-truncate">Palkkoja vastaanotettu (2026)</span>
+                                                    <span class="c-stat__value u-font-size-0">
+                                                        <span class="c-heading-stat-number">
+                                                            0<span class="c-heading-stat-number__decimal">kpl</span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                    </li>
+                                    <li class="c-stat">
+                                                <span class="c-stat__content u-1/1 u-position-relative">
+                                                    <span class="c-stat__title u-text-truncate">Palkat brutto (2026)</span>
+                                                    <span class="c-stat__value u-font-size-0">
+                                                        <span class="c-heading-stat-number">
+                                                            0<span class="c-heading-stat-number__decimal">,00 &nbsp;€</span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                    </li>
+                                    <li class="c-stat">
+                                                <span class="c-stat__content u-1/1 u-position-relative">
+                                                    <span class="c-stat__title u-text-truncate">Palkat netto (2026)</span>
+                                                    <span class="c-stat__value u-font-size-0">
+                                                        <span class="c-heading-stat-number">
+                                                            0<span class="c-heading-stat-number__decimal">,00 &nbsp;€</span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="o-wrapper u-padding-small u-padding-top@medium">
+                    <div class="u-animation-slide-in-up">
+                        <div class="o-layout o-layout--vertical-gutter">
+                            <div class="o-layout__item u-1/1@medium u-2/3@medium-1">
+                                <div class="o-layout o-layout--vertical-gutter">
+                                    <div class="o-layout__item u-1/2@medium-1">
+                                        <section class="c-card j-latest-contracts">
+                                            <header class="c-card__header o-stack o-stack--justify">
+                                                <h2 class="c-card__title o-stack o-stack--center u-padding-left-tiny">Sopimukset</h2>
+                                            </header>
+                                            <div class="c-card__body">
+                                                <div class="o-stack o-stack--vertical o-stack--center u-text-center u-padding-small">
+                                                    <div class="u-opacity-10">
+                                                                <span class="o-icon o-icon--huge">
+                                                                    <svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1">
+                                                                        <path d="d" fill-rule="nonzero" fill="#000000"></path>
+                                                                    </svg>
+                                                                </span>
+                                                    </div>
+                                                    <div class="c-heading-subheading u-margin-top-small">Sinulla ei ole yhtään voimassaolevaa sopimusta.</div>
+                                                </div>
+                                                <ul class="o-list" role="menu"></ul>
+                                            </div>
+                                        </section>
+                                    </div>
+                                    <div class="o-layout__item u-1/2@medium-1">
+                                        <section class="c-card j-latest-salaries">
+                                            <header class="c-card__header o-stack o-stack--justify">
+                                                <h2 class="c-card__title o-stack o-stack--center">Huomiota vaativat palkkajaksot</h2>
+                                            </header>
+                                            <div class="c-card__body">
+                                                <div class="o-stack o-stack--vertical o-stack--center u-text-center u-padding-small">
+                                                    <div class="u-opacity-10">
+                                                                <span class="o-icon o-icon--huge">
+                                                                    <svg width="100%" viewBox="0 0 24 24" version="1.1">
+                                                                        <g id="Coins" fill="#000000">
+                                                                            <path d="d"></path>
+                                                                        </g>
+                                                                    </svg>
+                                                                </span>
+                                                    </div>
+                                                    <div class="c-heading-subheading u-margin-top-small">Ei huomiota vaativia palkkajaksoja</div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o-layout__item u-1/1@medium u-1/3@medium-1">
+                                <section class="c-card j-latest-salaries">
+                                    <header class="c-card__header c-card__header--link o-stack o-stack--justify">
+                                        <a href="/home/payment" class="o-stack o-stack--justify u-1/1">
+                                            <h2 class="c-card__title o-stack o-stack--center">Palkat</h2>
+                                            <i class="material-icons-outlined c-md-icon--small" aria-hidden="true">keyboard_arrow_right</i>
+                                        </a>
+                                    </header>
+                                    <div class="c-card__body">
+                                        <div class="o-stack o-stack--vertical o-stack--center u-text-center u-padding-small">
+                                            <div class="u-opacity-10">
+                                                        <span class="o-icon o-icon--huge">
+                                                            <svg width="100%" viewBox="0 0 24 24" version="1.1">
+                                                                <g id="PiggyBank" fill="#000000">
+                                                                    <path d="d"></path>
+                                                                </g>
+                                                            </svg>
+                                                        </span>
+                                            </div>
+                                            <div class="c-heading-subheading u-margin-top-small">Sinulle ei ole maksettu vielä yhtään palkkaa.</div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="c-notifications o-pin o-pin--fixed o-pin--right u-margin-top-small u-margin-right-small u-pointer-events-none" style="top: 60px;">
+                <ul class="c-notification-list o-list-bare u-margin-bottom-none"></ul>
+            </div>
+        </div>
+    </div>
+    <footer class="c-footer u-padding-small u-padding@large u-text-center">
+        © Oima Oy 2026
+        <span class="u-muted"> · </span>
+        <span id="__cookie"><button aria-haspopup="dialog" aria-expanded="false" aria-controls="07c3ad99-27bd-4e1b-8276-41a39c3bab76">Evästeet</button><span class="u-muted"> · </span></span>
+        <a href="/saavutettavuusseloste" rel="nofollow noreferrer noopener" target="_blank" title="Avautuu uuteen ikkunaan">
+            Saavutettavuusseloste
+            <i class="material-icons c-md-icon--tiny" aria-hidden="true" style="margin-left: 3px">
+                open_in_new
+            </i>
+        </a>
+        <div>
+            Käyttämällä hyväksyt käyttöehdot
+        </div>
+    </footer>
+</main>
+<div id="popper-portal"></div>
+<div id="logout-dialog"></div>
+<div id="root-picker-outlet"></div>
+</body>
+</html>

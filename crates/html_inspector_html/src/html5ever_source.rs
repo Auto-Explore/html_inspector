@@ -112,6 +112,7 @@ pub struct Html5EverEventSource {
     staged: Option<StagedEvent>,
     start_tag_spans: FxHashMap<String, VecDeque<html_inspector::Span>>,
     end_tag_spans: FxHashMap<String, VecDeque<html_inspector::Span>>,
+    start_tag_attr_spans: FxHashMap<usize, FxHashMap<String, VecDeque<html_inspector::Span>>>,
     syntax_errors: VecDeque<ParseEvent>,
 }
 
@@ -129,6 +130,7 @@ impl Html5EverEventSource {
             staged: None,
             start_tag_spans: FxHashMap::default(),
             end_tag_spans: FxHashMap::default(),
+            start_tag_attr_spans: FxHashMap::default(),
             syntax_errors: VecDeque::new(),
         }
     }
@@ -270,6 +272,9 @@ impl Html5EverEventSource {
                             tag.make_ascii_lowercase();
                         }
                         let span = Self::pop_span_for_tag(&mut self.start_tag_spans, &tag);
+                        let mut attr_spans = span
+                            .as_ref()
+                            .and_then(|s| self.start_tag_attr_spans.remove(&s.byte_start));
                         let flush_syntax_errors_before = span.as_ref().map(|s| s.byte_start);
 
                         let attrs_borrow = attrs.borrow();
@@ -303,10 +308,14 @@ impl Html5EverEventSource {
                                 attr_name.make_ascii_lowercase();
                             }
 
+                            let span = attr_spans
+                                .as_mut()
+                                .and_then(|m| m.get_mut(attr_name.as_str()))
+                                .and_then(VecDeque::pop_front);
                             out_attrs.push(Attribute {
                                 name: attr_name,
                                 value: Some(a.value.as_ref().to_owned()),
-                                span: None,
+                                span,
                             });
                         }
 
@@ -414,6 +423,7 @@ impl Html5EverEventSource {
             return Ok(());
         };
         let mut errors: Vec<ParseEvent> = Vec::new();
+        self.start_tag_attr_spans.clear();
         let mut scan = crate::SimpleHtmlEventSource::from_shared_bytes(
             self.name.clone(),
             InputFormat::Html,
@@ -471,6 +481,14 @@ impl Html5EverEventSource {
                 } => {
                     if let Some(span) = span {
                         Self::push_span_for_tag(&mut self.start_tag_spans, name.as_str(), span);
+                        let entry = self.start_tag_attr_spans.entry(span.byte_start).or_default();
+                        for attr in attrs.iter() {
+                            let Some(attr_span) = attr.span else { continue };
+                            let mut attr_name = attr.name.clone();
+                            normalize_double_xmlns_prefix(&mut attr_name);
+                            attr_name.make_ascii_lowercase();
+                            entry.entry(attr_name).or_default().push_back(attr_span);
+                        }
                     }
                     let lc = name;
                     let in_template = open_stack.iter().any(|(n, _)| n == "template");

@@ -47,11 +47,19 @@ impl Rule for AriaIdrefExists {
             "aria-labelledby",
             "aria-owns",
         ] {
-            let Some(v) = ctx.attr_value(attrs, attr) else {
+            let Some((v, span)) = attrs.iter().find_map(|a| {
+                if ctx.name_is(&a.name, attr) {
+                    a.value
+                        .as_deref()
+                        .map(|v| (v, a.span.or(*span)))
+                } else {
+                    None
+                }
+            }) else {
                 continue;
             };
             for token in v.split_ascii_whitespace() {
-                self.refs.push((attr.to_string(), token.to_string(), *span));
+                self.refs.push((attr.to_string(), token.to_string(), span));
             }
         }
     }
