@@ -49,9 +49,7 @@ impl Rule for AriaIdrefExists {
         ] {
             let Some((v, span)) = attrs.iter().find_map(|a| {
                 if ctx.name_is(&a.name, attr) {
-                    a.value
-                        .as_deref()
-                        .map(|v| (v, a.span.or(*span)))
+                    a.value.as_deref().map(|v| (v, a.span.or(*span)))
                 } else {
                     None
                 }

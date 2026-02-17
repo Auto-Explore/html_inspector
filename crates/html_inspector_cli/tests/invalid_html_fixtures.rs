@@ -113,17 +113,12 @@ fn byte_offset_at_line_col(bytes: &[u8], target_line: u32, target_col: u32) -> O
     None
 }
 
-fn validate_file_errors(
-    path: &Path,
-    format: InputFormat,
-    bytes: Arc<Vec<u8>>,
-) -> Vec<ActualError> {
+fn validate_file_errors(path: &Path, format: InputFormat, bytes: Arc<Vec<u8>>) -> Vec<ActualError> {
     let rules = pack_html_conformance()
         .merge(pack_aria())
         .merge(pack_i18n())
         .merge(pack_css_checks());
-    let source =
-        HtmlEventSource::from_shared_bytes(path.to_string_lossy(), format, bytes).unwrap();
+    let source = HtmlEventSource::from_shared_bytes(path.to_string_lossy(), format, bytes).unwrap();
     let report = html_inspector::validate_events(
         source,
         rules,
@@ -177,7 +172,8 @@ fn read_expected_errors(path: &Path) -> Vec<ExpectedError> {
         })
         .collect();
 
-    expected.sort_by(|a, b| (a.code.as_str(), a.line, a.col).cmp(&(b.code.as_str(), b.line, b.col)));
+    expected
+        .sort_by(|a, b| (a.code.as_str(), a.line, a.col).cmp(&(b.code.as_str(), b.line, b.col)));
     expected
 }
 
@@ -204,7 +200,12 @@ fn invalid_html_fixtures_match_expected_errors_and_spans() {
         .unwrap()
         .filter_map(|entry| entry.ok().map(|e| e.path()))
         .filter(|p| p.is_file())
-        .filter(|p| matches!(p.extension().and_then(|e| e.to_str()), Some("html" | "xhtml")))
+        .filter(|p| {
+            matches!(
+                p.extension().and_then(|e| e.to_str()),
+                Some("html" | "xhtml")
+            )
+        })
         .collect();
     fixtures.sort();
 
@@ -242,19 +243,22 @@ fn invalid_html_fixtures_match_expected_errors_and_spans() {
 
         for (actual, expected) in actual.iter().zip(expected.iter()) {
             assert_eq!(
-                actual.code, expected.code,
+                actual.code,
+                expected.code,
                 "unexpected error code for {}",
                 fixture.display()
             );
 
             assert_eq!(
-                actual.span.line, expected.line,
+                actual.span.line,
+                expected.line,
                 "unexpected error line for {} ({})",
                 fixture.display(),
                 actual.code
             );
             assert_eq!(
-                actual.span.col, expected.col,
+                actual.span.col,
+                expected.col,
                 "unexpected error column for {} ({})",
                 fixture.display(),
                 actual.code
@@ -270,7 +274,8 @@ fn invalid_html_fixtures_match_expected_errors_and_spans() {
                     )
                 });
             assert_eq!(
-                offset, actual.span.byte_start,
+                offset,
+                actual.span.byte_start,
                 "span byte_start did not match computed line/col offset for {} ({})",
                 fixture.display(),
                 actual.code

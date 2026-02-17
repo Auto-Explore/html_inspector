@@ -321,9 +321,7 @@ mod tests {
             self.format
         }
 
-        fn next_event(
-            &mut self,
-        ) -> Result<Option<ParseEvent>, html_inspector::ValidatorError> {
+        fn next_event(&mut self) -> Result<Option<ParseEvent>, html_inspector::ValidatorError> {
             Ok(self.events.next())
         }
     }

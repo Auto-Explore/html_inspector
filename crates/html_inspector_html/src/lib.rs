@@ -1390,12 +1390,7 @@ fn parse_start_tag(
                     (tag_start, tag_line, tag_col)
                 };
                 let (decoded, decoded_errs) = decode_char_refs_with_errors(
-                    src.format,
-                    raw,
-                    true,
-                    base_start,
-                    base_line,
-                    base_col,
+                    src.format, raw, true, base_start, base_line, base_col,
                 );
                 errs.extend(decoded_errs);
                 value = Some(decoded);
@@ -1477,12 +1472,7 @@ fn parse_start_tag(
                     (tag_start, tag_line, tag_col)
                 };
                 let (decoded, decoded_errs) = decode_char_refs_with_errors(
-                    src.format,
-                    raw,
-                    true,
-                    base_start,
-                    base_line,
-                    base_col,
+                    src.format, raw, true, base_start, base_line, base_col,
                 );
                 errs.extend(decoded_errs);
                 value = Some(decoded);
@@ -1654,9 +1644,8 @@ fn decode_char_refs_with_errors(
         return (s.to_string(), Vec::new());
     }
     let mut errs: Vec<ParseEvent> = Vec::new();
-    let line_col_at = |byte_off: usize| {
-        line_col_at_byte_offset(s.as_bytes(), 0, base_line, base_col, byte_off)
-    };
+    let line_col_at =
+        |byte_off: usize| line_col_at_byte_offset(s.as_bytes(), 0, base_line, base_col, byte_off);
     if let Some((byte_off, cp, byte_len)) = first_forbidden_code_point(s) {
         let (line, col) = line_col_at(byte_off);
         errs.push(ParseEvent::ParseError {

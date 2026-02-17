@@ -66,11 +66,7 @@ fn is(ctx: &ValidationContext, actual: &str, expected: &str) -> bool {
     }
 }
 
-fn has_attr(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector::Attribute],
-    needle: &str,
-) -> bool {
+fn has_attr(ctx: &ValidationContext, attrs: &[html_inspector::Attribute], needle: &str) -> bool {
     attrs.iter().any(|a| match ctx.format {
         html_inspector::InputFormat::Html => a.name.eq_ignore_ascii_case(needle),
         html_inspector::InputFormat::Xhtml => a.name == needle,

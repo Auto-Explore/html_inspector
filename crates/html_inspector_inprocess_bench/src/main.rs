@@ -112,8 +112,8 @@ fn run_once(docs: &[Doc], config: &Config) -> Result<RunOnceOutput, String> {
         let mut config = config.clone();
         config.base_uri = doc.base_uri.clone();
 
-        let report: Report = html_inspector::validate_events(source, rules, config)
-            .map_err(|e| e.to_string())?;
+        let report: Report =
+            html_inspector::validate_events(source, rules, config).map_err(|e| e.to_string())?;
         total_msgs += report.messages.len();
         let (errors, warnings, infos) = report.counts();
         total_errors += errors;

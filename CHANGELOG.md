@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.2]
+
+### Added
+
+- `html_inspector_cli`: fixture-driven invalid HTML/XHTML tests (`tests/invalid_html_fixtures`) with an auto-generated `*.expected.json` on first run.
+
+### Fixed
+
+- `html_inspector_html` (`html5ever` backend): propagate attribute spans into emitted events so rules can point at specific attributes.
+- `html_inspector_rules_aria`: use attribute spans when reporting invalid ARIA attributes / missing `idref` targets (points at the attribute, not the tag).
+
 ## [0.1.0]
 
 Initial public release.

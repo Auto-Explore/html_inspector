@@ -481,7 +481,10 @@ impl Html5EverEventSource {
                 } => {
                     if let Some(span) = span {
                         Self::push_span_for_tag(&mut self.start_tag_spans, name.as_str(), span);
-                        let entry = self.start_tag_attr_spans.entry(span.byte_start).or_default();
+                        let entry = self
+                            .start_tag_attr_spans
+                            .entry(span.byte_start)
+                            .or_default();
                         for attr in attrs.iter() {
                             let Some(attr_span) = attr.span else { continue };
                             let mut attr_name = attr.name.clone();

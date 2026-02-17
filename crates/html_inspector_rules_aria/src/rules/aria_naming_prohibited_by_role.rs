@@ -158,10 +158,7 @@ fn computed_role(
     }
 }
 
-fn implicit_input_role(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector::Attribute],
-) -> String {
+fn implicit_input_role(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> String {
     let ty = ctx.attr_value(attrs, "type").unwrap_or("text").trim();
     let ty_lc = ty.to_ascii_lowercase();
     let role = match ty_lc.as_str() {
@@ -177,10 +174,7 @@ fn implicit_input_role(
     role.to_string()
 }
 
-fn implicit_select_role(
-    ctx: &ValidationContext,
-    attrs: &[html_inspector::Attribute],
-) -> String {
+fn implicit_select_role(ctx: &ValidationContext, attrs: &[html_inspector::Attribute]) -> String {
     let is_listbox = ctx.has_attr(attrs, "multiple")
         || ctx
             .attr_value(attrs, "size")
