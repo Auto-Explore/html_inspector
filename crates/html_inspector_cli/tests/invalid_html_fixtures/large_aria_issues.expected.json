@@ -1,0 +1,248 @@
+[
+  {
+    "code": "aria.aria-multiselectable.not_allowed",
+    "line": 104,
+    "col": 31,
+    "at": "aria-multiselectable"
+  },
+  {
+    "code": "aria.aria-placeholder.not_allowed",
+    "line": 346,
+    "col": 113,
+    "at": "aria-placeholder"
+  },
+  {
+    "code": "aria.aria-placeholder.not_allowed",
+    "line": 544,
+    "col": 90,
+    "at": "aria-placeholder"
+  },
+  {
+    "code": "aria.aria-readonly.not_allowed",
+    "line": 692,
+    "col": 26,
+    "at": "aria-readonly"
+  },
+  {
+    "code": "aria.aria_atomic.disallowed_on_br_wbr",
+    "line": 488,
+    "col": 1,
+    "at": "<br"
+  },
+  {
+    "code": "aria.aria_checked.disallowed_on_input_checkbox",
+    "line": 384,
+    "col": 36,
+    "at": "<input"
+  },
+  {
+    "code": "aria.aria_checked.disallowed_on_input_radio",
+    "line": 397,
+    "col": 36,
+    "at": "<input"
+  },
+  {
+    "code": "aria.aria_checked.not_allowed",
+    "line": 410,
+    "col": 29,
+    "at": "<div"
+  },
+  {
+    "code": "aria.aria_checked.not_allowed",
+    "line": 590,
+    "col": 17,
+    "at": "<summary"
+  },
+  {
+    "code": "aria.aria_label.prohibited_on_role.code",
+    "line": 54,
+    "col": 5,
+    "at": "<code"
+  },
+  {
+    "code": "aria.aria_label.prohibited_on_role.emphasis",
+    "line": 109,
+    "col": 17,
+    "at": "<em"
+  },
+  {
+    "code": "aria.aria_label.prohibited_on_role.generic",
+    "line": 798,
+    "col": 17,
+    "at": "<span"
+  },
+  {
+    "code": "aria.aria_label.prohibited_on_role.paragraph",
+    "line": 179,
+    "col": 13,
+    "at": "<p"
+  },
+  {
+    "code": "aria.aria_label.prohibited_on_role.paragraph",
+    "line": 381,
+    "col": 25,
+    "at": "<p"
+  },
+  {
+    "code": "aria.aria_labelledby.prohibited_on_role.strong",
+    "line": 122,
+    "col": 17,
+    "at": "<strong"
+  },
+  {
+    "code": "aria.aria_placeholder.disallowed_with_placeholder",
+    "line": 346,
+    "col": 25,
+    "at": "<textarea"
+  },
+  {
+    "code": "aria.aria_placeholder.disallowed_with_placeholder",
+    "line": 544,
+    "col": 21,
+    "at": "<input"
+  },
+  {
+    "code": "aria.aria_readonly.requires_role_or_state",
+    "line": 692,
+    "col": 21,
+    "at": "<div"
+  },
+  {
+    "code": "aria.aria_valuemax.input_number.with_max",
+    "line": 549,
+    "col": 21,
+    "at": "<input"
+  },
+  {
+    "code": "aria.aria_valuemax.progress.with_max",
+    "line": 250,
+    "col": 33,
+    "at": "<progress"
+  },
+  {
+    "code": "aria.aria_valuemin.input_number.with_min",
+    "line": 351,
+    "col": 25,
+    "at": "<input"
+  },
+  {
+    "code": "aria.element.output.missing_role",
+    "line": 740,
+    "col": 21,
+    "at": "<output"
+  },
+  {
+    "code": "aria.hidden.until_found.conflict",
+    "line": 513,
+    "col": 13,
+    "at": "<div"
+  },
+  {
+    "code": "aria.idref.missing.aria-controls",
+    "line": 89,
+    "col": 56,
+    "at": "aria-controls"
+  },
+  {
+    "code": "aria.idref.missing.aria-describedby",
+    "line": 184,
+    "col": 33,
+    "at": "aria-describedby"
+  },
+  {
+    "code": "aria.idref.missing.aria-flowto",
+    "line": 648,
+    "col": 26,
+    "at": "aria-flowto"
+  },
+  {
+    "code": "aria.idref.missing.aria-labelledby",
+    "line": 122,
+    "col": 25,
+    "at": "aria-labelledby"
+  },
+  {
+    "code": "aria.idref.missing.aria-owns",
+    "line": 655,
+    "col": 26,
+    "at": "aria-owns"
+  },
+  {
+    "code": "aria.role.separator.disallowed_on_br_wbr",
+    "line": 490,
+    "col": 1,
+    "at": "<wbr"
+  },
+  {
+    "code": "aria.role_cell.requires_row",
+    "line": 434,
+    "col": 21,
+    "at": "<div"
+  },
+  {
+    "code": "aria.role_option.requires_listbox",
+    "line": 457,
+    "col": 21,
+    "at": "<div"
+  },
+  {
+    "code": "aria.role_row.requires_table_like",
+    "line": 429,
+    "col": 21,
+    "at": "<div"
+  },
+  {
+    "code": "aria.select.role.button.invalid",
+    "line": 315,
+    "col": 25,
+    "at": "<select"
+  },
+  {
+    "code": "aria.select.role.combobox.missing_aria_expanded",
+    "line": 326,
+    "col": 25,
+    "at": "<select"
+  },
+  {
+    "code": "aria.select.role.listbox.disallowed_without_multiple_or_size",
+    "line": 608,
+    "col": 21,
+    "at": "<select"
+  },
+  {
+    "code": "aria.summary.details_summary.disallowed_attribute.aria_checked",
+    "line": 590,
+    "col": 17,
+    "at": "<summary"
+  },
+  {
+    "code": "aria.summary.details_summary.disallowed_attribute.aria_expanded",
+    "line": 563,
+    "col": 17,
+    "at": "<summary"
+  },
+  {
+    "code": "aria.summary.details_summary.disallowed_attribute.aria_pressed",
+    "line": 570,
+    "col": 17,
+    "at": "<summary"
+  },
+  {
+    "code": "aria.summary.details_summary.disallowed_attribute.role",
+    "line": 583,
+    "col": 17,
+    "at": "<summary"
+  },
+  {
+    "code": "aria.summary.details_summary.missing_role_for_aria_expanded",
+    "line": 563,
+    "col": 17,
+    "at": "<summary"
+  },
+  {
+    "code": "aria.summary.details_summary.missing_role_for_aria_pressed",
+    "line": 570,
+    "col": 17,
+    "at": "<summary"
+  }
+]

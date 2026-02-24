@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard | Project Tracker</title>
+    <meta name="description" content="Internal project management dashboard">
+    <link rel="stylesheet" href="/assets/css/dashboard.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        :root { --color-primary: #2563eb; --color-danger: #dc2626; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: #f8fafc; }
+        .skip-link { position: absolute; top: -40px; left: 0; }
+        .skip-link:focus { top: 0; }
+        .header { display: flex; align-items: center; background: #1e293b; color: white; padding: 0 1rem; height: 60px; }
+        .header__logo { height: 32px; margin-right: 1rem; }
+        .header__nav { display: flex; gap: 0.5rem; }
+        .sidebar { width: 250px; background: white; border-right: 1px solid #e2e8f0; min-height: calc(100vh - 60px); }
+        .sidebar__menu { list-style: none; padding: 0.5rem 0; }
+        .sidebar__item { padding: 0.75rem 1rem; cursor: pointer; }
+        .main { padding: 1.5rem; flex: 1; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        .card__header { padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .card__body { padding: 1.5rem; }
+        .tabs { display: flex; border-bottom: 2px solid #e2e8f0; }
+        .tab { padding: 0.75rem 1.5rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .tab--active { border-color: var(--color-primary); color: var(--color-primary); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .btn { padding: 0.5rem 1rem; border-radius: 4px; border: none; cursor: pointer; }
+        .btn--primary { background: var(--color-primary); color: white; }
+        .btn--danger { background: var(--color-danger); color: white; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.25rem; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+        .modal { background: white; border-radius: 8px; width: 500px; max-width: 90vw; }
+        .badge { display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; }
+        .tree-item { padding-left: 1.5rem; }
+        .footer { padding: 1.5rem; text-align: center; color: #64748b; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<!-- Skip link -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- ===================== HEADER ===================== -->
+<header class="header" role="banner">
+    <img src="/assets/img/logo.svg" alt="ProjectTracker logo" class="header__logo" height="32" width="120">
+
+    <!-- ISSUE: aria-label on <code> (naming prohibited on role=code) -->
+    <code aria-label="version number" class="header__version">v3.2.1</code>
+
+    <nav class="header__nav" aria-label="Main navigation">
+        <ul role="menubar" aria-label="Primary menu" style="display:flex; list-style:none; gap:0.5rem;">
+            <li role="none">
+                <a href="/dashboard" role="menuitem" class="header__nav-link">Dashboard</a>
+            </li>
+            <li role="none">
+                <a href="/projects" role="menuitem" class="header__nav-link">Projects</a>
+            </li>
+            <li role="none">
+                <a href="/team" role="menuitem" class="header__nav-link">Team</a>
+            </li>
+            <li role="none">
+                <a href="/reports" role="menuitem" class="header__nav-link">Reports</a>
+            </li>
+            <li role="none">
+                <a href="/settings" role="menuitem" class="header__nav-link">Settings</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="header__actions" style="margin-left:auto; display:flex; gap:0.5rem; align-items:center;">
+        <!-- Notifications button -->
+        <button class="btn" aria-label="Notifications" id="notif-btn" aria-haspopup="true" aria-expanded="false">
+            <span aria-hidden="true">&#128276;</span>
+            <span class="badge" style="background:#ef4444;color:white;">3</span>
+        </button>
+
+        <!-- User menu button -->
+        <button class="btn" aria-label="User menu" id="user-menu-btn" aria-haspopup="true" aria-expanded="false">
+            JD
+        </button>
+
+        <!-- ISSUE: aria-controls referencing non-existent ID -->
+        <button class="btn" aria-label="Quick actions" aria-controls="quick-actions-panel-missing" aria-haspopup="true">
+            <span aria-hidden="true">&#9889;</span>
+        </button>
+    </div>
+</header>
+
+<div style="display:flex;">
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="sidebar" role="complementary" aria-label="Project navigation">
+    <div style="padding: 1rem;">
+        <input type="search" placeholder="Search projects..." aria-label="Search projects">
+    </div>
+
+    <!-- ISSUE: aria-multiselectable on a nav list (not allowed on navigation role) -->
+    <ul class="sidebar__menu" aria-multiselectable="true">
+        <li class="sidebar__item">
+            <a href="/projects/alpha">
+                <strong>Alpha Release</strong>
+                <!-- ISSUE: aria-label on <em> (naming prohibited on role=emphasis) -->
+                <em aria-label="status indicator">In Progress</em>
+            </a>
+        </li>
+        <li class="sidebar__item">
+            <a href="/projects/beta">
+                <strong>Beta Testing</strong>
+                <em>Scheduled</em>
+            </a>
+        </li>
+        <li class="sidebar__item">
+            <a href="/projects/gamma">
+                <strong>Gamma Cleanup</strong>
+                <!-- ISSUE: aria-labelledby on <strong> (naming prohibited on role=strong) -->
+                <strong aria-labelledby="gamma-status">Done</strong>
+            </a>
+        </li>
+        <li class="sidebar__item">
+            <a href="/projects/delta">
+                <strong>Delta Migration</strong>
+                <span class="badge" style="background:#fbbf24;">Blocked</span>
+            </a>
+        </li>
+        <li class="sidebar__item">
+            <a href="/projects/epsilon">
+                <strong>Epsilon Deployment</strong>
+                <span class="badge" style="background:#22c55e;color:white;">Active</span>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tree view for project structure -->
+    <div style="padding: 0 1rem;">
+        <h3 style="font-size:0.875rem; color:#64748b; padding:0.5rem 0;">File Explorer</h3>
+        <ul role="tree" aria-label="Project files">
+            <li role="treeitem" aria-expanded="true">
+                src/
+                <ul role="group">
+                    <li role="treeitem">main.rs</li>
+                    <li role="treeitem" aria-expanded="false">
+                        components/
+                        <ul role="group">
+                            <li role="treeitem">header.rs</li>
+                            <li role="treeitem">sidebar.rs</li>
+                            <li role="treeitem">footer.rs</li>
+                        </ul>
+                    </li>
+                    <li role="treeitem">lib.rs</li>
+                </ul>
+            </li>
+            <li role="treeitem" aria-expanded="false">
+                tests/
+                <ul role="group">
+                    <li role="treeitem">unit_tests.rs</li>
+                    <li role="treeitem">integration_tests.rs</li>
+                </ul>
+            </li>
+            <li role="treeitem">Cargo.toml</li>
+            <li role="treeitem">README.md</li>
+        </ul>
+    </div>
+</aside>
+
+<!-- ===================== MAIN CONTENT ===================== -->
+<main class="main" id="main-content">
+
+    <!-- Page header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <div>
+            <h1>Dashboard Overview</h1>
+            <!-- ISSUE: aria-label on <p> (naming prohibited on role=paragraph) -->
+            <p aria-label="dashboard subtitle">Welcome back, John. Here is your project summary.</p>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn--primary" id="new-project-btn">+ New Project</button>
+            <!-- ISSUE: aria-describedby referencing non-existent ID -->
+            <button class="btn" aria-describedby="export-tooltip-nonexistent">Export Data</button>
+        </div>
+    </div>
+
+    <!-- =================== STATS CARDS =================== -->
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div class="card">
+            <div class="card__body" style="text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:var(--color-primary);">24</div>
+                <div style="color:#64748b;">Active Projects</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__body" style="text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:#16a34a;">156</div>
+                <div style="color:#64748b;">Tasks Completed</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__body" style="text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:#ea580c;">12</div>
+                <div style="color:#64748b;">Pending Reviews</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__body" style="text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:#dc2626;">3</div>
+                <div style="color:#64748b;">Critical Bugs</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== TABBED SECTION =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Project Activity</h2>
+        </div>
+        <div class="card__body">
+            <!-- Tab bar with active tab but NO tabpanel in document -->
+            <div class="tabs" role="tablist" aria-label="Activity views">
+                <!-- ISSUE: active tab with no tabpanel anywhere in the document -->
+                <div class="tab tab--active" role="tab" aria-selected="true" id="tab-overview">Overview</div>
+                <div class="tab" role="tab" aria-selected="false" id="tab-timeline">Timeline</div>
+                <div class="tab" role="tab" aria-selected="false" id="tab-commits">Commits</div>
+                <div class="tab" role="tab" aria-selected="false" id="tab-reviews">Reviews</div>
+            </div>
+
+            <!-- Content area with tabpanel -->
+            <div style="padding:1rem 0;" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Team Lead</th>
+                            <th>Last Update</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="/projects/alpha">Alpha Release</a></td>
+                            <td><span class="badge" style="background:#dbeafe; color:#2563eb;">In Progress</span></td>
+                            <td>
+                                <!-- ISSUE: progress with max and aria-valuemax (conflicts) -->
+                                <progress max="100" value="72" aria-valuemax="100" style="width:100%;">72%</progress>
+                            </td>
+                            <td>Jane Smith</td>
+                            <td>2 hours ago</td>
+                            <td>
+                                <button class="btn" aria-label="Edit Alpha Release">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><a href="/projects/beta">Beta Testing</a></td>
+                            <td><span class="badge" style="background:#fef3c7; color:#b45309;">Scheduled</span></td>
+                            <td>
+                                <progress max="100" value="30" style="width:100%;">30%</progress>
+                            </td>
+                            <td>Bob Chen</td>
+                            <td>1 day ago</td>
+                            <td>
+                                <button class="btn" aria-label="Edit Beta Testing">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><a href="/projects/gamma">Gamma Cleanup</a></td>
+                            <td><span class="badge" style="background:#dcfce7; color:#16a34a;">Done</span></td>
+                            <td>
+                                <progress max="100" value="100" style="width:100%;">100%</progress>
+                            </td>
+                            <td>Alice Kim</td>
+                            <td>3 days ago</td>
+                            <td>
+                                <button class="btn" aria-label="Edit Gamma Cleanup">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><a href="/projects/delta">Delta Migration</a></td>
+                            <td><span class="badge" style="background:#fee2e2; color:#dc2626;">Blocked</span></td>
+                            <td>
+                                <progress max="50" value="22" style="width:100%;">44%</progress>
+                            </td>
+                            <td>Carlos Ruiz</td>
+                            <td>5 hours ago</td>
+                            <td>
+                                <button class="btn" aria-label="Edit Delta Migration">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== FORM SECTION =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Quick Task Entry</h2>
+        </div>
+        <div class="card__body">
+            <form action="/api/tasks" method="post">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label for="task-title">Task Title</label>
+                        <input type="text" id="task-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-project">Project</label>
+                        <!-- ISSUE: select with role="button" (invalid) -->
+                        <select id="task-project" name="project" role="button">
+                            <option value="">Select a project...</option>
+                            <option value="alpha">Alpha Release</option>
+                            <option value="beta">Beta Testing</option>
+                            <option value="gamma">Gamma Cleanup</option>
+                            <option value="delta">Delta Migration</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-priority">Priority</label>
+                        <!-- ISSUE: select with role="combobox" but missing aria-expanded -->
+                        <select id="task-priority" name="priority" role="combobox">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-assignee">Assignee</label>
+                        <select id="task-assignee" name="assignee">
+                            <option value="">Unassigned</option>
+                            <option value="jane">Jane Smith</option>
+                            <option value="bob">Bob Chen</option>
+                            <option value="alice">Alice Kim</option>
+                            <option value="carlos">Carlos Ruiz</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="task-desc">Description</label>
+                        <!-- ISSUE: textarea with both placeholder and aria-placeholder -->
+                        <textarea id="task-desc" name="description" rows="3" placeholder="Describe the task..." aria-placeholder="Enter task description here"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-estimate">Estimate (hours)</label>
+                        <!-- ISSUE: input[number] with min and aria-valuemin (conflicts) -->
+                        <input type="number" id="task-estimate" name="estimate" min="0" aria-valuemin="0" max="1000" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-deadline">Deadline</label>
+                        <input type="date" id="task-deadline" name="deadline">
+                    </div>
+                </div>
+
+                <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+                    <button type="submit" class="btn btn--primary">Create Task</button>
+                    <button type="reset" class="btn">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================== TEAM SECTION =================== -->
+    <div class="card">
+        <div class="card__header" style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Team Members</h2>
+            <button class="btn btn--primary" id="invite-btn">Invite Member</button>
+        </div>
+        <div class="card__body">
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
+                <!-- Team member card 1 -->
+                <div class="card" style="box-shadow:none; border:1px solid #e2e8f0;">
+                    <div class="card__body" style="text-align:center;">
+                        <div style="width:64px; height:64px; border-radius:50%; background:#dbeafe; margin:0 auto 0.5rem; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:var(--color-primary);">JS</div>
+                        <h3>Jane Smith</h3>
+                        <!-- ISSUE: aria-label on <p> (naming prohibited on role=paragraph) -->
+                        <p aria-label="role description">Lead Developer</p>
+                        <div style="margin-top:0.5rem;">
+                            <!-- ISSUE: input[checkbox] with aria-checked (use native checked) -->
+                            <label><input type="checkbox" aria-checked="true" checked> Active</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team member card 2 -->
+                <div class="card" style="box-shadow:none; border:1px solid #e2e8f0;">
+                    <div class="card__body" style="text-align:center;">
+                        <div style="width:64px; height:64px; border-radius:50%; background:#dcfce7; margin:0 auto 0.5rem; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#16a34a;">BC</div>
+                        <h3>Bob Chen</h3>
+                        <p>QA Engineer</p>
+                        <div style="margin-top:0.5rem;">
+                            <!-- ISSUE: input[radio] with aria-checked (use native checked) -->
+                            <label><input type="radio" name="team-lead" aria-checked="false"> Team Lead</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team member card 3 -->
+                <div class="card" style="box-shadow:none; border:1px solid #e2e8f0;">
+                    <div class="card__body" style="text-align:center;">
+                        <div style="width:64px; height:64px; border-radius:50%; background:#fef3c7; margin:0 auto 0.5rem; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#b45309;">AK</div>
+                        <h3>Alice Kim</h3>
+                        <p>UI Designer</p>
+                        <div style="margin-top:0.5rem;">
+                            <!-- ISSUE: div with aria-checked but no valid role for it -->
+                            <div aria-checked="true" style="display:inline-block; cursor:pointer;">&#9989; Available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== ROLE HIERARCHY ISSUES =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Sprint Board</h2>
+        </div>
+        <div class="card__body">
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
+                <!-- Column: Backlog -->
+                <div>
+                    <h3 style="margin-bottom:0.75rem; color:#64748b;">Backlog</h3>
+                    <!-- ISSUE: role="row" not inside table/grid/treegrid/rowgroup -->
+                    <div role="row" style="padding:0.75rem; background:#f8fafc; border-radius:4px; margin-bottom:0.5rem;">
+                        <div style="font-weight:500;">Setup CI/CD pipeline</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Assigned to: Bob</div>
+                    </div>
+                    <!-- ISSUE: role="cell" not inside role="row" -->
+                    <div role="cell" style="padding:0.75rem; background:#f8fafc; border-radius:4px; margin-bottom:0.5rem;">
+                        <div style="font-weight:500;">Write API documentation</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Assigned to: Jane</div>
+                    </div>
+                </div>
+
+                <!-- Column: In Progress -->
+                <div>
+                    <h3 style="margin-bottom:0.75rem; color:#2563eb;">In Progress</h3>
+                    <div style="padding:0.75rem; background:#eff6ff; border-radius:4px; margin-bottom:0.5rem;">
+                        <div style="font-weight:500;">Implement auth module</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Assigned to: Carlos</div>
+                    </div>
+                    <div style="padding:0.75rem; background:#eff6ff; border-radius:4px; margin-bottom:0.5rem;">
+                        <div style="font-weight:500;">Design review screens</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Assigned to: Alice</div>
+                    </div>
+                </div>
+
+                <!-- Column: Review -->
+                <div>
+                    <h3 style="margin-bottom:0.75rem; color:#ea580c;">Review</h3>
+                    <!-- ISSUE: role="option" not inside listbox -->
+                    <div role="option" style="padding:0.75rem; background:#fff7ed; border-radius:4px; margin-bottom:0.5rem;">
+                        <div style="font-weight:500;">Database migration script</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Reviewer: Jane</div>
+                    </div>
+                </div>
+
+                <!-- Column: Done -->
+                <div>
+                    <h3 style="margin-bottom:0.75rem; color:#16a34a;">Done</h3>
+                    <div style="padding:0.75rem; background:#f0fdf4; border-radius:4px; margin-bottom:0.5rem;">
+                        <div style="font-weight:500;">Setup project structure</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Completed by: Jane</div>
+                    </div>
+                    <div style="padding:0.75rem; background:#f0fdf4; border-radius:4px; margin-bottom:0.5rem;">
+                        <div style="font-weight:500;">Create design tokens</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Completed by: Alice</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== BR/WBR CONSTRAINTS =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Build Log</h2>
+        </div>
+        <div class="card__body">
+            <pre style="background:#1e293b; color:#e2e8f0; padding:1rem; border-radius:4px; overflow-x:auto; font-size:0.875rem;">
+[2026-02-24 10:00:01] INFO  Starting build pipeline...
+[2026-02-24 10:00:02] INFO  Fetching dependencies...<!-- ISSUE: br with aria-atomic -->
+<br aria-atomic="true">[2026-02-24 10:00:15] INFO  Dependencies resolved (42 packages)
+[2026-02-24 10:00:16] INFO  Compiling src/main.rs...<!-- ISSUE: wbr with role="separator" -->
+<wbr role="separator">[2026-02-24 10:00:45] INFO  Compiling src/lib.rs...
+[2026-02-24 10:00:58] WARN  Unused variable `temp` in src/utils.rs:42
+[2026-02-24 10:01:02] INFO  Compiling tests...
+[2026-02-24 10:01:30] INFO  Build complete. 0 errors, 1 warning.
+[2026-02-24 10:01:31] INFO  Running tests...
+[2026-02-24 10:01:45] PASS  test_auth_login (0.12s)
+[2026-02-24 10:01:45] PASS  test_auth_logout (0.08s)
+[2026-02-24 10:01:46] PASS  test_project_create (0.23s)
+[2026-02-24 10:01:46] PASS  test_project_delete (0.15s)
+[2026-02-24 10:01:47] PASS  test_task_assign (0.19s)
+[2026-02-24 10:01:47] INFO  All 5 tests passed.
+[2026-02-24 10:01:48] INFO  Generating artifacts...
+[2026-02-24 10:01:50] INFO  Build artifacts saved to /dist/</pre>
+        </div>
+    </div>
+
+    <!-- =================== HIDDEN CONSTRAINTS =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Advanced Settings</h2>
+        </div>
+        <div class="card__body">
+            <!-- ISSUE: aria-hidden with hidden="until-found" (conflict) -->
+            <div aria-hidden="true" hidden="until-found" style="padding:1rem; background:#fef3c7; border-radius:4px; margin-bottom:1rem;">
+                <h3>Experimental Features</h3>
+                <p>These features are currently in beta and may change without notice.</p>
+                <ul>
+                    <li>Real-time collaboration</li>
+                    <li>AI-powered task suggestions</li>
+                    <li>Advanced analytics dashboard</li>
+                </ul>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <div class="form-group">
+                    <label for="setting-theme">Theme</label>
+                    <select id="setting-theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="auto">System</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="setting-lang">Language</label>
+                    <select id="setting-lang">
+                        <option value="en">English</option>
+                        <option value="fi">Suomi</option>
+                        <option value="sv">Svenska</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="setting-notif">Notification Email</label>
+                    <!-- ISSUE: input with both placeholder and aria-placeholder -->
+                    <input type="email" id="setting-notif" placeholder="you@example.com" aria-placeholder="Enter your email address">
+                </div>
+                <div class="form-group">
+                    <label for="setting-api">API Rate Limit</label>
+                    <!-- ISSUE: input[number] with max and aria-valuemax (conflicts) -->
+                    <input type="number" id="setting-api" max="10000" aria-valuemax="10000" value="1000">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== SUMMARY CONSTRAINTS =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>FAQ &amp; Documentation</h2>
+        </div>
+        <div class="card__body">
+            <details>
+                <!-- ISSUE: summary with aria-expanded (needs role) -->
+                <summary aria-expanded="true">How do I create a new project?</summary>
+                <div style="padding:0.75rem 0;">
+                    <p>Click the "+ New Project" button in the top right corner. Fill in the project name, description, and team members. Then click "Create" to set up your new project.</p>
+                </div>
+            </details>
+            <details>
+                <!-- ISSUE: summary with aria-pressed (needs role) -->
+                <summary aria-pressed="false">How do I assign tasks to team members?</summary>
+                <div style="padding:0.75rem 0;">
+                    <p>Navigate to the project's task board. Click on a task card, then use the "Assignee" dropdown to select a team member. You can also drag and drop tasks between columns.</p>
+                </div>
+            </details>
+            <details>
+                <summary>How do I export reports?</summary>
+                <div style="padding:0.75rem 0;">
+                    <p>Go to the Reports section from the main navigation. Select the report type and date range, then click "Export" to download as CSV or PDF.</p>
+                </div>
+            </details>
+            <details>
+                <!-- ISSUE: summary with role attribute (disallowed) -->
+                <summary role="button">How do I manage integrations?</summary>
+                <div style="padding:0.75rem 0;">
+                    <p>Visit Settings > Integrations. You can connect Slack, GitHub, Jira, and other tools. Each integration has its own configuration panel.</p>
+                </div>
+            </details>
+            <details>
+                <!-- ISSUE: summary with non-global aria attribute (disallowed) -->
+                <summary aria-checked="true">How do I set up notifications?</summary>
+                <div style="padding:0.75rem 0;">
+                    <p>Go to Settings > Notifications. Choose which events trigger notifications and select your preferred channels (email, in-app, Slack).</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- =================== SELECT ROLE CONSTRAINTS =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Filter &amp; Search</h2>
+        </div>
+        <div class="card__body">
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
+                <div class="form-group">
+                    <label for="filter-status">Filter by Status</label>
+                    <!-- ISSUE: select with role="listbox" but no multiple/size -->
+                    <select id="filter-status" role="listbox">
+                        <option value="all">All</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-priority">Filter by Priority</label>
+                    <select id="filter-priority">
+                        <option value="all">All Priorities</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-assignee">Filter by Assignee</label>
+                    <select id="filter-assignee">
+                        <option value="all">All Members</option>
+                        <option value="jane">Jane Smith</option>
+                        <option value="bob">Bob Chen</option>
+                        <option value="alice">Alice Kim</option>
+                        <option value="carlos">Carlos Ruiz</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== MORE IDREF ISSUES =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Activity Feed</h2>
+        </div>
+        <div class="card__body">
+            <ul style="list-style:none; padding:0;">
+                <li style="padding:0.75rem 0; border-bottom:1px solid #e2e8f0;">
+                    <!-- ISSUE: aria-flowto referencing non-existent ID -->
+                    <div aria-flowto="activity-detail-missing">
+                        <strong>Jane Smith</strong> pushed 3 commits to <code>main</code>
+                        <span style="color:#64748b; font-size:0.875rem;"> - 2 hours ago</span>
+                    </div>
+                </li>
+                <li style="padding:0.75rem 0; border-bottom:1px solid #e2e8f0;">
+                    <!-- ISSUE: aria-owns referencing non-existent ID -->
+                    <div aria-owns="owned-element-ghost">
+                        <strong>Bob Chen</strong> completed code review for PR #142
+                        <span style="color:#64748b; font-size:0.875rem;"> - 5 hours ago</span>
+                    </div>
+                </li>
+                <li style="padding:0.75rem 0; border-bottom:1px solid #e2e8f0;">
+                    <div>
+                        <strong>Alice Kim</strong> uploaded 4 new design mockups
+                        <span style="color:#64748b; font-size:0.875rem;"> - 1 day ago</span>
+                    </div>
+                </li>
+                <li style="padding:0.75rem 0; border-bottom:1px solid #e2e8f0;">
+                    <div>
+                        <strong>Carlos Ruiz</strong> resolved bug #89 (auth token refresh)
+                        <span style="color:#64748b; font-size:0.875rem;"> - 1 day ago</span>
+                    </div>
+                </li>
+                <li style="padding:0.75rem 0;">
+                    <div>
+                        <strong>System</strong> deployed v3.2.1 to production
+                        <span style="color:#64748b; font-size:0.875rem;"> - 2 days ago</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- =================== READONLY ISSUES =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>System Information</h2>
+        </div>
+        <div class="card__body">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <div>
+                    <h3 style="font-size:0.875rem; color:#64748b; margin-bottom:0.5rem;">Server Status</h3>
+                    <!-- ISSUE: aria-readonly without role or state context -->
+                    <div aria-readonly="true" style="padding:0.75rem; background:#f0fdf4; border-radius:4px;">
+                        <div style="font-weight:500; color:#16a34a;">All Systems Operational</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Uptime: 99.97% (last 30 days)</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size:0.875rem; color:#64748b; margin-bottom:0.5rem;">Database</h3>
+                    <div style="padding:0.75rem; background:#f0fdf4; border-radius:4px;">
+                        <div style="font-weight:500; color:#16a34a;">Connected</div>
+                        <div style="font-size:0.875rem; color:#64748b;">PostgreSQL 16.2 | 2.3 GB used</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size:0.875rem; color:#64748b; margin-bottom:0.5rem;">API Endpoints</h3>
+                    <div style="padding:0.75rem; background:#f0fdf4; border-radius:4px;">
+                        <div style="font-weight:500; color:#16a34a;">Healthy</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Avg response: 45ms | 12K req/min</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size:0.875rem; color:#64748b; margin-bottom:0.5rem;">Cache</h3>
+                    <div style="padding:0.75rem; background:#fef3c7; border-radius:4px;">
+                        <div style="font-weight:500; color:#b45309;">Warning</div>
+                        <div style="font-size:0.875rem; color:#64748b;">Redis | Hit rate: 78% (below 85% threshold)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== OUTPUT ELEMENT ISSUE =================== -->
+    <div class="card">
+        <div class="card__header">
+            <h2>Build Metrics Calculator</h2>
+        </div>
+        <div class="card__body">
+            <div style="display:flex; gap:1rem; align-items:end;">
+                <div class="form-group" style="flex:1;">
+                    <label for="builds-count">Number of Builds</label>
+                    <input type="number" id="builds-count" value="42">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label for="build-time">Avg Build Time (sec)</label>
+                    <input type="number" id="build-time" value="125">
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:0.75rem; color:#64748b; margin-bottom:0.25rem;">Total Build Hours</div>
+                    <!-- ISSUE: output with aria-pressed but no role -->
+                    <output aria-pressed="true" id="total-hours" style="display:block; padding:0.5rem; background:#f8fafc; border-radius:4px; font-size:1.25rem; font-weight:600;">1.46h</output>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+</div>
+
+<!-- ===================== MODAL (hidden) ===================== -->
+<div class="modal-overlay" style="display:none;" id="new-project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+        <div class="card__header" style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 id="modal-title">Create New Project</h2>
+            <button class="btn" aria-label="Close dialog">&times;</button>
+        </div>
+        <div class="card__body">
+            <form action="/api/projects" method="post">
+                <div class="form-group">
+                    <label for="proj-name">Project Name</label>
+                    <input type="text" id="proj-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="proj-desc">Description</label>
+                    <textarea id="proj-desc" name="description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="proj-team">Team</label>
+                    <select id="proj-team" name="team" multiple size="4">
+                        <option value="jane">Jane Smith</option>
+                        <option value="bob">Bob Chen</option>
+                        <option value="alice">Alice Kim</option>
+                        <option value="carlos">Carlos Ruiz</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:1rem;">
+                    <button type="button" class="btn">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+    <div>
+        &copy; 2026 ProjectTracker Inc. All rights reserved.
+        <span style="color:#94a3b8;"> | </span>
+        <a href="/privacy">Privacy Policy</a>
+        <span style="color:#94a3b8;"> | </span>
+        <a href="/terms">Terms of Service</a>
+        <span style="color:#94a3b8;"> | </span>
+        <a href="/docs" target="_blank" rel="noopener noreferrer">Documentation</a>
+    </div>
+    <div style="margin-top:0.5rem; font-size:0.75rem; color:#94a3b8;">
+        <!-- ISSUE: aria-label on <span> with role="generic" (naming prohibited) -->
+        Version <span aria-label="application version">3.2.1</span> | Built with Rust
+    </div>
+</footer>
+
+</body>
+</html>
