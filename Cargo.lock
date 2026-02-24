@@ -50,9 +50,9 @@ dependencies = [
 
 [[package]]
 name = "css_inspector"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d62412347602b3582bbfe19071f0fb0b32d6bfe4de07c87fe5c63344dda9a945"
+checksum = "4b84a3c2df953ceefd470d6359bfeab68313662d946df94ee3bda79479c11a7a"
 dependencies = [
  "rustc-hash",
  "serde",

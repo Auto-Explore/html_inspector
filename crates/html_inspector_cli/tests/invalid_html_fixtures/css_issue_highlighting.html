@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style>
+a { badprop: 1; }
+</style>
+</head>
+<body>
+<p style="badprop: 1">inline error at start</p>
+<p style="color: red; badprop: 1">inline error mid-value</p>
+<p style="color: red; /* unclosed">unclosed comment in attr</p>
+</body>
+</html>

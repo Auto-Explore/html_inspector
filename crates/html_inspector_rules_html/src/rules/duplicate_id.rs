@@ -90,11 +90,7 @@ mod tests {
         }
     }
 
-    fn start_tag_with_id(
-        id: &str,
-        tag_span: Option<Span>,
-        attr_span: Option<Span>,
-    ) -> ParseEvent {
+    fn start_tag_with_id(id: &str, tag_span: Option<Span>, attr_span: Option<Span>) -> ParseEvent {
         ParseEvent::StartTag {
             name: "div".to_string(),
             attrs: vec![Attribute {
@@ -131,9 +127,15 @@ mod tests {
         );
         assert_eq!(sink.0.len(), 2);
         assert_eq!(sink.0[0].code, "html.id.duplicate");
-        assert_eq!(sink.0[0].span, dup_attr, "should point to the id attribute, not the tag");
+        assert_eq!(
+            sink.0[0].span, dup_attr,
+            "should point to the id attribute, not the tag"
+        );
         assert_eq!(sink.0[1].code, "html.id.duplicate.first");
-        assert_eq!(sink.0[1].span, first_attr, "should point to the id attribute, not the tag");
+        assert_eq!(
+            sink.0[1].span, first_attr,
+            "should point to the id attribute, not the tag"
+        );
 
         // Ensure we don't emit any additional messages on finish.
         rule.on_finish(&mut ctx, &mut sink);
@@ -148,14 +150,13 @@ mod tests {
 
         rule.on_event(&start_tag_with_id("a", None, None), &mut ctx, &mut sink);
         let dup_span = Some(Span::new(5, 6, 1, 6));
-        rule.on_event(
-            &start_tag_with_id("a", dup_span, None),
-            &mut ctx,
-            &mut sink,
-        );
+        rule.on_event(&start_tag_with_id("a", dup_span, None), &mut ctx, &mut sink);
         assert_eq!(sink.0.len(), 2);
         assert_eq!(sink.0[0].code, "html.id.duplicate");
-        assert_eq!(sink.0[0].span, dup_span, "falls back to tag span when attr span is missing");
+        assert_eq!(
+            sink.0[0].span, dup_span,
+            "falls back to tag span when attr span is missing"
+        );
         assert_eq!(sink.0[1].code, "html.id.duplicate.first");
         assert_eq!(sink.0[1].span, None);
 

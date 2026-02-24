@@ -1,0 +1,25 @@
+[
+  {
+    "code": "html.css.error",
+    "line": 4,
+    "col": 1,
+    "at": "<style"
+  },
+  {
+    "code": "html.css.error",
+    "line": 9,
+    "col": 11,
+    "at": "badprop:"
+  },
+  {
+    "code": "html.css.error",
+    "line": 10,
+    "col": 23,
+    "at": "badprop:"
+  },
+  {
+    "code": "html.css.error",
+    "line": 11,
+    "col": 23
+  }
+]

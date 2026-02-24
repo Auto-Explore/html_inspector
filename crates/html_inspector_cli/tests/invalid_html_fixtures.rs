@@ -118,12 +118,17 @@ fn validate_file_errors(path: &Path, format: InputFormat, bytes: Arc<Vec<u8>>) -
         .merge(pack_aria())
         .merge(pack_i18n())
         .merge(pack_css_checks());
+    let also_check_css = path
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .is_some_and(|name| name.starts_with("css_"));
     let source = HtmlEventSource::from_shared_bytes(path.to_string_lossy(), format, bytes).unwrap();
     let report = html_inspector::validate_events(
         source,
         rules,
         Config {
             min_severity: Severity::Error,
+            also_check_css,
             ..Config::default()
         },
     )
