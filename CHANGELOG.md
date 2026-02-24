@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.3]
+
+### Added
+
+- `html_inspector_cli`: more invalid-HTML fixtures (including CSS issue highlighting and a larger ARIA test case).
+
+### Fixed
+
+- `html_inspector_rules_css`: CSS errors in `style="..."` attributes now point at the attribute/value span (instead of the tag), improving issue highlighting.
+- `html_inspector_rules_html`: duplicate `id` errors now point at the `id` attribute span (instead of the tag), when available.
+
 ## [0.2.2]
 
 ### Added
