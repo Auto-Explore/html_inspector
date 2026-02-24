@@ -41,24 +41,31 @@ impl Rule for DuplicateId {
             return;
         }
 
+        // Point the error at the `id` attribute itself, not the tag.
+        let id_span = attrs
+            .iter()
+            .find(|a| ctx.name_is(&a.name, "id"))
+            .and_then(|a| a.span)
+            .or(*span);
+
         if let Some(first_span) = self.first.get(id).copied() {
             // Emit messages immediately, matching TreeBuilder behavior.
             out.push(Message::new(
                 "html.id.duplicate",
                 Severity::Error,
                 Category::Html,
-                format!("Duplicate ID “{id}”."),
-                *span,
+                format!("Duplicate ID \u{201c}{id}\u{201d}."),
+                id_span,
             ));
             out.push(Message::new(
                 "html.id.duplicate.first",
                 Severity::Warning,
                 Category::Html,
-                format!("The first occurrence of ID “{id}” was here."),
+                format!("The first occurrence of ID \u{201c}{id}\u{201d} was here."),
                 first_span,
             ));
         } else {
-            self.first.insert(id.to_string(), *span);
+            self.first.insert(id.to_string(), id_span);
         }
     }
 
@@ -83,16 +90,20 @@ mod tests {
         }
     }
 
-    fn start_tag_with_id(id: &str, span: Option<Span>) -> ParseEvent {
+    fn start_tag_with_id(
+        id: &str,
+        tag_span: Option<Span>,
+        attr_span: Option<Span>,
+    ) -> ParseEvent {
         ParseEvent::StartTag {
             name: "div".to_string(),
             attrs: vec![Attribute {
                 name: "id".to_string(),
                 value: Some(id.to_string()),
-                span: None,
+                span: attr_span,
             }],
             self_closing: false,
-            span,
+            span: tag_span,
         }
     }
 
@@ -102,17 +113,27 @@ mod tests {
         let mut ctx = ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink::default();
 
-        let first_span = Some(Span::new(1, 2, 1, 2));
-        rule.on_event(&start_tag_with_id("a", first_span), &mut ctx, &mut sink);
+        let first_tag = Some(Span::new(0, 10, 1, 1));
+        let first_attr = Some(Span::new(5, 9, 1, 6));
+        rule.on_event(
+            &start_tag_with_id("a", first_tag, first_attr),
+            &mut ctx,
+            &mut sink,
+        );
         assert!(sink.0.is_empty());
 
-        let dup_span = Some(Span::new(5, 6, 1, 6));
-        rule.on_event(&start_tag_with_id("a", dup_span), &mut ctx, &mut sink);
+        let dup_tag = Some(Span::new(20, 30, 2, 1));
+        let dup_attr = Some(Span::new(25, 29, 2, 6));
+        rule.on_event(
+            &start_tag_with_id("a", dup_tag, dup_attr),
+            &mut ctx,
+            &mut sink,
+        );
         assert_eq!(sink.0.len(), 2);
         assert_eq!(sink.0[0].code, "html.id.duplicate");
-        assert_eq!(sink.0[0].span, dup_span);
+        assert_eq!(sink.0[0].span, dup_attr, "should point to the id attribute, not the tag");
         assert_eq!(sink.0[1].code, "html.id.duplicate.first");
-        assert_eq!(sink.0[1].span, first_span);
+        assert_eq!(sink.0[1].span, first_attr, "should point to the id attribute, not the tag");
 
         // Ensure we don't emit any additional messages on finish.
         rule.on_finish(&mut ctx, &mut sink);
@@ -125,11 +146,16 @@ mod tests {
         let mut ctx = ValidationContext::new(Config::default(), InputFormat::Html);
         let mut sink = Sink::default();
 
-        rule.on_event(&start_tag_with_id("a", None), &mut ctx, &mut sink);
+        rule.on_event(&start_tag_with_id("a", None, None), &mut ctx, &mut sink);
         let dup_span = Some(Span::new(5, 6, 1, 6));
-        rule.on_event(&start_tag_with_id("a", dup_span), &mut ctx, &mut sink);
+        rule.on_event(
+            &start_tag_with_id("a", dup_span, None),
+            &mut ctx,
+            &mut sink,
+        );
         assert_eq!(sink.0.len(), 2);
         assert_eq!(sink.0[0].code, "html.id.duplicate");
+        assert_eq!(sink.0[0].span, dup_span, "falls back to tag span when attr span is missing");
         assert_eq!(sink.0[1].code, "html.id.duplicate.first");
         assert_eq!(sink.0[1].span, None);
 

@@ -3,10 +3,17 @@ use html_inspector::{
     ValidationContext,
 };
 
+#[cfg(test)]
 fn attr_value_ci<'a>(attrs: &'a [Attribute], name: &str) -> Option<&'a str> {
     attrs.iter().find_map(|a| {
         let value = a.value.as_deref()?;
         a.name.eq_ignore_ascii_case(name).then_some(value)
+    })
+}
+
+fn attr_ci<'a>(attrs: &'a [Attribute], name: &str) -> Option<&'a Attribute> {
+    attrs.iter().find(|a| {
+        a.value.is_some() && a.name.eq_ignore_ascii_case(name)
     })
 }
 
@@ -45,11 +52,54 @@ fn line_col_at_byte(s: &str, byte: usize) -> (u32, u32) {
     (line, col)
 }
 
+#[cfg(test)]
 fn emit_css_errors(report: &css_inspector::Report, span: Option<Span>, out: &mut dyn MessageSink) {
     for m in &report.messages {
         if m.severity != css_inspector::Severity::Error {
             continue;
         }
+        out.push(Message::new(
+            "html.css.error",
+            Severity::Error,
+            Category::Html,
+            format!("CSS: {}", m.message),
+            span,
+        ));
+    }
+}
+
+fn emit_css_errors_in_style_attr(
+    report: &css_inspector::Report,
+    style_contents: &str,
+    attr: &Attribute,
+    tag_span: Option<Span>,
+    out: &mut dyn MessageSink,
+) {
+    let attr_span = attr.span.or(tag_span);
+
+    // Try to compute a base span for the style attribute value.
+    // The attribute span covers `style="..."`, so the value starts at
+    // attr.span.byte_start + len("style") + len('=') + len(quote_char).
+    // We estimate: name.len() + 2 for `="` and the value ends 1 byte before byte_end for `"`.
+    let value_base = attr.span.map(|s| {
+        let value_offset = attr.name.len() + 2; // `name="` — the `=` and opening quote
+        Span::new(
+            s.byte_start + value_offset,
+            s.byte_end.saturating_sub(1),
+            s.line,
+            s.col + value_offset as u32,
+        )
+    });
+
+    for m in &report.messages {
+        if m.severity != css_inspector::Severity::Error {
+            continue;
+        }
+
+        let span = value_base
+            .and_then(|base| locate_css_error_span(style_contents, base, &m.message))
+            .or(attr_span);
+
         out.push(Message::new(
             "html.css.error",
             Severity::Error,
@@ -187,7 +237,10 @@ impl Rule for StyleAttributeCssRule {
         let ParseEvent::StartTag { attrs, span, .. } = event else {
             return;
         };
-        let Some(style_contents) = attr_value_ci(attrs, "style") else {
+        let Some(style_attr) = attr_ci(attrs, "style") else {
+            return;
+        };
+        let Some(style_contents) = style_attr.value.as_deref() else {
             return;
         };
         if style_contents.trim().is_empty() {
@@ -201,7 +254,7 @@ impl Rule for StyleAttributeCssRule {
         // A style attribute is a declaration list, not a full stylesheet.
         let report = css_inspector::validate_css_declarations_text(style_contents, css_config)
             .unwrap_or_else(report_from_err);
-        emit_css_errors(&report, *span, out);
+        emit_css_errors_in_style_attr(&report, style_contents, style_attr, *span, out);
     }
 }
 
@@ -431,7 +484,8 @@ mod tests {
 
     #[test]
     fn style_attribute_css_rule_emits_errors() {
-        let span = Span::new(0, 0, 1, 1);
+        let tag_span = Span::new(0, 20, 1, 1);
+        let attr_span = Span::new(3, 15, 1, 4);
         let src = CaptureSource::new(
             InputFormat::Html,
             vec![ParseEvent::StartTag {
@@ -439,19 +493,24 @@ mod tests {
                 attrs: vec![Attribute {
                     name: "style".to_string(),
                     value: Some("/*".to_string()),
-                    span: None,
+                    span: Some(attr_span),
                 }],
                 self_closing: false,
-                span: Some(span),
+                span: Some(tag_span),
             }],
         );
 
         let report = validate_events(src, pack_css_checks(), default_test_config()).unwrap();
-        assert!(report.messages.iter().any(|m| {
-            m.code == "html.css.error"
-                && m.severity == html_inspector::Severity::Error
-                && m.category == Category::Html
-        }));
+        let css_err = report
+            .messages
+            .iter()
+            .find(|m| m.code == "html.css.error")
+            .expect("expected a CSS error");
+        assert_eq!(css_err.severity, html_inspector::Severity::Error);
+        assert_eq!(css_err.category, Category::Html);
+        // Error should point to the style attribute, not the tag.
+        assert_ne!(css_err.span, Some(tag_span),
+            "CSS error should not point to the tag span");
     }
 
     #[test]
@@ -613,8 +672,9 @@ mod tests {
 
     #[test]
     fn style_attribute_css_rule_handles_multiple_events() {
-        let span1 = Span::new(0, 0, 1, 1);
-        let span2 = Span::new(0, 0, 2, 1);
+        // attr spans cover `style="/*"` — value starts at byte_start + 7 (len("style") + len('="'))
+        let attr_span1 = Span::new(3, 15, 1, 4);
+        let attr_span2 = Span::new(23, 35, 2, 4);
         let src = CaptureSource::new(
             InputFormat::Html,
             vec![
@@ -623,20 +683,20 @@ mod tests {
                     attrs: vec![Attribute {
                         name: "style".to_string(),
                         value: Some("/*".to_string()),
-                        span: None,
+                        span: Some(attr_span1),
                     }],
                     self_closing: false,
-                    span: Some(span1),
+                    span: Some(Span::new(0, 16, 1, 1)),
                 },
                 ParseEvent::StartTag {
                     name: "p".to_string(),
                     attrs: vec![Attribute {
                         name: "style".to_string(),
                         value: Some("/*".to_string()),
-                        span: None,
+                        span: Some(attr_span2),
                     }],
                     self_closing: false,
-                    span: Some(span2),
+                    span: Some(Span::new(20, 36, 2, 1)),
                 },
             ],
         );
@@ -648,7 +708,13 @@ mod tests {
             .filter(|m| m.code == "html.css.error")
             .filter_map(|m| m.span)
             .collect();
-        assert_eq!(spans, vec![span1, span2]);
+        // Errors should be localized to the `/*` token within the style value
+        // (value starts at attr byte_start + 7), not point at the tag.
+        assert_eq!(
+            spans,
+            vec![Span::new(10, 11, 1, 11), Span::new(30, 31, 2, 11)],
+            "CSS errors should be localized within the style attribute value"
+        );
     }
 
     #[test]
